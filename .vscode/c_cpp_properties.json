@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/ti/xdctools_3_32_00_06_core/packages",
+                "C:/ti/tirtos_tivac_2_16_01_14/products/bios_6_45_02_31/packages",
+                "C:/ti/tirtos_tivac_2_16_01_14/products/tidrivers_tivac_2_16_01_13/packages",
+                "C:/ti/TivaWare_C_Series-2.2.0.295",
+                "C:/ti/TivaWare_C_Series-2.2.0.295/examples/boards/ek-tm4c1294xl-boostxl-kentec-s1"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.22621.0",
+            "compilerPath": "cl.exe",
+            "intelliSenseMode": "windows-msvc-x64"
+        }
+    ],
+    "version": 4
+}

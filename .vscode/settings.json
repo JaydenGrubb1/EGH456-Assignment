@@ -1,0 +1,8 @@
+{
+	"files.associations": {
+		"uartstdio.h": "c",
+		"event.h": "c",
+		"touch.h": "c",
+		"semaphore.h": "c"
+	}
+}
