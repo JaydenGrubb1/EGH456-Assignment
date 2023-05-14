@@ -20,6 +20,7 @@
 /* Font header files */
 #include "fonts/fontnf10.h"
 #include "fonts/fontnf16.h"
+#include "fonts/fontnf16i.h"
 
 /* Global defines */
 #define DISPLAY &g_sKentec320x240x16_SSD2119
@@ -41,6 +42,7 @@ tCheckBoxWidget g_sGraphSpeedChk;
 tCheckBoxWidget g_sGraphPowerChk;
 tCheckBoxWidget g_sGraphOther1Chk;
 tCheckBoxWidget g_sGraphOther2Chk;
+tCanvasWidget g_sGraphContent;
 
 Canvas(
 	g_sMainPanel,	   // struct name
@@ -80,6 +82,8 @@ Canvas(
 	NULL,			   // image pointer
 	NULL			   // on-paint function pointer
 );
+
+/* Graph panel widget constructors */
 Canvas(
 	g_sGraphPanel,	   // struct name
 	NULL,			   // parent widget pointer
@@ -106,7 +110,7 @@ RectangularButton(
 	NULL,											  // child widget pointer
 	DISPLAY,										  // display device pointer
 	6,												  // x position
-	185,											  // y position
+	184,											  // y position
 	70,												  // width
 	50,												  // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
@@ -129,7 +133,7 @@ CheckBox(
 	NULL,			   // child widget pointer
 	DISPLAY,		   // display device pointer
 	82,				   // x position
-	185,			   // y position
+	184,			   // y position
 	118,			   // width
 	22,				   // height
 	CB_STYLE_TEXT,	   // style
@@ -149,7 +153,7 @@ CheckBox(
 	NULL,				// child widget pointer
 	DISPLAY,			// display device pointer
 	82,					// x position
-	213,				// y position
+	212,				// y position
 	118,				// width
 	22,					// height
 	CB_STYLE_TEXT,		// style
@@ -169,7 +173,7 @@ CheckBox(
 	NULL,				// child widget pointer
 	DISPLAY,			// display device pointer
 	206,				// x position
-	185,				// y position
+	184,				// y position
 	118,				// width
 	22,					// height
 	CB_STYLE_TEXT,		// style
@@ -185,11 +189,11 @@ CheckBox(
 CheckBox(
 	g_sGraphOther2Chk, // struct name
 	&g_sGraphPanel,	   // parent widget pointer
-	NULL,			   // sibling widget pointer
+	&g_sGraphContent,  // sibling widget pointer
 	NULL,			   // child widget pointer
 	DISPLAY,		   // display device pointer
 	206,			   // x position
-	213,			   // y position
+	212,			   // y position
 	118,			   // width
 	22,				   // height
 	CB_STYLE_TEXT,	   // style
@@ -201,6 +205,25 @@ CheckBox(
 	" Other 2 (IDK)",  // text
 	NULL,			   // image pointer
 	NULL			   // on-change function pointer
+);
+Canvas(
+	g_sGraphContent,																									  // struct name
+	&g_sGraphPanel,																										  // parent widget pointer
+	NULL,																												  // sibling widget pointer
+	NULL,																												  // child widget pointer
+	DISPLAY,																											  // display device pointer
+	6,																													  // x position
+	6,																													  // y position
+	308,																												  // width
+	172,																												  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_VCENTER, // style
+	ClrBlack,																											  // fill color
+	ClrWhite,																											  // outline color
+	ClrLightGrey,																										  // text color
+	&g_sFontNf16i,																										  // font pointer
+	"plot graph here...",																								  // text
+	NULL,																												  // image pointer
+	NULL																												  // on-paint function pointer
 );
 
 /**
