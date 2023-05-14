@@ -32,6 +32,7 @@ tContext g_sContext;
 tRectangle g_sScreenRect;
 int16_t g_i16DesiredSpeed = 0;
 int16_t g_i16CurrentSpeed = 0;
+bool g_bIsRunning = false;
 
 /* Main panel widgets */
 tCanvasWidget g_sMainPanel;
@@ -104,7 +105,7 @@ RectangularButton(
 	ClrWhite,										  // outline color
 	ClrWhite,										  // text color
 	&g_sFontNf16,									  // font pointer
-	"Start",										  // text
+	"START",										  // text
 	NULL,											  // image pointer
 	NULL,											  // press image pointer
 	0,												  // auto repeat delay
@@ -450,6 +451,17 @@ Canvas(
 
 void OnMainStartBtnClick(tWidget *pWidget) {
 	// TODO: start the motor
+	g_bIsRunning = !g_bIsRunning;
+
+	if (g_bIsRunning) {
+		PushButtonTextSet(&g_sMainStartBtn, "STOP");
+		PushButtonFillColorSet(&g_sMainStartBtn, ClrRed);
+		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkRed);
+	} else {
+		PushButtonTextSet(&g_sMainStartBtn, "START");
+		PushButtonFillColorSet(&g_sMainStartBtn, ClrBlue);
+		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkBlue);
+	}
 }
 
 void OnMainSpeedUpBtnClick(tWidget *pWidget) {
