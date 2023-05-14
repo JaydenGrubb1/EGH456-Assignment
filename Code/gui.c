@@ -176,7 +176,7 @@ Canvas(
 	ClrWhite,																				   // outline color
 	ClrWhite,																				   // text color
 	&g_sFontNf16,																			   // font pointer
-	"Current Time: 21:56 14/05/23",															   // text
+	"Current Time: 21:56",																	   // text
 	NULL,																					   // image pointer
 	NULL																					   // on-paint function pointer
 );
