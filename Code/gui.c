@@ -34,6 +34,9 @@ int16_t g_i16DesiredSpeed = 0;
 int16_t g_i16CurrentSpeed = 0;
 bool g_bIsRunning = false;
 
+/* Callback function array */
+tGUICallbackFxn g_pfnCallbacks[GUI_CALLBACK_COUNT];
+
 /* Main panel widgets */
 tCanvasWidget g_sMainPanel;
 tPushButtonWidget g_sMainStartBtn;
@@ -192,7 +195,7 @@ Canvas(
 	ClrWhite,																																   // outline color
 	ClrWhite,																																   // text color
 	&g_sFontNf10,																															   // font pointer
-	"Target Speed",																														   // text
+	"Target Speed",																															   // text
 	NULL,																																	   // image pointer
 	OnMainDesiredSpeedPaint																													   // on-paint function pointer
 );
@@ -211,7 +214,7 @@ Canvas(
 	ClrWhite,																																   // outline color
 	ClrWhite,																																   // text color
 	&g_sFontNf10,																															   // font pointer
-	"Actual Speed",																														   // text
+	"Actual Speed",																															   // text
 	NULL,																																	   // image pointer
 	OnMainCurrentSpeedPaint																													   // on-paint function pointer
 );
@@ -450,18 +453,23 @@ Canvas(
 );
 
 void OnMainStartBtnClick(tWidget *pWidget) {
-	// TODO: start the motor
 	g_bIsRunning = !g_bIsRunning;
 
 	if (g_bIsRunning) {
 		PushButtonTextSet(&g_sMainStartBtn, "STOP");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrRed);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkRed);
+
+		InvokeGUICallback(GUI_MOTOR_START, NULL, NULL);
 	} else {
 		PushButtonTextSet(&g_sMainStartBtn, "START");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrBlue);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkBlue);
+
+		InvokeGUICallback(GUI_MOTOR_STOP, NULL, NULL);
 	}
+
+	InvokeGUICallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
 }
 
 void OnMainSpeedUpBtnClick(tWidget *pWidget) {
@@ -545,6 +553,35 @@ void HandleGUI() {
 	while (1) {
 		WidgetMessageQueueProcess();
 	}
+}
+
+/**
+ * @brief Sets the callback function for a specific callback
+ *
+ * @param tCallbackOpt The callback to set
+ * @param pfnCallbackFxn The function to call when the callback is triggered
+ */
+void SetGUICallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbackFxn) {
+	if (tCallbackOpt >= GUI_CALLBACK_COUNT)
+		return;
+
+	g_pfnCallbacks[tCallbackOpt] = pfnCallbackFxn;
+}
+
+/**
+ * @brief Invokes a callback
+ *
+ * @param tCallbackOpt The callback to invoke
+ * @param arg1 The first argument to pass to the callback
+ * @param arg2 The second argument to pass to the callback
+ */
+void InvokeGUICallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2) {
+	if (tCallbackOpt >= GUI_CALLBACK_COUNT)
+		return;
+	if (g_pfnCallbacks[tCallbackOpt] == NULL)
+		return;
+
+	g_pfnCallbacks[tCallbackOpt](arg1, arg2);
 }
 
 /**

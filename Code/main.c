@@ -32,6 +32,39 @@ Task_Struct g_sHandleGUITask;
 char ga_cHandleGUIStack[TASK_STACK_SIZE];
 
 /**
+ * @brief Example callback function for when the motor is started
+ * 
+ */
+void MotorStarted() {
+	System_printf("Motor started\n");
+	System_flush();
+}
+
+/**
+ * @brief Example callback function for when the motor is stopped
+ * 
+ */
+void MotorStopped() {
+	System_printf("Motor stopped\n");
+	System_flush();
+}
+
+/**
+ * @brief Example callback function for when the motor state is changed
+ * 
+ * @param bMotorState The new state of the motor
+ */
+void MotorStateChanged(bool bMotorState) {
+	System_printf("Motor state changed: ");
+	if (bMotorState) {
+		System_printf("Motor is on\n");
+	} else {
+		System_printf("Motor is off\n");
+	}
+	System_flush();
+}
+
+/**
  * @brief Application entry point
  *
  * @return Unused
@@ -47,6 +80,9 @@ int main(void) {
 
 	/* Initialize the GUI */
 	InitGUI(cpuFreq.lo);
+	SetGUICallback(GUI_MOTOR_START, (tGUICallbackFxn)MotorStarted);
+	SetGUICallback(GUI_MOTOR_STOP, (tGUICallbackFxn)MotorStopped);
+	SetGUICallback(GUI_MOTOR_STATE_CHANGE, (tGUICallbackFxn)MotorStateChanged);
 
 	/* Construct task threads */
 	Task_Params taskParams;
