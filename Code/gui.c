@@ -46,6 +46,7 @@ tPushButtonWidget g_sMainDesiredSpeedDownBtn;
 
 /* Settings panel widgets */
 tCanvasWidget g_sSettingsPanel;
+tPushButtonWidget g_sSettingsBackBtn;
 
 /* Graph panel widgets */
 tCanvasWidget g_sGraphPanel;
@@ -62,9 +63,10 @@ void OnMainSpeedUpBtnClick(tWidget *psWidget);
 void OnMainSpeedDownBtnClick(tWidget *psWidget);
 void OnMainSettingsBtnClick(tWidget *psWidget);
 void OnMainGraphBtnClick(tWidget *psWidget);
-void OnGraphBackBtnClick(tWidget *psWidget);
 void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext);
 void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext);
+void OnSettingsBackBtnClick(tWidget *psWidget);
+void OnGraphBackBtnClick(tWidget *psWidget);
 
 /* Main panel widget contructors */
 Canvas(
@@ -232,7 +234,7 @@ RectangularButton(
 	NULL,																	 // image pointer
 	NULL,																	 // press image pointer
 	250,																	 // auto repeat delay
-	32,																		 // auto repeat rate
+	20,																		 // auto repeat rate
 	OnMainSpeedUpBtnClick													 // on-click function pointer
 );
 RectangularButton(
@@ -254,30 +256,53 @@ RectangularButton(
 	"Down",																	 // text
 	NULL,																	 // image pointer
 	NULL,																	 // press image pointer
-	400,																	 // auto repeat delay
-	32,																		 // auto repeat rate
+	250,																	 // auto repeat delay
+	20,																		 // auto repeat rate
 	OnMainSpeedDownBtnClick													 // on-click function pointer
 );
 
 /* Settings panel widget contructors */
 Canvas(
-	g_sSettingsPanel,  // struct name
-	NULL,			   // parent widget pointer
-	NULL,			   // sibling widget pointer
-	NULL,			   // child widget pointer
-	DISPLAY,		   // display device pointer
-	0,				   // x position
-	0,				   // y position
-	320,			   // width
-	240,			   // height
-	CANVAS_STYLE_FILL, // style
-	ClrBlack,		   // fill color
-	NULL,			   // outline color
-	NULL,			   // text color
-	NULL,			   // font pointer
-	NULL,			   // text
-	NULL,			   // image pointer
-	NULL			   // on-paint function pointer
+	g_sSettingsPanel,	 // struct name
+	NULL,				 // parent widget pointer
+	NULL,				 // sibling widget pointer
+	&g_sSettingsBackBtn, // child widget pointer
+	DISPLAY,			 // display device pointer
+	0,					 // x position
+	0,					 // y position
+	320,				 // width
+	240,				 // height
+	CANVAS_STYLE_FILL,	 // style
+	ClrBlack,			 // fill color
+	NULL,				 // outline color
+	NULL,				 // text color
+	NULL,				 // font pointer
+	NULL,				 // text
+	NULL,				 // image pointer
+	NULL				 // on-paint function pointer
+);
+RectangularButton(
+	g_sSettingsBackBtn,								  // struct name
+	&g_sSettingsPanel,								  // parent widget pointer
+	NULL,											  // sibling widget pointer
+	NULL,											  // child widget pointer
+	DISPLAY,										  // display device pointer
+	6,												  // x position
+	184,											  // y position
+	70,												  // width
+	50,												  // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
+	ClrGray,										  // fill color
+	ClrGray,										  // press fill color
+	ClrWhite,										  // outline color
+	ClrWhite,										  // text color
+	&g_sFontNf16,									  // font pointer
+	"Back",											  // text
+	NULL,											  // image pointer
+	NULL,											  // press image pointer
+	0,												  // auto repeat delay
+	0,												  // auto repeat rate
+	OnSettingsBackBtnClick							  // on-click function pointer
 );
 
 /* Graph panel widget constructors */
@@ -451,12 +476,6 @@ void OnMainGraphBtnClick(tWidget *pWidget) {
 	WidgetPaint(WIDGET_ROOT);
 }
 
-void OnGraphBackBtnClick(tWidget *pWidget) {
-	WidgetRemove((tWidget *)&g_sGraphPanel);
-	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
-	WidgetPaint(WIDGET_ROOT);
-}
-
 void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf36);
@@ -471,6 +490,18 @@ void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	char text[8];
 	snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
 	GrStringDrawCentered(psContext, text, -1, 107, 142, false);
+}
+
+void OnSettingsBackBtnClick(tWidget *pWidget) {
+	WidgetRemove((tWidget *)&g_sSettingsPanel);
+	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
+	WidgetPaint(WIDGET_ROOT);
+}
+
+void OnGraphBackBtnClick(tWidget *pWidget) {
+	WidgetRemove((tWidget *)&g_sGraphPanel);
+	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
+	WidgetPaint(WIDGET_ROOT);
 }
 
 /**
