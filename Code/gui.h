@@ -24,7 +24,7 @@ typedef void (*tGUICallbackFxn)(uint32_t arg1, uint32_t arg2);
  *
  * @param ui32SysClock The frequency of the system clock
  */
-void InitGUI(uint32_t ui32SysClock);
+void GUI_Init(uint32_t ui32SysClock);
 
 /**
  * @brief Handles processing the messages for the widget message queue
@@ -32,7 +32,7 @@ void InitGUI(uint32_t ui32SysClock);
  * @note This function does not return and should be called in its own task
  *
  */
-void HandleGUI();
+void GUI_Handle();
 
 /**
  * @brief Sets the callback function for a specific callback
@@ -40,7 +40,7 @@ void HandleGUI();
  * @param tCallbackOpt The callback to set
  * @param pfnCallbackFxn The function to call when the callback is triggered
  */
-void SetGUICallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbackFxn);
+void GUI_SetCallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbackFxn);
 
 /**
  * @brief Invokes the callback function for a specific callback
@@ -51,10 +51,10 @@ void SetGUICallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallback
  * 
  * @note This function is not intended to be called by the user
  */
-void InvokeGUICallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2);
+void GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2);
 
 /**
- * @brief Draws the GUI
+ * @brief Starts the GUI
  *
  */
-void DrawGUI();
+void GUI_Start();

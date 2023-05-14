@@ -460,16 +460,16 @@ void OnMainStartBtnClick(tWidget *pWidget) {
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrRed);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkRed);
 
-		InvokeGUICallback(GUI_MOTOR_START, NULL, NULL);
+		GUI_InvokeCallback(GUI_MOTOR_START, NULL, NULL);
 	} else {
 		PushButtonTextSet(&g_sMainStartBtn, "START");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrBlue);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkBlue);
 
-		InvokeGUICallback(GUI_MOTOR_STOP, NULL, NULL);
+		GUI_InvokeCallback(GUI_MOTOR_STOP, NULL, NULL);
 	}
 
-	InvokeGUICallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
+	GUI_InvokeCallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
 }
 
 void OnMainSpeedUpBtnClick(tWidget *pWidget) {
@@ -529,7 +529,7 @@ void OnGraphBackBtnClick(tWidget *pWidget) {
  *
  * @param ui32SysClock The frequency of the system clock
  */
-void InitGUI(uint32_t ui32SysClock) {
+void GUI_Init(uint32_t ui32SysClock) {
 	/* Initialize touch screen */
 	Kentec320x240x16_SSD2119Init(ui32SysClock);
 	GrContextInit(&g_sContext, &g_sKentec320x240x16_SSD2119);
@@ -549,7 +549,7 @@ void InitGUI(uint32_t ui32SysClock) {
  * @note This function does not return and should be called in its own task
  *
  */
-void HandleGUI() {
+void GUI_Handle() {
 	while (1) {
 		WidgetMessageQueueProcess();
 	}
@@ -561,7 +561,7 @@ void HandleGUI() {
  * @param tCallbackOpt The callback to set
  * @param pfnCallbackFxn The function to call when the callback is triggered
  */
-void SetGUICallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbackFxn) {
+void GUI_SetCallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbackFxn) {
 	if (tCallbackOpt >= GUI_CALLBACK_COUNT)
 		return;
 
@@ -575,7 +575,7 @@ void SetGUICallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallback
  * @param arg1 The first argument to pass to the callback
  * @param arg2 The second argument to pass to the callback
  */
-void InvokeGUICallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2) {
+void GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2) {
 	if (tCallbackOpt >= GUI_CALLBACK_COUNT)
 		return;
 	if (g_pfnCallbacks[tCallbackOpt] == NULL)
@@ -585,10 +585,10 @@ void InvokeGUICallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t 
 }
 
 /**
- * @brief Draws the GUI
+ * @brief Starts the GUI
  *
  */
-void DrawGUI() {
+void GUI_Start() {
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
 	WidgetPaint(WIDGET_ROOT);
 }

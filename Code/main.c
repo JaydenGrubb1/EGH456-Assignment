@@ -79,20 +79,20 @@ int main(void) {
 	BIOS_getCpuFreq(&cpuFreq);
 
 	/* Initialize the GUI */
-	InitGUI(cpuFreq.lo);
-	SetGUICallback(GUI_MOTOR_START, (tGUICallbackFxn)MotorStarted);
-	SetGUICallback(GUI_MOTOR_STOP, (tGUICallbackFxn)MotorStopped);
-	SetGUICallback(GUI_MOTOR_STATE_CHANGE, (tGUICallbackFxn)MotorStateChanged);
+	GUI_Init(cpuFreq.lo);
+	GUI_SetCallback(GUI_MOTOR_START, (tGUICallbackFxn)MotorStarted);
+	GUI_SetCallback(GUI_MOTOR_STOP, (tGUICallbackFxn)MotorStopped);
+	GUI_SetCallback(GUI_MOTOR_STATE_CHANGE, (tGUICallbackFxn)MotorStateChanged);
 
 	/* Construct task threads */
 	Task_Params taskParams;
 	Task_Params_init(&taskParams);
 	taskParams.stackSize = TASK_STACK_SIZE;
 	taskParams.stack = &ga_cHandleGUIStack;
-	Task_construct(&g_sHandleGUITask, (Task_FuncPtr)HandleGUI, &taskParams, NULL);
+	Task_construct(&g_sHandleGUITask, (Task_FuncPtr)GUI_Handle, &taskParams, NULL);
 
 	/* Draw the GUI */
-	DrawGUI();
+	GUI_Start();
 
 	/* Start BIOS */
 	BIOS_start();
