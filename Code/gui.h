@@ -6,9 +6,7 @@
  *
  */
 typedef enum GUICallbackOption {
-	GUI_MOTOR_START = 0,
-	GUI_MOTOR_STOP,
-	GUI_MOTOR_STATE_CHANGE,
+	GUI_MOTOR_STATE_CHANGE = 0,
 	GUI_MOTOR_SPEED_CHANGE,
 
 	GUI_CALLBACK_COUNT
@@ -45,11 +43,11 @@ void GUI_SetCallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbac
 
 /**
  * @brief Invokes the callback function for a specific callback
- * 
+ *
  * @param tCallbackOpt The callback to invoke
  * @param arg1 The first argument to pass to the callback
  * @param arg2 The second argument to pass to the callback
- * 
+ *
  * @note This function is not intended to be called by the user
  */
 void GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2);

@@ -464,14 +464,10 @@ void OnMainStartBtnClick(tWidget *pWidget) {
 		PushButtonTextSet(&g_sMainStartBtn, "STOP");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrRed);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkRed);
-
-		GUI_InvokeCallback(GUI_MOTOR_START, NULL, NULL);
 	} else {
 		PushButtonTextSet(&g_sMainStartBtn, "START");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrBlue);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkBlue);
-
-		GUI_InvokeCallback(GUI_MOTOR_STOP, NULL, NULL);
 	}
 
 	GUI_InvokeCallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
