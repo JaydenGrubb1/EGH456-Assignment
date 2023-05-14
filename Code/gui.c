@@ -30,6 +30,8 @@
 /* Global variables */
 tContext g_sContext;
 tRectangle g_sScreenRect;
+int16_t g_i16DesiredSpeed = 0;
+int16_t g_i16CurrentSpeed = 0;
 
 /* Main panel widgets */
 tCanvasWidget g_sMainPanel;
@@ -41,8 +43,6 @@ tCanvasWidget g_sMainDesiredSpeed;
 tCanvasWidget g_sMainCurrentSpeed;
 tPushButtonWidget g_sMainDesiredSpeedUpBtn;
 tPushButtonWidget g_sMainDesiredSpeedDownBtn;
-tContainerWidget g_sMainDesiredSpeedContent;
-tContainerWidget g_sMainCurrentSpeedContent;
 
 /* Settings panel widgets */
 tCanvasWidget g_sSettingsPanel;
@@ -63,6 +63,8 @@ void OnMainSpeedDownBtnClick(tWidget *psWidget);
 void OnMainSettingsBtnClick(tWidget *psWidget);
 void OnMainGraphBtnClick(tWidget *psWidget);
 void OnGraphBackBtnClick(tWidget *psWidget);
+void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext);
+void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext);
 
 /* Main panel widget contructors */
 Canvas(
@@ -173,122 +175,88 @@ Canvas(
 	NULL																					   // on-paint function pointer
 );
 Canvas(
-	g_sMainDesiredSpeed,																							  // struct name
-	&g_sMainContent,																								  // parent widget pointer
-	&g_sMainCurrentSpeed,																							  // sibling widget pointer
-	&g_sMainDesiredSpeedContent,																					  // child widget pointer
-	DISPLAY,																										  // display device pointer
-	6,																												  // x position
-	28,																												  // y position
-	202,																											  // width
-	72,																												  // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
-	ClrBlack,																										  // fill color
-	ClrWhite,																										  // outline color
-	ClrWhite,																										  // text color
-	&g_sFontNf10,																									  // font pointer
-	"Desired Speed",																								  // text
-	NULL,																											  // image pointer
-	NULL																											  // on-paint function pointer
+	g_sMainDesiredSpeed,																													   // struct name
+	&g_sMainContent,																														   // parent widget pointer
+	&g_sMainCurrentSpeed,																													   // sibling widget pointer
+	NULL,																																	   // child widget pointer
+	DISPLAY,																																   // display device pointer
+	6,																																		   // x position
+	28,																																		   // y position
+	202,																																	   // width
+	72,																																		   // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
+	ClrBlack,																																   // fill color
+	ClrWhite,																																   // outline color
+	ClrWhite,																																   // text color
+	&g_sFontNf10,																															   // font pointer
+	"Desired Speed",																														   // text
+	NULL,																																	   // image pointer
+	OnMainDesiredSpeedPaint																													   // on-paint function pointer
 );
 Canvas(
-	g_sMainCurrentSpeed,																							  // struct name
-	&g_sMainContent,																								  // parent widget pointer
-	&g_sMainDesiredSpeedUpBtn,																						  // sibling widget pointer
-	&g_sMainCurrentSpeedContent,																					  // child widget pointer
-	DISPLAY,																										  // display device pointer
-	6,																												  // x position
-	106,																											  // y position
-	202,																											  // width
-	72,																												  // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
-	ClrBlack,																										  // fill color
-	ClrWhite,																										  // outline color
-	ClrWhite,																										  // text color
-	&g_sFontNf10,																									  // font pointer
-	"Current Speed",																								  // text
-	NULL,																											  // image pointer
-	NULL																											  // on-paint function pointer
+	g_sMainCurrentSpeed,																													   // struct name
+	&g_sMainContent,																														   // parent widget pointer
+	&g_sMainDesiredSpeedUpBtn,																												   // sibling widget pointer
+	NULL,																																	   // child widget pointer
+	DISPLAY,																																   // display device pointer
+	6,																																		   // x position
+	106,																																	   // y position
+	202,																																	   // width
+	72,																																		   // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
+	ClrBlack,																																   // fill color
+	ClrWhite,																																   // outline color
+	ClrWhite,																																   // text color
+	&g_sFontNf10,																															   // font pointer
+	"Current Speed",																														   // text
+	NULL,																																	   // image pointer
+	OnMainCurrentSpeedPaint																													   // on-paint function pointer
 );
 RectangularButton(
-	g_sMainDesiredSpeedUpBtn,						  // struct name
-	&g_sMainContent,								  // parent widget pointer
-	&g_sMainDesiredSpeedDownBtn,					  // sibling widget pointer
-	NULL,											  // child widget pointer
-	DISPLAY,										  // display device pointer
-	214,											  // x position
-	28,												  // y position
-	98,												  // width
-	33,												  // height
-	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
-	ClrGray,										  // fill color
-	ClrGray,										  // press fill color
-	ClrWhite,										  // outline color
-	ClrWhite,										  // text color
-	&g_sFontNf16,									  // font pointer
-	"Up",											  // text
-	NULL,											  // image pointer
-	NULL,											  // press image pointer
-	0,												  // auto repeat delay
-	0,												  // auto repeat rate
-	OnMainSpeedUpBtnClick							  // on-click function pointer
+	g_sMainDesiredSpeedUpBtn,												 // struct name
+	&g_sMainContent,														 // parent widget pointer
+	&g_sMainDesiredSpeedDownBtn,											 // sibling widget pointer
+	NULL,																	 // child widget pointer
+	DISPLAY,																 // display device pointer
+	214,																	 // x position
+	28,																		 // y position
+	98,																		 // width
+	33,																		 // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
+	ClrGray,																 // fill color
+	ClrGray,																 // press fill color
+	ClrWhite,																 // outline color
+	ClrWhite,																 // text color
+	&g_sFontNf16,															 // font pointer
+	"Up",																	 // text
+	NULL,																	 // image pointer
+	NULL,																	 // press image pointer
+	250,																	 // auto repeat delay
+	32,																		 // auto repeat rate
+	OnMainSpeedUpBtnClick													 // on-click function pointer
 );
 RectangularButton(
-	g_sMainDesiredSpeedDownBtn,						  // struct name
-	&g_sMainContent,								  // parent widget pointer
-	NULL,											  // sibling widget pointer
-	NULL,											  // child widget pointer
-	DISPLAY,										  // display device pointer
-	214,											  // x position
-	67,												  // y position
-	98,												  // width
-	33,												  // height
-	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
-	ClrGray,										  // fill color
-	ClrGray,										  // press fill color
-	ClrWhite,										  // outline color
-	ClrWhite,										  // text color
-	&g_sFontNf16,									  // font pointer
-	"Down",											  // text
-	NULL,											  // image pointer
-	NULL,											  // press image pointer
-	0,												  // auto repeat delay
-	0,												  // auto repeat rate
-	OnMainSpeedDownBtnClick							  // on-click function pointer
-);
-Container(
-	g_sMainDesiredSpeedContent,				// struct name
-	&g_sMainDesiredSpeed,					// parent widget pointer
-	NULL,									// sibling widget pointer
-	NULL,									// child widget pointer
-	DISPLAY,								// display device pointer
-	6,										// x position
-	46,										// y position
-	202,									// width
-	72,										// height
-	CTR_STYLE_TEXT | CTR_STYLE_TEXT_CENTER, // style
-	ClrBlack,								// fill color
-	NULL,									// outline color
-	ClrWhite,								// text color
-	&g_sFontNf36,							// font pointer
-	"000"									// text
-);
-Container(
-	g_sMainCurrentSpeedContent,				// struct name
-	&g_sMainCurrentSpeed,					// parent widget pointer
-	NULL,									// sibling widget pointer
-	NULL,									// child widget pointer
-	DISPLAY,								// display device pointer
-	6,										// x position
-	124,									// y position
-	202,									// width
-	72,										// height
-	CTR_STYLE_TEXT | CTR_STYLE_TEXT_CENTER, // style
-	ClrBlack,								// fill color
-	NULL,									// outline color
-	ClrWhite,								// text color
-	&g_sFontNf36,							// font pointer
-	"000"									// text
+	g_sMainDesiredSpeedDownBtn,												 // struct name
+	&g_sMainContent,														 // parent widget pointer
+	NULL,																	 // sibling widget pointer
+	NULL,																	 // child widget pointer
+	DISPLAY,																 // display device pointer
+	214,																	 // x position
+	67,																		 // y position
+	98,																		 // width
+	33,																		 // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
+	ClrGray,																 // fill color
+	ClrGray,																 // press fill color
+	ClrWhite,																 // outline color
+	ClrWhite,																 // text color
+	&g_sFontNf16,															 // font pointer
+	"Down",																	 // text
+	NULL,																	 // image pointer
+	NULL,																	 // press image pointer
+	400,																	 // auto repeat delay
+	32,																		 // auto repeat rate
+	OnMainSpeedDownBtnClick													 // on-click function pointer
 );
 
 /* Settings panel widget contructors */
@@ -461,10 +429,14 @@ void OnMainStartBtnClick(tWidget *pWidget) {
 
 void OnMainSpeedUpBtnClick(tWidget *pWidget) {
 	// TODO: increase the speed
+	g_i16DesiredSpeed++;
+	WidgetPaint((tWidget *)&g_sMainDesiredSpeed);
 }
 
 void OnMainSpeedDownBtnClick(tWidget *pWidget) {
 	// TODO: decrease the speed
+	g_i16DesiredSpeed--;
+	WidgetPaint((tWidget *)&g_sMainDesiredSpeed);
 }
 
 void OnMainSettingsBtnClick(tWidget *pWidget) {
@@ -483,6 +455,22 @@ void OnGraphBackBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sGraphPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
 	WidgetPaint(WIDGET_ROOT);
+}
+
+void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext) {
+	GrContextForegroundSet(psContext, ClrRed);
+	GrContextFontSet(psContext, &g_sFontNf36);
+	char text[8];
+	snprintf(text, 8, "%03d RPM\0", g_i16DesiredSpeed);
+	GrStringDrawCentered(psContext, text, -1, 107, 64, false);
+}
+
+void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
+	GrContextForegroundSet(psContext, ClrRed);
+	GrContextFontSet(psContext, &g_sFontNf36);
+	char text[8];
+	snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
+	GrStringDrawCentered(psContext, text, -1, 107, 142, false);
 }
 
 /**
