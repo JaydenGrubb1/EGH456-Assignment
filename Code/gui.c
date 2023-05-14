@@ -192,7 +192,7 @@ Canvas(
 	ClrWhite,																																   // outline color
 	ClrWhite,																																   // text color
 	&g_sFontNf10,																															   // font pointer
-	"Desired Speed",																														   // text
+	"Target Speed",																														   // text
 	NULL,																																	   // image pointer
 	OnMainDesiredSpeedPaint																													   // on-paint function pointer
 );
@@ -211,7 +211,7 @@ Canvas(
 	ClrWhite,																																   // outline color
 	ClrWhite,																																   // text color
 	&g_sFontNf10,																															   // font pointer
-	"Current Speed",																														   // text
+	"Actual Speed",																														   // text
 	NULL,																																	   // image pointer
 	OnMainCurrentSpeedPaint																													   // on-paint function pointer
 );
