@@ -31,6 +31,10 @@ tRectangle g_sScreenRect;
 
 /* Main panel widgets */
 tCanvasWidget g_sMainPanel;
+tPushButtonWidget g_sMainStartBtn;
+tPushButtonWidget g_sMainSettingsBtn;
+tPushButtonWidget g_sMainGraphBtn;
+tCanvasWidget g_sMainContent;
 
 /* Settings panel widgets */
 tCanvasWidget g_sSettingsPanel;
@@ -44,11 +48,12 @@ tCheckBoxWidget g_sGraphOther1Chk;
 tCheckBoxWidget g_sGraphOther2Chk;
 tCanvasWidget g_sGraphContent;
 
+/* Main panel widget contructors */
 Canvas(
 	g_sMainPanel,	   // struct name
 	NULL,			   // parent widget pointer
 	NULL,			   // sibling widget pointer
-	NULL,			   // child widget pointer
+	&g_sMainStartBtn,  // child widget pointer
 	DISPLAY,		   // display device pointer
 	0,				   // x position
 	0,				   // y position
@@ -63,6 +68,96 @@ Canvas(
 	NULL,			   // image pointer
 	NULL			   // on-paint function pointer
 );
+RectangularButton(
+	g_sMainStartBtn,								  // struct name
+	&g_sMainPanel,									  // parent widget pointer
+	&g_sMainSettingsBtn,							  // sibling widget pointer
+	NULL,											  // child widget pointer
+	DISPLAY,										  // display device pointer
+	6,												  // x position
+	184,											  // y position
+	98,												  // width
+	50,												  // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
+	ClrBlue,										  // fill color
+	ClrDarkBlue,									  // press fill color
+	ClrWhite,										  // outline color
+	ClrWhite,										  // text color
+	&g_sFontNf16,									  // font pointer
+	"Start",										  // text
+	NULL,											  // image pointer
+	NULL,											  // press image pointer
+	0,												  // auto repeat delay
+	0,												  // auto repeat rate
+	NULL											  // on-click function pointer
+);
+RectangularButton(
+	g_sMainSettingsBtn,								  // struct name
+	&g_sMainPanel,									  // parent widget pointer
+	&g_sMainGraphBtn,								  // sibling widget pointer
+	NULL,											  // child widget pointer
+	DISPLAY,										  // display device pointer
+	110,											  // x position
+	184,											  // y position
+	98,												  // width
+	50,												  // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
+	ClrBlack,										  // fill color
+	ClrGray,										  // press fill color
+	ClrWhite,										  // outline color
+	ClrWhite,										  // text color
+	&g_sFontNf16,									  // font pointer
+	"Settings",										  // text
+	NULL,											  // image pointer
+	NULL,											  // press image pointer
+	0,												  // auto repeat delay
+	0,												  // auto repeat rate
+	NULL											  // on-click function pointer
+);
+RectangularButton(
+	g_sMainGraphBtn,								  // struct name
+	&g_sMainPanel,									  // parent widget pointer
+	&g_sMainContent,								  // sibling widget pointer
+	NULL,											  // child widget pointer
+	DISPLAY,										  // display device pointer
+	214,											  // x position
+	184,											  // y position
+	98,												  // width
+	50,												  // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
+	ClrBlack,										  // fill color
+	ClrGray,										  // press fill color
+	ClrWhite,										  // outline color
+	ClrWhite,										  // text color
+	&g_sFontNf16,									  // font pointer
+	"Graph",										  // text
+	NULL,											  // image pointer
+	NULL,											  // press image pointer
+	0,												  // auto repeat delay
+	0,												  // auto repeat rate
+	NULL											  // on-click function pointer
+);
+Canvas(
+	g_sMainContent,																									  // struct name
+	&g_sMainPanel,																									  // parent widget pointer
+	NULL,																											  // sibling widget pointer
+	NULL,																											  // child widget pointer
+	DISPLAY,																										  // display device pointer
+	6,																												  // x position
+	6,																												  // y position
+	308,																											  // width
+	172,																											  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																										  // fill color
+	ClrWhite,																										  // outline color
+	ClrWhite,																										  // text color
+	&g_sFontNf16,																									  // font pointer
+	"Current Time: 21:56 14/05/23",																					  // text
+	NULL,																											  // image pointer
+	NULL																											  // on-paint function pointer
+);
+
+/* Settings panel widget contructors */
 Canvas(
 	g_sSettingsPanel,  // struct name
 	NULL,			   // parent widget pointer
@@ -262,6 +357,6 @@ void HandleGUI() {
  *
  */
 void DrawGUI() {
-	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sGraphPanel);
+	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
 	WidgetPaint(WIDGET_ROOT);
 }
