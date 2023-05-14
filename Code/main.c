@@ -45,7 +45,7 @@ int main(void) {
 	Types_FreqHz cpuFreq;
 	BIOS_getCpuFreq(&cpuFreq);
 
-	/* Initialize the gui */
+	/* Initialize the GUI */
 	InitGUI(cpuFreq.lo);
 
 	/* Construct task threads */

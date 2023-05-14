@@ -17,6 +17,10 @@
 #include "drivers/Kentec320x240x16_ssd2119_spi.h"
 #include "drivers/touch.h"
 
+/* Font header files */
+#include "fonts/fontnf10.h"
+#include "fonts/fontnf16.h"
+
 /* Global defines */
 #define DISPLAY &g_sKentec320x240x16_SSD2119
 
@@ -110,7 +114,7 @@ RectangularButton(
 	ClrGray,										  // press fill color
 	ClrWhite,										  // outline color
 	ClrWhite,										  // text color
-	&g_sFontCmss12,									  // font pointer
+	&g_sFontNf16,									  // font pointer
 	"Back",											  // text
 	NULL,											  // image pointer
 	NULL,											  // press image pointer
@@ -133,7 +137,7 @@ CheckBox(
 	NULL,			   // fill color
 	ClrWhite,		   // outline color
 	ClrRed,			   // text color
-	&g_sFontCmss12,	   // font pointer
+	&g_sFontNf10,	   // font pointer
 	" Speed (RPM)",	   // text
 	NULL,			   // image pointer
 	NULL			   // on-change function pointer
@@ -153,7 +157,7 @@ CheckBox(
 	NULL,				// fill color
 	ClrWhite,			// outline color
 	ClrBlue,			// text color
-	&g_sFontCmss12,		// font pointer
+	&g_sFontNf10,		// font pointer
 	" Power (Watts)",	// text
 	NULL,				// image pointer
 	NULL				// on-change function pointer
@@ -173,7 +177,7 @@ CheckBox(
 	NULL,				// fill color
 	ClrWhite,			// outline color
 	ClrLime,			// text color
-	&g_sFontCmss12,		// font pointer
+	&g_sFontNf10,		// font pointer
 	" Other 1 (IDK)",	// text
 	NULL,				// image pointer
 	NULL				// on-change function pointer
@@ -193,7 +197,7 @@ CheckBox(
 	NULL,			   // fill color
 	ClrWhite,		   // outline color
 	ClrYellow,		   // text color
-	&g_sFontCmss12,	   // font pointer
+	&g_sFontNf10,	   // font pointer
 	" Other 2 (IDK)",  // text
 	NULL,			   // image pointer
 	NULL			   // on-change function pointer
