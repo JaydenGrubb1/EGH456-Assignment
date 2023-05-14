@@ -9,6 +9,7 @@ typedef enum GUICallbackOption {
 	GUI_MOTOR_START = 0,
 	GUI_MOTOR_STOP,
 	GUI_MOTOR_STATE_CHANGE,
+	GUI_MOTOR_SPEED_CHANGE,
 
 	GUI_CALLBACK_COUNT
 } tGUICallbackOption;

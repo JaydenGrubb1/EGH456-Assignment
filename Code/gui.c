@@ -452,6 +452,11 @@ Canvas(
 	NULL																												  // on-paint function pointer
 );
 
+/**
+ * @brief Function to handle the back button click event on the main panel
+ *
+ * @param pWidget Unused
+ */
 void OnMainStartBtnClick(tWidget *pWidget) {
 	g_bIsRunning = !g_bIsRunning;
 
@@ -472,30 +477,58 @@ void OnMainStartBtnClick(tWidget *pWidget) {
 	GUI_InvokeCallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
 }
 
+/**
+ * @brief Function to handle the speed up button click event on the main panel
+ *
+ * @param pWidget The widget that triggered the event
+ */
 void OnMainSpeedUpBtnClick(tWidget *pWidget) {
-	// TODO: increase the speed
 	g_i16DesiredSpeed++;
 	WidgetPaint((tWidget *)&g_sMainDesiredSpeed);
+
+	GUI_InvokeCallback(GUI_MOTOR_SPEED_CHANGE, g_i16DesiredSpeed, NULL);
 }
 
+/**
+ * @brief Function to handle the speed down button click event on the main panel
+ *
+ * @param pWidget The widget that triggered the event
+ */
 void OnMainSpeedDownBtnClick(tWidget *pWidget) {
-	// TODO: decrease the speed
 	g_i16DesiredSpeed--;
 	WidgetPaint((tWidget *)&g_sMainDesiredSpeed);
+
+	GUI_InvokeCallback(GUI_MOTOR_SPEED_CHANGE, g_i16DesiredSpeed, NULL);
 }
 
+/**
+ * @brief Function to handle the settings button click event on the main panel
+ *
+ * @param pWidget The widget that triggered the event
+ */
 void OnMainSettingsBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sMainPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sSettingsPanel);
 	WidgetPaint(WIDGET_ROOT);
 }
 
+/**
+ * @brief Function to handle the graph button click event on the main panel
+ *
+ * @param pWidget The widget that triggered the event
+ */
 void OnMainGraphBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sMainPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sGraphPanel);
 	WidgetPaint(WIDGET_ROOT);
 }
 
+/**
+ * @brief Function to handle painting the desired speed widget on the main panel
+ *
+ * @param psWidget The widget that is being painted
+ * @param psContext The graphics context
+ */
 void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf36);
@@ -504,6 +537,12 @@ void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	GrStringDrawCentered(psContext, text, -1, 107, 64, false);
 }
 
+/**
+ * @brief Function to handle painting the current speed widget on the main panel
+ *
+ * @param psWidget The widget that is being painted
+ * @param psContext The graphics context
+ */
 void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf36);
@@ -512,12 +551,22 @@ void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	GrStringDrawCentered(psContext, text, -1, 107, 142, false);
 }
 
+/**
+ * @brief Function to handle the back button click event on the settings panel
+ *
+ * @param pWidget The widget that triggered the event
+ */
 void OnSettingsBackBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sSettingsPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
 	WidgetPaint(WIDGET_ROOT);
 }
 
+/**
+ * @brief Function to handle the back button click event on the graph panel
+ *
+ * @param pWidget The widget that triggered the event
+ */
 void OnGraphBackBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sGraphPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
