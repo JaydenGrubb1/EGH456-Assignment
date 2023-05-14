@@ -19,43 +19,21 @@
 /* Board header file */
 #include "Board.h"
 
-/* GRLib header files */
-#include "grlib/grlib.h"
-#include "grlib/widget.h"
-#include "grlib/canvas.h"
-
-/* Driver header files */
-#include "drivers/Kentec320x240x16_ssd2119_spi.h"
-#include "drivers/touch.h"
+/* Project header files */
+#include "gui.h"
 
 /* Global defines */
 #define TASK_STACK_SIZE 1024
 
 /* Task structs */
-Task_Struct g_sWidgetMsgQueueTask;
+Task_Struct g_sHandleGUITask;
 
 /* Task stacks */
-char ga_cWidgetMsgQueueStack[TASK_STACK_SIZE];
-
-/* Global variables */
-tContext g_sContext;
-tRectangle g_sScreenRect;
-
-/**
- * @brief Handles processing the messages for the widget message queue
- *
- * @param arg0 Unused
- * @param arg1 Unused
- */
-void widgetMsgQueueFxn(UArg arg0, UArg arg1) {
-	while (1) {
-		WidgetMessageQueueProcess();
-	}
-}
+char ga_cHandleGUIStack[TASK_STACK_SIZE];
 
 /**
  * @brief Application entry point
- * 
+ *
  * @return Unused
  */
 int main(void) {
@@ -63,26 +41,22 @@ int main(void) {
 	Board_initGeneral();
 	Board_initGPIO();
 
-	/* Initialize touch screen */
+	/* Get CPU frequency */
 	Types_FreqHz cpuFreq;
 	BIOS_getCpuFreq(&cpuFreq);
-	Kentec320x240x16_SSD2119Init(cpuFreq.lo);
-	GrContextInit(&g_sContext, &g_sKentec320x240x16_SSD2119);
-	TouchScreenInit(cpuFreq.lo);
-	TouchScreenCallbackSet(WidgetPointerMessage);
 
-	/* Initialize screen rect */
-	g_sScreenRect.i16XMin = 0;
-	g_sScreenRect.i16YMin = 0;
-	g_sScreenRect.i16XMax = GrContextDpyWidthGet(&g_sContext);
-	g_sScreenRect.i16YMax = GrContextDpyHeightGet(&g_sContext);
+	/* Initialize the gui */
+	InitGUI(cpuFreq.lo);
 
 	/* Construct task threads */
 	Task_Params taskParams;
 	Task_Params_init(&taskParams);
 	taskParams.stackSize = TASK_STACK_SIZE;
-	taskParams.stack = &ga_cWidgetMsgQueueStack;
-	Task_construct(&g_sWidgetMsgQueueTask, (Task_FuncPtr)widgetMsgQueueFxn, &taskParams, NULL);
+	taskParams.stack = &ga_cHandleGUIStack;
+	Task_construct(&g_sHandleGUITask, (Task_FuncPtr)HandleGUI, &taskParams, NULL);
+
+	/* Draw the GUI */
+	DrawGUI();
 
 	/* Start BIOS */
 	BIOS_start();
