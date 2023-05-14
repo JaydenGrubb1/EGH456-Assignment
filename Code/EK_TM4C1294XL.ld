@@ -30,7 +30,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*
- *  ======== EK_TM4C1294XL.cmd ========
+ *  ======== EK_TM4C1294XL.ld ========
  *  Define the memory block start/length for the EK_TM4C1294XL M4
  */
 
