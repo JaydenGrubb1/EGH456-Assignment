@@ -53,6 +53,8 @@ tPushButtonWidget g_sMainStartBtn;
 tPushButtonWidget g_sMainSettingsBtn;
 tPushButtonWidget g_sMainGraphBtn;
 tCanvasWidget g_sMainContent;
+tCanvasWidget g_sMainTime;
+tCanvasWidget g_sMainStatus;
 tCanvasWidget g_sMainDesiredSpeed;
 tCanvasWidget g_sMainCurrentSpeed;
 tPushButtonWidget g_sMainDesiredSpeedUpBtn;
@@ -85,28 +87,31 @@ tCheckBoxWidget g_sGraphLightChk;
 tCheckBoxWidget g_sGraphAccelChk;
 tCanvasWidget g_sGraphContent;
 
-/* Forward function declerations */
+/* Forward button click function declerations */
 void OnMainStartBtnClick(tWidget *psWidget);
 void OnMainSpeedUpBtnClick(tWidget *psWidget);
 void OnMainSpeedDownBtnClick(tWidget *psWidget);
 void OnMainSettingsBtnClick(tWidget *psWidget);
 void OnMainGraphBtnClick(tWidget *psWidget);
-void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext);
-void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext);
 void OnSettingsBackBtnClick(tWidget *psWidget);
 void OnSettingsOption1DownBtnClick(tWidget *psWidget);
 void OnSettingsOption1UpBtnClick(tWidget *psWidget);
-void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext);
 void OnSettingsOption2DownBtnClick(tWidget *psWidget);
 void OnSettingsOption2UpBtnClick(tWidget *psWidget);
-void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext);
 void OnSettingsOption3DownBtnClick(tWidget *psWidget);
 void OnSettingsOption3UpBtnClick(tWidget *psWidget);
-void OnSettingsOption3Paint(tWidget *psWidget, tContext *psContext);
 void OnSettingsOption4DownBtnClick(tWidget *psWidget);
 void OnSettingsOption4UpBtnClick(tWidget *psWidget);
-void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext);
 void OnGraphBackBtnClick(tWidget *psWidget);
+
+/* Forward widget pain function declerations */
+void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext);
+void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext);
+void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext);
+void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext);
+void OnSettingsOption3Paint(tWidget *psWidget, tContext *psContext);
+void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext);
+void OnGraphContentPaint(tWidget *psWidget, tContext *psContext);
 #pragma endregion
 
 #pragma region Main panel widget constructors
@@ -200,23 +205,61 @@ RectangularButton(
 	OnMainGraphBtnClick								  // on-click function pointer
 );
 Canvas(
-	g_sMainContent,																			   // struct name
-	&g_sMainPanel,																			   // parent widget pointer
-	NULL,																					   // sibling widget pointer
-	&g_sMainDesiredSpeed,																	   // child widget pointer
-	DISPLAY,																				   // display device pointer
-	6,																						   // x position
-	6,																						   // y position
-	308,																					   // width
-	172,																					   // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
-	ClrBlack,																				   // fill color
-	ClrWhite,																				   // outline color
-	ClrWhite,																				   // text color
-	&g_sFontNf16,																			   // font pointer
-	"Current Time: 21:56",																	   // text
-	NULL,																					   // image pointer
-	NULL																					   // on-paint function pointer
+	g_sMainContent,		  // struct name
+	&g_sMainPanel,		  // parent widget pointer
+	&g_sMainTime,		  // sibling widget pointer
+	&g_sMainDesiredSpeed, // child widget pointer
+	DISPLAY,			  // display device pointer
+	6,					  // x position
+	6,					  // y position
+	308,				  // width
+	172,				  // height
+	CANVAS_STYLE_FILL,	  // style
+	ClrBlack,			  // fill color
+	NULL,				  // outline color
+	NULL,				  // text color
+	NULL,				  // font pointer
+	NULL,				  // text
+	NULL,				  // image pointer
+	NULL				  // on-paint function pointer
+);
+Canvas(
+	g_sMainTime,																			// struct name
+	&g_sMainPanel,																			// parent widget pointer
+	&g_sMainStatus,																			// sibling widget pointer
+	NULL,																					// child widget pointer
+	DISPLAY,																				// display device pointer
+	6,																						// x position
+	6,																						// y position
+	172,																					// width
+	22,																						// height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_LEFT | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																				// fill color
+	NULL,																					// outline color
+	ClrWhite,																				// text color
+	&g_sFontNf16,																			// font pointer
+	"Time: 21:56 (night)",																	// text
+	NULL,																					// image pointer
+	NULL																					// on-paint function pointer
+);
+Canvas(
+	g_sMainStatus,																			 // struct name
+	&g_sMainPanel,																			 // parent widget pointer
+	NULL,																					 // sibling widget pointer
+	NULL,																					 // child widget pointer
+	DISPLAY,																				 // display device pointer
+	178,																					 // x position
+	6,																						 // y position
+	136,																					 // width
+	22,																						 // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_RIGHT | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																				 // fill color
+	ClrWhite,																				 // outline color
+	ClrWhite,																				 // text color
+	&g_sFontNf16,																			 // font pointer
+	"Status: Off",																			 // text
+	NULL,																					 // image pointer
+	NULL																					 // on-paint function pointer
 );
 Canvas(
 	g_sMainDesiredSpeed,																													   // struct name
@@ -748,7 +791,7 @@ CheckBox(
 	ClrWhite,		   // outline color
 	ClrLime,		   // text color
 	&g_sFontNf10,	   // font pointer
-	" Light (lx)",	   // text
+	" Light (lux)",	   // text
 	NULL,			   // image pointer
 	NULL			   // on-change function pointer
 );
@@ -773,23 +816,23 @@ CheckBox(
 	NULL			  // on-change function pointer
 );
 Canvas(
-	g_sGraphContent,																									  // struct name
-	&g_sGraphPanel,																										  // parent widget pointer
-	NULL,																												  // sibling widget pointer
-	NULL,																												  // child widget pointer
-	DISPLAY,																											  // display device pointer
-	6,																													  // x position
-	6,																													  // y position
-	308,																												  // width
-	172,																												  // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_VCENTER, // style
-	ClrBlack,																											  // fill color
-	ClrWhite,																											  // outline color
-	ClrLightGrey,																										  // text color
-	&g_sFontNf16i,																										  // font pointer
-	"plot graph here...",																								  // text
-	NULL,																												  // image pointer
-	NULL																												  // on-paint function pointer
+	g_sGraphContent,							   // struct name
+	&g_sGraphPanel,								   // parent widget pointer
+	NULL,										   // sibling widget pointer
+	NULL,										   // child widget pointer
+	DISPLAY,									   // display device pointer
+	6,											   // x position
+	6,											   // y position
+	308,										   // width
+	172,										   // height
+	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_APP_DRAWN, // style
+	NULL,										   // fill color
+	ClrWhite,									   // outline color
+	NULL,										   // text color
+	NULL,										   // font pointer
+	NULL,										   // text
+	NULL,										   // image pointer
+	OnGraphContentPaint							   // on-paint function pointer
 );
 #pragma endregion
 
@@ -804,15 +847,19 @@ void OnMainStartBtnClick(tWidget *pWidget) {
 
 	if (g_bIsRunning) {
 		PushButtonTextSet(&g_sMainStartBtn, "STOP");
+		CanvasTextSet(&g_sMainStatus, "Status: On");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrRed);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkRed);
 		CanvasFillColorSet(&g_sSettingsLine, ClrRed);
 	} else {
 		PushButtonTextSet(&g_sMainStartBtn, "START");
+		CanvasTextSet(&g_sMainStatus, "Status: Off");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrBlue);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkBlue);
 		CanvasFillColorSet(&g_sSettingsLine, ClrBlue);
 	}
+
+	WidgetPaint((tWidget *)&g_sMainStatus);
 
 	GUI_InvokeCallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
 }
@@ -1077,6 +1124,16 @@ void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
 	char text[4];
 	snprintf(text, 4, "%02d\0", g_ui8TimeMinutes);
 	GrStringDrawCentered(psContext, text, -1, 198, 209, false);
+}
+
+/**
+ * @brief Function to handle painting the graph content
+ *
+ * @param psWidget The widget that is being painted
+ * @param psContext The graphics context
+ */
+void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
+	// TODO: Draw graph content
 }
 #pragma endregion
 
