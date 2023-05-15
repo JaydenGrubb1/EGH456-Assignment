@@ -42,6 +42,10 @@ uint8_t g_ui8MaxAccel = 10;
 uint8_t g_ui8TimeHours = 0;
 uint8_t g_ui8TimeMinutes = 0;
 bool g_bIsRunning = false;
+bool g_bGraphSpeed = true;
+bool g_bGraphPower = true;
+bool g_bGraphLight = false;
+bool g_bGraphAccel = false;
 
 /* Callback function array */
 tGUICallbackFxn g_pfnCallbacks[GUI_CALLBACK_COUNT];
@@ -103,6 +107,10 @@ void OnSettingsOption3UpBtnClick(tWidget *psWidget);
 void OnSettingsOption4DownBtnClick(tWidget *psWidget);
 void OnSettingsOption4UpBtnClick(tWidget *psWidget);
 void OnGraphBackBtnClick(tWidget *psWidget);
+void OnGraphSpeedChkClick(tWidget *psWidget, uint32_t bSelected);
+void OnGraphPowerChkClick(tWidget *psWidget, uint32_t bSelected);
+void OnGraphLightChkClick(tWidget *psWidget, uint32_t bSelected);
+void OnGraphAccelChkClick(tWidget *psWidget, uint32_t bSelected);
 
 /* Forward widget pain function declerations */
 void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext);
@@ -736,44 +744,44 @@ RectangularButton(
 	OnGraphBackBtnClick								  // on-click function pointer
 );
 CheckBox(
-	g_sGraphSpeedChk,  // struct name
-	&g_sGraphPanel,	   // parent widget pointer
-	&g_sGraphPowerChk, // sibling widget pointer
-	NULL,			   // child widget pointer
-	DISPLAY,		   // display device pointer
-	82,				   // x position
-	184,			   // y position
-	108,			   // width
-	22,				   // height
-	CB_STYLE_TEXT,	   // style
-	22,				   // box size
-	NULL,			   // fill color
-	ClrWhite,		   // outline color
-	ClrRed,			   // text color
-	&g_sFontNf10,	   // font pointer
-	" Speed (RPM)",	   // text
-	NULL,			   // image pointer
-	NULL			   // on-change function pointer
+	g_sGraphSpeedChk,				   // struct name
+	&g_sGraphPanel,					   // parent widget pointer
+	&g_sGraphPowerChk,				   // sibling widget pointer
+	NULL,							   // child widget pointer
+	DISPLAY,						   // display device pointer
+	82,								   // x position
+	184,							   // y position
+	108,							   // width
+	22,								   // height
+	CB_STYLE_TEXT | CB_STYLE_SELECTED, // style
+	22,								   // box size
+	NULL,							   // fill color
+	ClrWhite,						   // outline color
+	ClrRed,							   // text color
+	&g_sFontNf10,					   // font pointer
+	" Speed (RPM)",					   // text
+	NULL,							   // image pointer
+	NULL							   // on-change function pointer
 );
 CheckBox(
-	g_sGraphPowerChk,  // struct name
-	&g_sGraphPanel,	   // parent widget pointer
-	&g_sGraphLightChk, // sibling widget pointer
-	NULL,			   // child widget pointer
-	DISPLAY,		   // display device pointer
-	82,				   // x position
-	212,			   // y position
-	108,			   // width
-	22,				   // height
-	CB_STYLE_TEXT,	   // style
-	22,				   // box size
-	NULL,			   // fill color
-	ClrWhite,		   // outline color
-	ClrBlue,		   // text color
-	&g_sFontNf10,	   // font pointer
-	" Power (W)",	   // text
-	NULL,			   // image pointer
-	NULL			   // on-change function pointer
+	g_sGraphPowerChk,				   // struct name
+	&g_sGraphPanel,					   // parent widget pointer
+	&g_sGraphLightChk,				   // sibling widget pointer
+	NULL,							   // child widget pointer
+	DISPLAY,						   // display device pointer
+	82,								   // x position
+	212,							   // y position
+	108,							   // width
+	22,								   // height
+	CB_STYLE_TEXT | CB_STYLE_SELECTED, // style
+	22,								   // box size
+	NULL,							   // fill color
+	ClrWhite,						   // outline color
+	ClrBlue,						   // text color
+	&g_sFontNf10,					   // font pointer
+	" Power (W)",					   // text
+	NULL,							   // image pointer
+	NULL							   // on-change function pointer
 );
 CheckBox(
 	g_sGraphLightChk,  // struct name
@@ -1038,6 +1046,46 @@ void OnGraphBackBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sGraphPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
 	WidgetPaint(WIDGET_ROOT);
+}
+
+/**
+ * @brief Function to handle the speed checkbox click event on the graph panel
+ *
+ * @param psWidget The widget that triggered the event
+ * @param bSelected The state of the checkbox
+ */
+void OnGraphSpeedChkClick(tWidget *psWidget, uint32_t bSelected) {
+	g_bGraphSpeed = bSelected;
+}
+
+/**
+ * @brief Function to handle the power checkbox click event on the graph panel
+ *
+ * @param psWidget The widget that triggered the event
+ * @param bSelected The state of the checkbox
+ */
+void OnGraphPowerChkClick(tWidget *psWidget, uint32_t bSelected) {
+	g_bGraphPower = bSelected;
+}
+
+/**
+ * @brief Function to handle the light checkbox click event on the graph panel
+ *
+ * @param psWidget The widget that triggered the event
+ * @param bSelected The state of the checkbox
+ */
+void OnGraphLightChkClick(tWidget *psWidget, uint32_t bSelected) {
+	g_bGraphLight = bSelected;
+}
+
+/**
+ * @brief Function to handle the accel checkbox click event on the graph panel
+ *
+ * @param psWidget The widget that triggered the event
+ * @param bSelected The state of the checkbox
+ */
+void OnGraphAccelChkClick(tWidget *psWidget, uint32_t bSelected) {
+	g_bGraphAccel = bSelected;
 }
 #pragma endregion
 
