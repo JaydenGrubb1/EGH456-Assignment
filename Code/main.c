@@ -52,6 +52,15 @@ void TimeChanged(uint32_t hours, uint32_t minutes) {
 }
 
 /**
+ * @brief Callback function to get the current RPM
+ *
+ * @return The current RPM
+ */
+int16_t GetCurrentRPM() {
+	return 20;
+}
+
+/**
  * @brief Application entry point
  *
  * @return Unused
@@ -69,6 +78,7 @@ int main(void) {
 	GUI_Init(cpuFreq.lo);
 	GUI_SetCallback(GUI_MOTOR_STATE_CHANGE, (tGUICallbackFxn)MotorStateChanged);
 	GUI_SetCallback(GUI_SET_TIME_CHANGE, (tGUICallbackFxn)TimeChanged);
+	GUI_SetCallback(GUI_RETURN_RPM, (tGUICallbackFxn)GetCurrentRPM);
 
 	/* Construct task threads */
 	Task_Params taskParams;
