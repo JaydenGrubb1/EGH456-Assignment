@@ -1244,9 +1244,9 @@ void GUI_SetCallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbac
  */
 uint32_t GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2) {
 	if (tCallbackOpt >= GUI_CALLBACK_COUNT)
-		return NULL;
+		return 0;
 	if (g_pfnCallbacks[tCallbackOpt] == NULL)
-		return NULL;
+		return 0;
 
 	return g_pfnCallbacks[tCallbackOpt](arg1, arg2);
 }
