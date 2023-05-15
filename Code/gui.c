@@ -51,14 +51,15 @@ tPushButtonWidget g_sMainDesiredSpeedDownBtn;
 /* Settings panel widgets */
 tCanvasWidget g_sSettingsPanel;
 tPushButtonWidget g_sSettingsBackBtn;
+tCanvasWidget g_sSettingsContent;
 
 /* Graph panel widgets */
 tCanvasWidget g_sGraphPanel;
 tPushButtonWidget g_sGraphBackBtn;
 tCheckBoxWidget g_sGraphSpeedChk;
 tCheckBoxWidget g_sGraphPowerChk;
-tCheckBoxWidget g_sGraphOther1Chk;
-tCheckBoxWidget g_sGraphOther2Chk;
+tCheckBoxWidget g_sGraphOther1Chk;	// light sensor
+tCheckBoxWidget g_sGraphOther2Chk;	// vehicle acceleration
 tCanvasWidget g_sGraphContent;
 
 /* Forward function declerations */
@@ -288,7 +289,7 @@ Canvas(
 RectangularButton(
 	g_sSettingsBackBtn,								  // struct name
 	&g_sSettingsPanel,								  // parent widget pointer
-	NULL,											  // sibling widget pointer
+	&g_sSettingsContent,							  // sibling widget pointer
 	NULL,											  // child widget pointer
 	DISPLAY,										  // display device pointer
 	6,												  // x position
@@ -307,6 +308,25 @@ RectangularButton(
 	0,												  // auto repeat delay
 	0,												  // auto repeat rate
 	OnSettingsBackBtnClick							  // on-click function pointer
+);
+Canvas(
+	g_sSettingsContent,						  // struct name
+	&g_sSettingsPanel,						  // parent widget pointer
+	NULL,									  // sibling widget pointer
+	NULL,									  // child widget pointer
+	DISPLAY,								  // display device pointer
+	82,										  // x position
+	6,										  // y position
+	232,									  // width
+	228,									  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE, // style
+	ClrBlack,								  // fill color
+	ClrWhite,								  // outline color
+	NULL,									  // text color
+	NULL,									  // font pointer
+	NULL,									  // text
+	NULL,									  // image pointer
+	NULL									  // on-paint function pointer
 );
 
 /* Graph panel widget constructors */
