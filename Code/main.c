@@ -47,8 +47,8 @@ void MotorStateChanged(bool bMotorState) {
  * @param minutes The new minutes value
  */
 void TimeChanged(uint32_t hours, uint32_t minutes) {
-	System_printf("Time changed to %02d:%02d\n", hours, minutes);
-	System_flush();
+	// System_printf("Time changed to %02d:%02d\n", hours, minutes);
+	// System_flush();
 }
 
 /**

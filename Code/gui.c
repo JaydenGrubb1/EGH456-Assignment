@@ -1033,7 +1033,7 @@ void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
 	char text[4];
-	snprintf(text, 4, "%d\0", g_ui8MaxPower);
+	snprintf(text, 4, "%03d\0", g_ui8MaxPower);
 	GrStringDrawCentered(psContext, text, -1, 198, 41, false);
 }
 
@@ -1047,7 +1047,7 @@ void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
 	char text[4];
-	snprintf(text, 4, "%d\0", g_ui8MaxAccel);
+	snprintf(text, 4, "%03d\0", g_ui8MaxAccel);
 	GrStringDrawCentered(psContext, text, -1, 198, 97, false);
 }
 
@@ -1061,7 +1061,7 @@ void OnSettingsOption3Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
 	char text[4];
-	snprintf(text, 4, "%d\0", g_ui8TimeHours);
+	snprintf(text, 4, "%02d\0", g_ui8TimeHours);
 	GrStringDrawCentered(psContext, text, -1, 198, 153, false);
 }
 
@@ -1075,7 +1075,7 @@ void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
 	char text[4];
-	snprintf(text, 4, "%d\0", g_ui8TimeMinutes);
+	snprintf(text, 4, "%02d\0", g_ui8TimeMinutes);
 	GrStringDrawCentered(psContext, text, -1, 198, 209, false);
 }
 #pragma endregion
