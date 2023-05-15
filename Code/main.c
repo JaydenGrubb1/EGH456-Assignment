@@ -32,12 +32,23 @@ Task_Struct g_sHandleGUITask;
 char ga_cHandleGUIStack[TASK_STACK_SIZE];
 
 /**
- * @brief Example callback function for when the motor state is changed
+ * @brief Callback function for when the motor state changes
  *
  * @param bMotorState The new state of the motor
  */
 void MotorStateChanged(bool bMotorState) {
 	GPIO_write(Board_LED0, bMotorState);
+}
+
+/**
+ * @brief Callback function for when the time settings change
+ *
+ * @param hours The new hours value
+ * @param minutes The new minutes value
+ */
+void TimeChanged(uint32_t hours, uint32_t minutes) {
+	System_printf("Time changed to %02d:%02d\n", hours, minutes);
+	System_flush();
 }
 
 /**
@@ -57,6 +68,7 @@ int main(void) {
 	/* Initialize the GUI */
 	GUI_Init(cpuFreq.lo);
 	GUI_SetCallback(GUI_MOTOR_STATE_CHANGE, (tGUICallbackFxn)MotorStateChanged);
+	GUI_SetCallback(GUI_SET_TIME_CHANGE, (tGUICallbackFxn)TimeChanged);
 
 	/* Construct task threads */
 	Task_Params taskParams;

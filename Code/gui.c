@@ -882,6 +882,8 @@ void OnSettingsBackBtnClick(tWidget *pWidget) {
 void OnSettingsOption1UpBtnClick(tWidget *psWidget) {
 	g_ui8MaxPower++;
 	WidgetPaint((tWidget *)&g_sSettingsOption1Panel);
+
+	GUI_InvokeCallback(GUI_MAX_POWER_CHANGE, g_ui8MaxPower, NULL);
 }
 
 /**
@@ -892,6 +894,8 @@ void OnSettingsOption1UpBtnClick(tWidget *psWidget) {
 void OnSettingsOption1DownBtnClick(tWidget *psWidget) {
 	g_ui8MaxPower--;
 	WidgetPaint((tWidget *)&g_sSettingsOption1Panel);
+
+	GUI_InvokeCallback(GUI_MAX_POWER_CHANGE, g_ui8MaxPower, NULL);
 }
 
 /**
@@ -902,6 +906,8 @@ void OnSettingsOption1DownBtnClick(tWidget *psWidget) {
 void OnSettingsOption2UpBtnClick(tWidget *psWidget) {
 	g_ui8MaxAccel++;
 	WidgetPaint((tWidget *)&g_sSettingsOption2Panel);
+
+	GUI_InvokeCallback(GUI_MAX_ACCEL_CHANGE, g_ui8MaxAccel, NULL);
 }
 
 /**
@@ -912,6 +918,8 @@ void OnSettingsOption2UpBtnClick(tWidget *psWidget) {
 void OnSettingsOption2DownBtnClick(tWidget *psWidget) {
 	g_ui8MaxAccel--;
 	WidgetPaint((tWidget *)&g_sSettingsOption2Panel);
+
+	GUI_InvokeCallback(GUI_MAX_ACCEL_CHANGE, g_ui8MaxAccel, NULL);
 }
 
 /**
@@ -922,6 +930,8 @@ void OnSettingsOption2DownBtnClick(tWidget *psWidget) {
 void OnSettingsOption3UpBtnClick(tWidget *psWidget) {
 	g_ui8TimeHours++;
 	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
+
+	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
 }
 
 /**
@@ -932,6 +942,8 @@ void OnSettingsOption3UpBtnClick(tWidget *psWidget) {
 void OnSettingsOption3DownBtnClick(tWidget *psWidget) {
 	g_ui8TimeHours--;
 	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
+
+	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
 }
 
 /**
@@ -942,6 +954,8 @@ void OnSettingsOption3DownBtnClick(tWidget *psWidget) {
 void OnSettingsOption4UpBtnClick(tWidget *psWidget) {
 	g_ui8TimeMinutes++;
 	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
+
+	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
 }
 
 /**
@@ -952,6 +966,8 @@ void OnSettingsOption4UpBtnClick(tWidget *psWidget) {
 void OnSettingsOption4DownBtnClick(tWidget *psWidget) {
 	g_ui8TimeMinutes--;
 	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
+
+	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
 }
 
 /**
