@@ -58,8 +58,8 @@ tCanvasWidget g_sGraphPanel;
 tPushButtonWidget g_sGraphBackBtn;
 tCheckBoxWidget g_sGraphSpeedChk;
 tCheckBoxWidget g_sGraphPowerChk;
-tCheckBoxWidget g_sGraphOther1Chk;	// light sensor
-tCheckBoxWidget g_sGraphOther2Chk;	// vehicle acceleration
+tCheckBoxWidget g_sGraphLightChk;
+tCheckBoxWidget g_sGraphAccelChk;
 tCanvasWidget g_sGraphContent;
 
 /* Forward function declerations */
@@ -380,7 +380,7 @@ CheckBox(
 	DISPLAY,		   // display device pointer
 	82,				   // x position
 	184,			   // y position
-	118,			   // width
+	108,			   // width
 	22,				   // height
 	CB_STYLE_TEXT,	   // style
 	22,				   // box size
@@ -393,64 +393,64 @@ CheckBox(
 	NULL			   // on-change function pointer
 );
 CheckBox(
-	g_sGraphPowerChk,	// struct name
-	&g_sGraphPanel,		// parent widget pointer
-	&g_sGraphOther1Chk, // sibling widget pointer
-	NULL,				// child widget pointer
-	DISPLAY,			// display device pointer
-	82,					// x position
-	212,				// y position
-	118,				// width
-	22,					// height
-	CB_STYLE_TEXT,		// style
-	22,					// box size
-	NULL,				// fill color
-	ClrWhite,			// outline color
-	ClrBlue,			// text color
-	&g_sFontNf10,		// font pointer
-	" Power (Watts)",	// text
-	NULL,				// image pointer
-	NULL				// on-change function pointer
-);
-CheckBox(
-	g_sGraphOther1Chk,	// struct name
-	&g_sGraphPanel,		// parent widget pointer
-	&g_sGraphOther2Chk, // sibling widget pointer
-	NULL,				// child widget pointer
-	DISPLAY,			// display device pointer
-	206,				// x position
-	184,				// y position
-	118,				// width
-	22,					// height
-	CB_STYLE_TEXT,		// style
-	22,					// box size
-	NULL,				// fill color
-	ClrWhite,			// outline color
-	ClrLime,			// text color
-	&g_sFontNf10,		// font pointer
-	" Other 1 (IDK)",	// text
-	NULL,				// image pointer
-	NULL				// on-change function pointer
-);
-CheckBox(
-	g_sGraphOther2Chk, // struct name
+	g_sGraphPowerChk,  // struct name
 	&g_sGraphPanel,	   // parent widget pointer
-	&g_sGraphContent,  // sibling widget pointer
+	&g_sGraphLightChk, // sibling widget pointer
 	NULL,			   // child widget pointer
 	DISPLAY,		   // display device pointer
-	206,			   // x position
+	82,				   // x position
 	212,			   // y position
-	118,			   // width
+	108,			   // width
 	22,				   // height
 	CB_STYLE_TEXT,	   // style
 	22,				   // box size
 	NULL,			   // fill color
 	ClrWhite,		   // outline color
-	ClrYellow,		   // text color
+	ClrBlue,		   // text color
 	&g_sFontNf10,	   // font pointer
-	" Other 2 (IDK)",  // text
+	" Power (W)",	   // text
 	NULL,			   // image pointer
 	NULL			   // on-change function pointer
+);
+CheckBox(
+	g_sGraphLightChk,  // struct name
+	&g_sGraphPanel,	   // parent widget pointer
+	&g_sGraphAccelChk, // sibling widget pointer
+	NULL,			   // child widget pointer
+	DISPLAY,		   // display device pointer
+	196,			   // x position
+	184,			   // y position
+	128,			   // width
+	22,				   // height
+	CB_STYLE_TEXT,	   // style
+	22,				   // box size
+	NULL,			   // fill color
+	ClrWhite,		   // outline color
+	ClrLime,		   // text color
+	&g_sFontNf10,	   // font pointer
+	" Light (lx)",	   // text
+	NULL,			   // image pointer
+	NULL			   // on-change function pointer
+);
+CheckBox(
+	g_sGraphAccelChk, // struct name
+	&g_sGraphPanel,	  // parent widget pointer
+	&g_sGraphContent, // sibling widget pointer
+	NULL,			  // child widget pointer
+	DISPLAY,		  // display device pointer
+	196,			  // x position
+	212,			  // y position
+	128,			  // width
+	22,				  // height
+	CB_STYLE_TEXT,	  // style
+	22,				  // box size
+	NULL,			  // fill color
+	ClrWhite,		  // outline color
+	ClrYellow,		  // text color
+	&g_sFontNf10,	  // font pointer
+	" Accel (m/s/s)", // text
+	NULL,			  // image pointer
+	NULL			  // on-change function pointer
 );
 Canvas(
 	g_sGraphContent,																									  // struct name
