@@ -53,23 +53,18 @@ tPushButtonWidget g_sMainDesiredSpeedDownBtn;
 tCanvasWidget g_sSettingsPanel;
 tPushButtonWidget g_sSettingsBackBtn;
 tCanvasWidget g_sSettingsContent;
-
 tCanvasWidget g_sSettingsOption1Panel;
 tPushButtonWidget g_sSettingsOption1DownBtn;
 tPushButtonWidget g_sSettingsOption1UpBtn;
-
 tCanvasWidget g_sSettingsOption2Panel;
 tPushButtonWidget g_sSettingsOption2DownBtn;
 tPushButtonWidget g_sSettingsOption2UpBtn;
-
 tCanvasWidget g_sSettingsOption3Panel;
 tPushButtonWidget g_sSettingsOption3DownBtn;
 tPushButtonWidget g_sSettingsOption3UpBtn;
-
 tCanvasWidget g_sSettingsOption4Panel;
 tPushButtonWidget g_sSettingsOption4DownBtn;
 tPushButtonWidget g_sSettingsOption4UpBtn;
-
 tCanvasWidget g_sSettingsLine;
 
 /* Graph panel widgets */
@@ -374,7 +369,7 @@ Canvas(
 	ClrWhite,																																   // outline color
 	ClrWhite,																																   // text color
 	&g_sFontNf10,																															   // font pointer
-	"Option 1",																																   // text
+	"Max Power (W)",																														   // text
 	NULL,																																	   // image pointer
 	OnSettingsOption1Paint																													   // on-paint function pointer
 );
@@ -439,7 +434,7 @@ Canvas(
 	ClrWhite,																																   // outline color
 	ClrWhite,																																   // text color
 	&g_sFontNf10,																															   // font pointer
-	"Option 2",																																   // text
+	"Max Accel (m/s/s)",																													   // text
 	NULL,																																	   // image pointer
 	OnSettingsOption2Paint																													   // on-paint function pointer
 );
@@ -504,7 +499,7 @@ Canvas(
 	ClrWhite,																																   // outline color
 	ClrWhite,																																   // text color
 	&g_sFontNf10,																															   // font pointer
-	"Option 3",																																   // text
+	"Time Hour",																															   // text
 	NULL,																																	   // image pointer
 	OnSettingsOption3Paint																													   // on-paint function pointer
 );
@@ -569,7 +564,7 @@ Canvas(
 	ClrWhite,																																   // outline color
 	ClrWhite,																																   // text color
 	&g_sFontNf10,																															   // font pointer
-	"Option 4",																																   // text
+	"Time Minute",																															   // text
 	NULL,																																	   // image pointer
 	OnSettingsOption4Paint																													   // on-paint function pointer
 );
@@ -630,7 +625,7 @@ Canvas(
 	308,				 // width
 	4,					 // height
 	CANVAS_STYLE_FILL,	 // style
-	ClrRed,				 // fill color
+	ClrBlue,			 // fill color
 	NULL,				 // outline color
 	NULL,				 // text color
 	NULL,				 // font pointer
@@ -903,7 +898,7 @@ void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextFontSet(psContext, &g_sFontNf24);
 	// char text[8];
 	// snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
-	GrStringDrawCentered(psContext, "test", -1, 198, 41, false);
+	GrStringDrawCentered(psContext, "0", -1, 198, 41, false);
 }
 
 void OnSettingsOption2UpBtnClick(tWidget *psWidget) {
@@ -919,7 +914,7 @@ void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextFontSet(psContext, &g_sFontNf24);
 	// char text[8];
 	// snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
-	GrStringDrawCentered(psContext, "test", -1, 198, 97, false);
+	GrStringDrawCentered(psContext, "0", -1, 198, 97, false);
 }
 
 void OnSettingsOption3UpBtnClick(tWidget *psWidget) {
@@ -935,7 +930,7 @@ void OnSettingsOption3Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextFontSet(psContext, &g_sFontNf24);
 	// char text[8];
 	// snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
-	GrStringDrawCentered(psContext, "test", -1, 198, 153, false);
+	GrStringDrawCentered(psContext, "0", -1, 198, 153, false);
 }
 
 void OnSettingsOption4UpBtnClick(tWidget *psWidget) {
@@ -951,7 +946,7 @@ void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextFontSet(psContext, &g_sFontNf24);
 	// char text[8];
 	// snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
-	GrStringDrawCentered(psContext, "test", -1, 198, 209, false);
+	GrStringDrawCentered(psContext, "0", -1, 198, 209, false);
 }
 
 /**
