@@ -876,7 +876,7 @@ void OnSettingsBackBtnClick(tWidget *pWidget) {
 
 /**
  * @brief Function to handle the option 1 up button click event on the graph panel
- * 
+ *
  * @param psWidget The widget that triggered the event
  */
 void OnSettingsOption1UpBtnClick(tWidget *psWidget) {
@@ -888,7 +888,7 @@ void OnSettingsOption1UpBtnClick(tWidget *psWidget) {
 
 /**
  * @brief Function to handle the option 1 down button click event on the graph panel
- * 
+ *
  * @param psWidget The widget that triggered the event
  */
 void OnSettingsOption1DownBtnClick(tWidget *psWidget) {
@@ -900,7 +900,7 @@ void OnSettingsOption1DownBtnClick(tWidget *psWidget) {
 
 /**
  * @brief Function to handle the option 2 up button click event on the graph panel
- * 
+ *
  * @param psWidget The widget that triggered the event
  */
 void OnSettingsOption2UpBtnClick(tWidget *psWidget) {
@@ -912,7 +912,7 @@ void OnSettingsOption2UpBtnClick(tWidget *psWidget) {
 
 /**
  * @brief Function to handle the option 2 down button click event on the graph panel
- * 
+ *
  * @param psWidget The widget that triggered the event
  */
 void OnSettingsOption2DownBtnClick(tWidget *psWidget) {
@@ -924,11 +924,14 @@ void OnSettingsOption2DownBtnClick(tWidget *psWidget) {
 
 /**
  * @brief Function to handle the option 3 up button click event on the graph panel
- * 
+ *
  * @param psWidget The widget that triggered the event
  */
 void OnSettingsOption3UpBtnClick(tWidget *psWidget) {
 	g_ui8TimeHours++;
+	if (g_ui8TimeHours > 23)
+		g_ui8TimeHours = 0;
+
 	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
 
 	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
@@ -936,11 +939,15 @@ void OnSettingsOption3UpBtnClick(tWidget *psWidget) {
 
 /**
  * @brief Function to handle the option 3 down button click event on the graph panel
- * 
+ *
  * @param psWidget The widget that triggered the event
  */
 void OnSettingsOption3DownBtnClick(tWidget *psWidget) {
 	g_ui8TimeHours--;
+	if (g_ui8TimeHours > 24)
+		g_ui8TimeHours = 23;
+
+	g_ui8TimeHours = g_ui8TimeHours % 24;
 	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
 
 	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
@@ -948,11 +955,13 @@ void OnSettingsOption3DownBtnClick(tWidget *psWidget) {
 
 /**
  * @brief Function to handle the option 4 up button click event on the graph panel
- * 
+ *
  * @param psWidget The widget that triggered the event
  */
 void OnSettingsOption4UpBtnClick(tWidget *psWidget) {
 	g_ui8TimeMinutes++;
+	if (g_ui8TimeMinutes > 59)
+		g_ui8TimeMinutes = 0;
 	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
 
 	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
@@ -960,11 +969,14 @@ void OnSettingsOption4UpBtnClick(tWidget *psWidget) {
 
 /**
  * @brief Function to handle the option 4 down button click event on the graph panel
- * 
+ *
  * @param psWidget The widget that triggered the event
  */
 void OnSettingsOption4DownBtnClick(tWidget *psWidget) {
 	g_ui8TimeMinutes--;
+	if (g_ui8TimeMinutes > 60)
+		g_ui8TimeMinutes = 59;
+
 	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
 
 	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
