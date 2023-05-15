@@ -27,6 +27,8 @@
 
 /* Global defines */
 #define DISPLAY &g_sKentec320x240x16_SSD2119
+#define AUTO_REPEAT_DELAY 250
+#define AUTO_REPEAT_RATE 20
 
 /* Global variables */
 tContext g_sContext;
@@ -268,8 +270,8 @@ RectangularButton(
 	"Up",																	 // text
 	NULL,																	 // image pointer
 	NULL,																	 // press image pointer
-	250,																	 // auto repeat delay
-	20,																		 // auto repeat rate
+	AUTO_REPEAT_DELAY,														 // auto repeat delay
+	AUTO_REPEAT_RATE,														 // auto repeat rate
 	OnMainSpeedUpBtnClick													 // on-click function pointer
 );
 RectangularButton(
@@ -291,8 +293,8 @@ RectangularButton(
 	"Down",																	 // text
 	NULL,																	 // image pointer
 	NULL,																	 // press image pointer
-	250,																	 // auto repeat delay
-	20,																		 // auto repeat rate
+	AUTO_REPEAT_DELAY,														 // auto repeat delay
+	AUTO_REPEAT_RATE,														 // auto repeat rate
 	OnMainSpeedDownBtnClick													 // on-click function pointer
 );
 
@@ -378,50 +380,50 @@ Canvas(
 	OnSettingsOption1Paint																													   // on-paint function pointer
 );
 RectangularButton(
-	g_sSettingsOption1DownBtn,						  // struct name
-	&g_sSettingsOption1Panel,						  // parent widget pointer
-	&g_sSettingsOption1UpBtn,						  // sibling widget pointer
-	NULL,											  // child widget pointer
-	DISPLAY,										  // display device pointer
-	82,												  // x position
-	16,												  // y position
-	50,												  // width
-	50,												  // height
-	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
-	ClrGray,										  // fill color
-	ClrGray,										  // press fill color
-	ClrWhite,										  // outline color
-	ClrWhite,										  // text color
-	&g_sFontNf36,									  // font pointer
-	"-",											  // text
-	NULL,											  // image pointer
-	NULL,											  // press image pointer
-	0,												  // auto repeat delay
-	0,												  // auto repeat rate
-	OnSettingsOption1DownBtnClick					  // on-click function pointer
+	g_sSettingsOption1DownBtn,												 // struct name
+	&g_sSettingsOption1Panel,												 // parent widget pointer
+	&g_sSettingsOption1UpBtn,												 // sibling widget pointer
+	NULL,																	 // child widget pointer
+	DISPLAY,																 // display device pointer
+	82,																		 // x position
+	16,																		 // y position
+	50,																		 // width
+	50,																		 // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
+	ClrGray,																 // fill color
+	ClrGray,																 // press fill color
+	ClrWhite,																 // outline color
+	ClrWhite,																 // text color
+	&g_sFontNf36,															 // font pointer
+	"-",																	 // text
+	NULL,																	 // image pointer
+	NULL,																	 // press image pointer
+	AUTO_REPEAT_DELAY,														 // auto repeat delay
+	AUTO_REPEAT_RATE,														 // auto repeat rate
+	OnSettingsOption1DownBtnClick											 // on-click function pointer
 );
 RectangularButton(
-	g_sSettingsOption1UpBtn,						  // struct name
-	&g_sSettingsOption1Panel,						  // parent widget pointer
-	NULL,											  // sibling widget pointer
-	NULL,											  // child widget pointer
-	DISPLAY,										  // display device pointer
-	264,											  // x position
-	16,												  // y position
-	50,												  // width
-	50,												  // height
-	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
-	ClrGray,										  // fill color
-	ClrGray,										  // press fill color
-	ClrWhite,										  // outline color
-	ClrWhite,										  // text color
-	&g_sFontNf36,									  // font pointer
-	"+",											  // text
-	NULL,											  // image pointer
-	NULL,											  // press image pointer
-	0,												  // auto repeat delay
-	0,												  // auto repeat rate
-	OnSettingsOption1UpBtnClick						  // on-click function pointer
+	g_sSettingsOption1UpBtn,												 // struct name
+	&g_sSettingsOption1Panel,												 // parent widget pointer
+	NULL,																	 // sibling widget pointer
+	NULL,																	 // child widget pointer
+	DISPLAY,																 // display device pointer
+	264,																	 // x position
+	16,																		 // y position
+	50,																		 // width
+	50,																		 // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
+	ClrGray,																 // fill color
+	ClrGray,																 // press fill color
+	ClrWhite,																 // outline color
+	ClrWhite,																 // text color
+	&g_sFontNf36,															 // font pointer
+	"+",																	 // text
+	NULL,																	 // image pointer
+	NULL,																	 // press image pointer
+	AUTO_REPEAT_DELAY,														 // auto repeat delay
+	AUTO_REPEAT_RATE,														 // auto repeat rate
+	OnSettingsOption1UpBtnClick												 // on-click function pointer
 );
 Canvas(
 	g_sSettingsOption2Panel,																												   // struct name
@@ -443,50 +445,50 @@ Canvas(
 	OnSettingsOption2Paint																													   // on-paint function pointer
 );
 RectangularButton(
-	g_sSettingsOption2DownBtn,						  // struct name
-	&g_sSettingsOption2Panel,						  // parent widget pointer
-	&g_sSettingsOption2UpBtn,						  // sibling widget pointer
-	NULL,											  // child widget pointer
-	DISPLAY,										  // display device pointer
-	82,												  // x position
-	72,												  // y position
-	50,												  // width
-	50,												  // height
-	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
-	ClrGray,										  // fill color
-	ClrGray,										  // press fill color
-	ClrWhite,										  // outline color
-	ClrWhite,										  // text color
-	&g_sFontNf36,									  // font pointer
-	"-",											  // text
-	NULL,											  // image pointer
-	NULL,											  // press image pointer
-	0,												  // auto repeat delay
-	0,												  // auto repeat rate
-	OnSettingsOption2DownBtnClick					  // on-click function pointer
+	g_sSettingsOption2DownBtn,												 // struct name
+	&g_sSettingsOption2Panel,												 // parent widget pointer
+	&g_sSettingsOption2UpBtn,												 // sibling widget pointer
+	NULL,																	 // child widget pointer
+	DISPLAY,																 // display device pointer
+	82,																		 // x position
+	72,																		 // y position
+	50,																		 // width
+	50,																		 // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
+	ClrGray,																 // fill color
+	ClrGray,																 // press fill color
+	ClrWhite,																 // outline color
+	ClrWhite,																 // text color
+	&g_sFontNf36,															 // font pointer
+	"-",																	 // text
+	NULL,																	 // image pointer
+	NULL,																	 // press image pointer
+	AUTO_REPEAT_DELAY,														 // auto repeat delay
+	AUTO_REPEAT_RATE,														 // auto repeat rate
+	OnSettingsOption2DownBtnClick											 // on-click function pointer
 );
 RectangularButton(
-	g_sSettingsOption2UpBtn,						  // struct name
-	&g_sSettingsOption2Panel,						  // parent widget pointer
-	NULL,											  // sibling widget pointer
-	NULL,											  // child widget pointer
-	DISPLAY,										  // display device pointer
-	264,											  // x position
-	72,												  // y position
-	50,												  // width
-	50,												  // height
-	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
-	ClrGray,										  // fill color
-	ClrGray,										  // press fill color
-	ClrWhite,										  // outline color
-	ClrWhite,										  // text color
-	&g_sFontNf36,									  // font pointer
-	"+",											  // text
-	NULL,											  // image pointer
-	NULL,											  // press image pointer
-	0,												  // auto repeat delay
-	0,												  // auto repeat rate
-	OnSettingsOption2UpBtnClick						  // on-click function pointer
+	g_sSettingsOption2UpBtn,												 // struct name
+	&g_sSettingsOption2Panel,												 // parent widget pointer
+	NULL,																	 // sibling widget pointer
+	NULL,																	 // child widget pointer
+	DISPLAY,																 // display device pointer
+	264,																	 // x position
+	72,																		 // y position
+	50,																		 // width
+	50,																		 // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
+	ClrGray,																 // fill color
+	ClrGray,																 // press fill color
+	ClrWhite,																 // outline color
+	ClrWhite,																 // text color
+	&g_sFontNf36,															 // font pointer
+	"+",																	 // text
+	NULL,																	 // image pointer
+	NULL,																	 // press image pointer
+	AUTO_REPEAT_DELAY,														 // auto repeat delay
+	AUTO_REPEAT_RATE,														 // auto repeat rate
+	OnSettingsOption2UpBtnClick												 // on-click function pointer
 );
 Canvas(
 	g_sSettingsOption3Panel,																												   // struct name
@@ -508,50 +510,50 @@ Canvas(
 	OnSettingsOption3Paint																													   // on-paint function pointer
 );
 RectangularButton(
-	g_sSettingsOption3DownBtn,						  // struct name
-	&g_sSettingsOption3Panel,						  // parent widget pointer
-	&g_sSettingsOption3UpBtn,						  // sibling widget pointer
-	NULL,											  // child widget pointer
-	DISPLAY,										  // display device pointer
-	82,												  // x position
-	128,											  // y position
-	50,												  // width
-	50,												  // height
-	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
-	ClrGray,										  // fill color
-	ClrGray,										  // press fill color
-	ClrWhite,										  // outline color
-	ClrWhite,										  // text color
-	&g_sFontNf36,									  // font pointer
-	"-",											  // text
-	NULL,											  // image pointer
-	NULL,											  // press image pointer
-	0,												  // auto repeat delay
-	0,												  // auto repeat rate
-	OnSettingsOption3DownBtnClick					  // on-click function pointer
+	g_sSettingsOption3DownBtn,												 // struct name
+	&g_sSettingsOption3Panel,												 // parent widget pointer
+	&g_sSettingsOption3UpBtn,												 // sibling widget pointer
+	NULL,																	 // child widget pointer
+	DISPLAY,																 // display device pointer
+	82,																		 // x position
+	128,																	 // y position
+	50,																		 // width
+	50,																		 // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
+	ClrGray,																 // fill color
+	ClrGray,																 // press fill color
+	ClrWhite,																 // outline color
+	ClrWhite,																 // text color
+	&g_sFontNf36,															 // font pointer
+	"-",																	 // text
+	NULL,																	 // image pointer
+	NULL,																	 // press image pointer
+	AUTO_REPEAT_DELAY,														 // auto repeat delay
+	AUTO_REPEAT_RATE,														 // auto repeat rate
+	OnSettingsOption3DownBtnClick											 // on-click function pointer
 );
 RectangularButton(
-	g_sSettingsOption3UpBtn,						  // struct name
-	&g_sSettingsOption3Panel,						  // parent widget pointer
-	NULL,											  // sibling widget pointer
-	NULL,											  // child widget pointer
-	DISPLAY,										  // display device pointer
-	264,											  // x position
-	128,											  // y position
-	50,												  // width
-	50,												  // height
-	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
-	ClrGray,										  // fill color
-	ClrGray,										  // press fill color
-	ClrWhite,										  // outline color
-	ClrWhite,										  // text color
-	&g_sFontNf36,									  // font pointer
-	"+",											  // text
-	NULL,											  // image pointer
-	NULL,											  // press image pointer
-	0,												  // auto repeat delay
-	0,												  // auto repeat rate
-	OnSettingsOption3UpBtnClick						  // on-click function pointer
+	g_sSettingsOption3UpBtn,												 // struct name
+	&g_sSettingsOption3Panel,												 // parent widget pointer
+	NULL,																	 // sibling widget pointer
+	NULL,																	 // child widget pointer
+	DISPLAY,																 // display device pointer
+	264,																	 // x position
+	128,																	 // y position
+	50,																		 // width
+	50,																		 // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
+	ClrGray,																 // fill color
+	ClrGray,																 // press fill color
+	ClrWhite,																 // outline color
+	ClrWhite,																 // text color
+	&g_sFontNf36,															 // font pointer
+	"+",																	 // text
+	NULL,																	 // image pointer
+	NULL,																	 // press image pointer
+	AUTO_REPEAT_DELAY,														 // auto repeat delay
+	AUTO_REPEAT_RATE,														 // auto repeat rate
+	OnSettingsOption3UpBtnClick												 // on-click function pointer
 );
 Canvas(
 	g_sSettingsOption4Panel,																												   // struct name
@@ -573,50 +575,50 @@ Canvas(
 	OnSettingsOption4Paint																													   // on-paint function pointer
 );
 RectangularButton(
-	g_sSettingsOption4DownBtn,						  // struct name
-	&g_sSettingsOption4Panel,						  // parent widget pointer
-	&g_sSettingsOption4UpBtn,						  // sibling widget pointer
-	NULL,											  // child widget pointer
-	DISPLAY,										  // display device pointer
-	82,												  // x position
-	184,											  // y position
-	50,												  // width
-	50,												  // height
-	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
-	ClrGray,										  // fill color
-	ClrGray,										  // press fill color
-	ClrWhite,										  // outline color
-	ClrWhite,										  // text color
-	&g_sFontNf36,									  // font pointer
-	"-",											  // text
-	NULL,											  // image pointer
-	NULL,											  // press image pointer
-	0,												  // auto repeat delay
-	0,												  // auto repeat rate
-	OnSettingsOption4DownBtnClick					  // on-click function pointer
+	g_sSettingsOption4DownBtn,												 // struct name
+	&g_sSettingsOption4Panel,												 // parent widget pointer
+	&g_sSettingsOption4UpBtn,												 // sibling widget pointer
+	NULL,																	 // child widget pointer
+	DISPLAY,																 // display device pointer
+	82,																		 // x position
+	184,																	 // y position
+	50,																		 // width
+	50,																		 // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
+	ClrGray,																 // fill color
+	ClrGray,																 // press fill color
+	ClrWhite,																 // outline color
+	ClrWhite,																 // text color
+	&g_sFontNf36,															 // font pointer
+	"-",																	 // text
+	NULL,																	 // image pointer
+	NULL,																	 // press image pointer
+	AUTO_REPEAT_DELAY,														 // auto repeat delay
+	AUTO_REPEAT_RATE,														 // auto repeat rate
+	OnSettingsOption4DownBtnClick											 // on-click function pointer
 );
 RectangularButton(
-	g_sSettingsOption4UpBtn,						  // struct name
-	&g_sSettingsOption4Panel,						  // parent widget pointer
-	NULL,											  // sibling widget pointer
-	NULL,											  // child widget pointer
-	DISPLAY,										  // display device pointer
-	264,											  // x position
-	184,											  // y position
-	50,												  // width
-	50,												  // height
-	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
-	ClrGray,										  // fill color
-	ClrGray,										  // press fill color
-	ClrWhite,										  // outline color
-	ClrWhite,										  // text color
-	&g_sFontNf36,									  // font pointer
-	"+",											  // text
-	NULL,											  // image pointer
-	NULL,											  // press image pointer
-	0,												  // auto repeat delay
-	0,												  // auto repeat rate
-	OnSettingsOption4UpBtnClick						  // on-click function pointer
+	g_sSettingsOption4UpBtn,												 // struct name
+	&g_sSettingsOption4Panel,												 // parent widget pointer
+	NULL,																	 // sibling widget pointer
+	NULL,																	 // child widget pointer
+	DISPLAY,																 // display device pointer
+	264,																	 // x position
+	184,																	 // y position
+	50,																		 // width
+	50,																		 // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
+	ClrGray,																 // fill color
+	ClrGray,																 // press fill color
+	ClrWhite,																 // outline color
+	ClrWhite,																 // text color
+	&g_sFontNf36,															 // font pointer
+	"+",																	 // text
+	NULL,																	 // image pointer
+	NULL,																	 // press image pointer
+	AUTO_REPEAT_DELAY,														 // auto repeat delay
+	AUTO_REPEAT_RATE,														 // auto repeat rate
+	OnSettingsOption4UpBtnClick												 // on-click function pointer
 );
 Canvas(
 	g_sSettingsLine,	 // struct name
