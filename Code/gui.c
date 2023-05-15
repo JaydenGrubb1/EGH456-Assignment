@@ -33,6 +33,10 @@ tContext g_sContext;
 tRectangle g_sScreenRect;
 int16_t g_i16DesiredSpeed = 0;
 int16_t g_i16CurrentSpeed = 0;
+uint8_t g_ui8MaxPower = 10;
+uint8_t g_ui8MaxAccel = 10;
+uint8_t g_ui8TimeHours = 0;
+uint8_t g_ui8TimeMinutes = 0;
 bool g_bIsRunning = false;
 
 /* Callback function array */
@@ -886,67 +890,75 @@ void OnSettingsBackBtnClick(tWidget *pWidget) {
 }
 
 void OnSettingsOption1UpBtnClick(tWidget *psWidget) {
-	// TODO: Implement
+	g_ui8MaxPower++;
+	WidgetPaint((tWidget *)&g_sSettingsOption1Panel);
 }
 
 void OnSettingsOption1DownBtnClick(tWidget *psWidget) {
-	// TODO: Implement
+	g_ui8MaxPower--;
+	WidgetPaint((tWidget *)&g_sSettingsOption1Panel);
 }
 
 void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
-	// char text[8];
-	// snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
-	GrStringDrawCentered(psContext, "0", -1, 198, 41, false);
+	char text[4];
+	snprintf(text, 4, "%d\0", g_ui8MaxPower);
+	GrStringDrawCentered(psContext, text, -1, 198, 41, false);
 }
 
 void OnSettingsOption2UpBtnClick(tWidget *psWidget) {
-	// TODO: Implement
+	g_ui8MaxAccel++;
+	WidgetPaint((tWidget *)&g_sSettingsOption2Panel);
 }
 
 void OnSettingsOption2DownBtnClick(tWidget *psWidget) {
-	// TODO: Implement
+	g_ui8MaxAccel--;
+	WidgetPaint((tWidget *)&g_sSettingsOption2Panel);
 }
 
 void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
-	// char text[8];
-	// snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
-	GrStringDrawCentered(psContext, "0", -1, 198, 97, false);
+	char text[4];
+	snprintf(text, 4, "%d\0", g_ui8MaxAccel);
+	GrStringDrawCentered(psContext, text, -1, 198, 97, false);
 }
 
 void OnSettingsOption3UpBtnClick(tWidget *psWidget) {
-	// TODO: Implement
+	g_ui8TimeHours++;
+	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
 }
 
 void OnSettingsOption3DownBtnClick(tWidget *psWidget) {
-	// TODO: Implement
+	g_ui8TimeHours--;
+	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
 }
 
 void OnSettingsOption3Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
-	// char text[8];
-	// snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
-	GrStringDrawCentered(psContext, "0", -1, 198, 153, false);
+	char text[4];
+	snprintf(text, 4, "%d\0", g_ui8TimeHours);
+	GrStringDrawCentered(psContext, text, -1, 198, 153, false);
 }
 
 void OnSettingsOption4UpBtnClick(tWidget *psWidget) {
-	// TODO: Implement
+	g_ui8TimeMinutes++;
+	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
 }
 
 void OnSettingsOption4DownBtnClick(tWidget *psWidget) {
-	// TODO: Implement
+	g_ui8TimeMinutes--;
+	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
 }
 
 void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
-	// char text[8];
-	// snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
-	GrStringDrawCentered(psContext, "0", -1, 198, 209, false);
+	char text[4];
+	snprintf(text, 4, "%d\0", g_ui8TimeMinutes);
+	GrStringDrawCentered(psContext, text, -1, 198, 209, false);
 }
 
 /**
