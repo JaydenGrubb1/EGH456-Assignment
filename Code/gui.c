@@ -1,3 +1,4 @@
+#pragma region Includes
 #include "gui.h"
 
 /* Standard header files */
@@ -24,6 +25,7 @@
 #include "fonts/fontnf16i.h"
 #include "fonts/fontnf24.h"
 #include "fonts/fontnf36.h"
+#pragma endregion
 
 /* Global defines */
 #define DISPLAY &g_sKentec320x240x16_SSD2119
@@ -44,6 +46,7 @@ bool g_bIsRunning = false;
 /* Callback function array */
 tGUICallbackFxn g_pfnCallbacks[GUI_CALLBACK_COUNT];
 
+#pragma region Forward widget and function declerations
 /* Main panel widgets */
 tCanvasWidget g_sMainPanel;
 tPushButtonWidget g_sMainStartBtn;
@@ -104,7 +107,9 @@ void OnSettingsOption4DownBtnClick(tWidget *psWidget);
 void OnSettingsOption4UpBtnClick(tWidget *psWidget);
 void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext);
 void OnGraphBackBtnClick(tWidget *psWidget);
+#pragma endregion
 
+#pragma region Main panel widget constructors
 /* Main panel widget contructors */
 Canvas(
 	g_sMainPanel,	   // struct name
@@ -297,7 +302,9 @@ RectangularButton(
 	AUTO_REPEAT_RATE,														 // auto repeat rate
 	OnMainSpeedDownBtnClick													 // on-click function pointer
 );
+#pragma endregion
 
+#pragma region Settings panel widget constructors
 /* Settings panel widget contructors */
 Canvas(
 	g_sSettingsPanel,	 // struct name
@@ -639,7 +646,9 @@ Canvas(
 	NULL,				 // image pointer
 	NULL				 // on-paint function pointer
 );
+#pragma endregion
 
+#pragma region Graph panel widget constructors
 /* Graph panel widget constructors */
 Canvas(
 	g_sGraphPanel,	   // struct name
@@ -782,7 +791,9 @@ Canvas(
 	NULL,																												  // image pointer
 	NULL																												  // on-paint function pointer
 );
+#pragma endregion
 
+#pragma region Button click handlers
 /**
  * @brief Function to handle the back button click event on the main panel
  *
@@ -853,6 +864,110 @@ void OnMainGraphBtnClick(tWidget *pWidget) {
 }
 
 /**
+ * @brief Function to handle the back button click event on the settings panel
+ *
+ * @param pWidget The widget that triggered the event
+ */
+void OnSettingsBackBtnClick(tWidget *pWidget) {
+	WidgetRemove((tWidget *)&g_sSettingsPanel);
+	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
+	WidgetPaint(WIDGET_ROOT);
+}
+
+/**
+ * @brief Function to handle the option 1 up button click event on the graph panel
+ * 
+ * @param psWidget The widget that triggered the event
+ */
+void OnSettingsOption1UpBtnClick(tWidget *psWidget) {
+	g_ui8MaxPower++;
+	WidgetPaint((tWidget *)&g_sSettingsOption1Panel);
+}
+
+/**
+ * @brief Function to handle the option 1 down button click event on the graph panel
+ * 
+ * @param psWidget The widget that triggered the event
+ */
+void OnSettingsOption1DownBtnClick(tWidget *psWidget) {
+	g_ui8MaxPower--;
+	WidgetPaint((tWidget *)&g_sSettingsOption1Panel);
+}
+
+/**
+ * @brief Function to handle the option 2 up button click event on the graph panel
+ * 
+ * @param psWidget The widget that triggered the event
+ */
+void OnSettingsOption2UpBtnClick(tWidget *psWidget) {
+	g_ui8MaxAccel++;
+	WidgetPaint((tWidget *)&g_sSettingsOption2Panel);
+}
+
+/**
+ * @brief Function to handle the option 2 down button click event on the graph panel
+ * 
+ * @param psWidget The widget that triggered the event
+ */
+void OnSettingsOption2DownBtnClick(tWidget *psWidget) {
+	g_ui8MaxAccel--;
+	WidgetPaint((tWidget *)&g_sSettingsOption2Panel);
+}
+
+/**
+ * @brief Function to handle the option 3 up button click event on the graph panel
+ * 
+ * @param psWidget The widget that triggered the event
+ */
+void OnSettingsOption3UpBtnClick(tWidget *psWidget) {
+	g_ui8TimeHours++;
+	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
+}
+
+/**
+ * @brief Function to handle the option 3 down button click event on the graph panel
+ * 
+ * @param psWidget The widget that triggered the event
+ */
+void OnSettingsOption3DownBtnClick(tWidget *psWidget) {
+	g_ui8TimeHours--;
+	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
+}
+
+/**
+ * @brief Function to handle the option 4 up button click event on the graph panel
+ * 
+ * @param psWidget The widget that triggered the event
+ */
+void OnSettingsOption4UpBtnClick(tWidget *psWidget) {
+	g_ui8TimeMinutes++;
+	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
+}
+
+/**
+ * @brief Function to handle the option 4 down button click event on the graph panel
+ * 
+ * @param psWidget The widget that triggered the event
+ */
+void OnSettingsOption4DownBtnClick(tWidget *psWidget) {
+	g_ui8TimeMinutes--;
+	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
+}
+
+/**
+ * @brief Function to handle the back button click event on the graph panel
+ *
+ * @param pWidget The widget that triggered the event
+ */
+void OnGraphBackBtnClick(tWidget *pWidget) {
+	WidgetRemove((tWidget *)&g_sGraphPanel);
+	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
+	WidgetPaint(WIDGET_ROOT);
+}
+#pragma endregion
+
+#pragma region Widget paint handlers
+/**
  * @brief Function to handle painting the desired speed widget on the main panel
  *
  * @param psWidget The widget that is being painted
@@ -881,26 +996,11 @@ void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
 }
 
 /**
- * @brief Function to handle the back button click event on the settings panel
+ * @brief Function to handle painting the option 1 value on the settings panel
  *
- * @param pWidget The widget that triggered the event
+ * @param psWidget The widget that is being painted
+ * @param psContext The graphics context
  */
-void OnSettingsBackBtnClick(tWidget *pWidget) {
-	WidgetRemove((tWidget *)&g_sSettingsPanel);
-	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
-	WidgetPaint(WIDGET_ROOT);
-}
-
-void OnSettingsOption1UpBtnClick(tWidget *psWidget) {
-	g_ui8MaxPower++;
-	WidgetPaint((tWidget *)&g_sSettingsOption1Panel);
-}
-
-void OnSettingsOption1DownBtnClick(tWidget *psWidget) {
-	g_ui8MaxPower--;
-	WidgetPaint((tWidget *)&g_sSettingsOption1Panel);
-}
-
 void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
@@ -909,16 +1009,12 @@ void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext) {
 	GrStringDrawCentered(psContext, text, -1, 198, 41, false);
 }
 
-void OnSettingsOption2UpBtnClick(tWidget *psWidget) {
-	g_ui8MaxAccel++;
-	WidgetPaint((tWidget *)&g_sSettingsOption2Panel);
-}
-
-void OnSettingsOption2DownBtnClick(tWidget *psWidget) {
-	g_ui8MaxAccel--;
-	WidgetPaint((tWidget *)&g_sSettingsOption2Panel);
-}
-
+/**
+ * @brief Function to handle painting the option 2 value on the settings panel
+ *
+ * @param psWidget The widget that is being painted
+ * @param psContext The graphics context
+ */
 void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
@@ -927,16 +1023,12 @@ void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext) {
 	GrStringDrawCentered(psContext, text, -1, 198, 97, false);
 }
 
-void OnSettingsOption3UpBtnClick(tWidget *psWidget) {
-	g_ui8TimeHours++;
-	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
-}
-
-void OnSettingsOption3DownBtnClick(tWidget *psWidget) {
-	g_ui8TimeHours--;
-	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
-}
-
+/**
+ * @brief Function to handle painting the option 3 value on the settings panel
+ *
+ * @param psWidget The widget that is being painted
+ * @param psContext The graphics context
+ */
 void OnSettingsOption3Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
@@ -945,16 +1037,12 @@ void OnSettingsOption3Paint(tWidget *psWidget, tContext *psContext) {
 	GrStringDrawCentered(psContext, text, -1, 198, 153, false);
 }
 
-void OnSettingsOption4UpBtnClick(tWidget *psWidget) {
-	g_ui8TimeMinutes++;
-	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
-}
-
-void OnSettingsOption4DownBtnClick(tWidget *psWidget) {
-	g_ui8TimeMinutes--;
-	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
-}
-
+/**
+ * @brief Function to handle painting the option 4 value on the settings panel
+ *
+ * @param psWidget The widget that is being painted
+ * @param psContext The graphics context
+ */
 void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
@@ -962,18 +1050,9 @@ void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
 	snprintf(text, 4, "%d\0", g_ui8TimeMinutes);
 	GrStringDrawCentered(psContext, text, -1, 198, 209, false);
 }
+#pragma endregion
 
-/**
- * @brief Function to handle the back button click event on the graph panel
- *
- * @param pWidget The widget that triggered the event
- */
-void OnGraphBackBtnClick(tWidget *pWidget) {
-	WidgetRemove((tWidget *)&g_sGraphPanel);
-	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
-	WidgetPaint(WIDGET_ROOT);
-}
-
+#pragma region GUI API functions
 /**
  * @brief Initialize the GUI
  *
@@ -1042,3 +1121,4 @@ void GUI_Start() {
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
 	WidgetPaint(WIDGET_ROOT);
 }
+#pragma endregion
