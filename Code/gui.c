@@ -22,6 +22,7 @@
 #include "fonts/fontnf10.h"
 #include "fonts/fontnf16.h"
 #include "fonts/fontnf16i.h"
+#include "fonts/fontnf24.h"
 #include "fonts/fontnf36.h"
 
 /* Global defines */
@@ -53,6 +54,22 @@ tCanvasWidget g_sSettingsPanel;
 tPushButtonWidget g_sSettingsBackBtn;
 tCanvasWidget g_sSettingsContent;
 
+tCanvasWidget g_sSettingsOption1Panel;
+tPushButtonWidget g_sSettingsOption1DownBtn;
+tPushButtonWidget g_sSettingsOption1UpBtn;
+
+tCanvasWidget g_sSettingsOption2Panel;
+tPushButtonWidget g_sSettingsOption2DownBtn;
+tPushButtonWidget g_sSettingsOption2UpBtn;
+
+tCanvasWidget g_sSettingsOption3Panel;
+tPushButtonWidget g_sSettingsOption3DownBtn;
+tPushButtonWidget g_sSettingsOption3UpBtn;
+
+tCanvasWidget g_sSettingsOption4Panel;
+tPushButtonWidget g_sSettingsOption4DownBtn;
+tPushButtonWidget g_sSettingsOption4UpBtn;
+
 /* Graph panel widgets */
 tCanvasWidget g_sGraphPanel;
 tPushButtonWidget g_sGraphBackBtn;
@@ -71,6 +88,18 @@ void OnMainGraphBtnClick(tWidget *psWidget);
 void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext);
 void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext);
 void OnSettingsBackBtnClick(tWidget *psWidget);
+void OnSettingsOption1DownBtnClick(tWidget *psWidget);
+void OnSettingsOption1UpBtnClick(tWidget *psWidget);
+void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext);
+void OnSettingsOption2DownBtnClick(tWidget *psWidget);
+void OnSettingsOption2UpBtnClick(tWidget *psWidget);
+void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext);
+void OnSettingsOption3DownBtnClick(tWidget *psWidget);
+void OnSettingsOption3UpBtnClick(tWidget *psWidget);
+void OnSettingsOption3Paint(tWidget *psWidget, tContext *psContext);
+void OnSettingsOption4DownBtnClick(tWidget *psWidget);
+void OnSettingsOption4UpBtnClick(tWidget *psWidget);
+void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext);
 void OnGraphBackBtnClick(tWidget *psWidget);
 
 /* Main panel widget contructors */
@@ -310,23 +339,88 @@ RectangularButton(
 	OnSettingsBackBtnClick							  // on-click function pointer
 );
 Canvas(
-	g_sSettingsContent,						  // struct name
-	&g_sSettingsPanel,						  // parent widget pointer
-	NULL,									  // sibling widget pointer
-	NULL,									  // child widget pointer
-	DISPLAY,								  // display device pointer
-	82,										  // x position
-	6,										  // y position
-	232,									  // width
-	228,									  // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE, // style
-	ClrBlack,								  // fill color
-	ClrWhite,								  // outline color
-	NULL,									  // text color
-	NULL,									  // font pointer
-	NULL,									  // text
-	NULL,									  // image pointer
-	NULL									  // on-paint function pointer
+	g_sSettingsContent,		  // struct name
+	&g_sSettingsPanel,		  // parent widget pointer
+	NULL,					  // sibling widget pointer
+	&g_sSettingsOption1Panel, // child widget pointer
+	DISPLAY,				  // display device pointer
+	82,						  // x position
+	6,						  // y position
+	232,					  // width
+	228,					  // height
+	CANVAS_STYLE_FILL,		  // style
+	ClrBlack,				  // fill color
+	NULL,					  // outline color
+	NULL,					  // text color
+	NULL,					  // font pointer
+	NULL,					  // text
+	NULL,					  // image pointer
+	NULL					  // on-paint function pointer
+);
+Canvas(
+	g_sSettingsOption1Panel,																												   // struct name
+	&g_sSettingsContent,																													   // parent widget pointer
+	NULL,																																	   // sibling widget pointer
+	&g_sSettingsOption1DownBtn,																												   // child widget pointer
+	DISPLAY,																																   // display device pointer
+	140,																																	   // x position
+	6,																																		   // y position
+	116,																																	   // width
+	52,																																		   // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
+	ClrBlack,																																   // fill color
+	ClrWhite,																																   // outline color
+	ClrWhite,																																   // text color
+	&g_sFontNf10,																															   // font pointer
+	"Option 1",																																   // text
+	NULL,																																	   // image pointer
+	OnSettingsOption1Paint																													   // on-paint function pointer
+);
+RectangularButton(
+	g_sSettingsOption1DownBtn,						  // struct name
+	&g_sSettingsOption1Panel,						  // parent widget pointer
+	&g_sSettingsOption1UpBtn,						  // sibling widget pointer
+	NULL,											  // child widget pointer
+	DISPLAY,										  // display device pointer
+	82,												  // x position
+	6,												  // y position
+	52,												  // width
+	52,												  // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
+	ClrGray,										  // fill color
+	ClrGray,										  // press fill color
+	ClrWhite,										  // outline color
+	ClrWhite,										  // text color
+	&g_sFontNf36,									  // font pointer
+	"-",											  // text
+	NULL,											  // image pointer
+	NULL,											  // press image pointer
+	0,												  // auto repeat delay
+	0,												  // auto repeat rate
+	OnSettingsOption1DownBtnClick					  // on-click function pointer
+);
+RectangularButton(
+	g_sSettingsOption1UpBtn,						  // struct name
+	&g_sSettingsOption1Panel,						  // parent widget pointer
+	NULL,											  // sibling widget pointer
+	NULL,											  // child widget pointer
+	DISPLAY,										  // display device pointer
+	262,											  // x position
+	6,												  // y position
+	52,												  // width
+	52,												  // height
+	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
+	ClrGray,										  // fill color
+	ClrGray,										  // press fill color
+	ClrWhite,										  // outline color
+	ClrWhite,										  // text color
+	&g_sFontNf36,									  // font pointer
+	"+",											  // text
+	NULL,											  // image pointer
+	NULL,											  // press image pointer
+	0,												  // auto repeat delay
+	0,												  // auto repeat rate
+	OnSettingsOption1UpBtnClick						  // on-click function pointer
 );
 
 /* Graph panel widget constructors */
@@ -576,6 +670,22 @@ void OnSettingsBackBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sSettingsPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
 	WidgetPaint(WIDGET_ROOT);
+}
+
+void OnSettingsOption1UpBtnClick(tWidget *psWidget) {
+	// TODO: Implement
+}
+
+void OnSettingsOption1DownBtnClick(tWidget *psWidget) {
+	// TODO: Implement
+}
+
+void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext) {
+	GrContextForegroundSet(psContext, ClrRed);
+	GrContextFontSet(psContext, &g_sFontNf24);
+	// char text[8];
+	// snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
+	GrStringDrawCentered(psContext, "test", -1, 198, 32, false);
 }
 
 /**
