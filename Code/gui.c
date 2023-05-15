@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 #include <math.h>
 
 /* GRLib header files */
@@ -1205,6 +1206,9 @@ void GUI_Init(uint32_t ui32SysClock) {
 	g_sScreenRect.i16YMin = 0;
 	g_sScreenRect.i16XMax = GrContextDpyWidthGet(&g_sContext);
 	g_sScreenRect.i16YMax = GrContextDpyHeightGet(&g_sContext);
+
+	/* Erase the function callbacks array */
+	memset(g_pfnCallbacks, NULL, sizeof(g_pfnCallbacks));
 }
 
 /**
