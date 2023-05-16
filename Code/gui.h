@@ -42,6 +42,14 @@ void GUI_Init(uint32_t ui32SysClock);
 void GUI_Handle();
 
 /**
+ * @brief Triggers a periodic GUI update
+ *
+ * @note This function should be called periodically from a clock task
+ *
+ */
+void GUI_Pulse();
+
+/**
  * @brief Sets the callback function for a specific callback
  *
  * @param tCallbackOpt The callback to set
