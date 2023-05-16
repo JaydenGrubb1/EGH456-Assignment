@@ -1,5 +1,6 @@
 #pragma region Includes
 #include "gui.h"
+#include "util.h"
 
 /* Standard header files */
 #include <stdio.h>
@@ -1258,10 +1259,12 @@ void GUI_PulseInternal() {
 			g_ui32PrevTime = ui32Time;
 			g_ui32PrevLight = ui32Light;
 
+			TicksToTime(ui32Time, &g_ui8TimeHours, &g_ui8TimeMinutes, NULL);
+
 			if (ui32Light < NIGHT_LIGHT_THRESHOLD)
-				snprintf(ga_cTimeText, 20, "Time: %02d:%02d (night)\0", ui32Time / 3600, (ui32Time / 60) % 60);
+				snprintf(ga_cTimeText, 20, "Time: %02d:%02d (night)\0", g_ui8TimeHours, g_ui8TimeMinutes);
 			else
-				snprintf(ga_cTimeText, 20, "Time: %02d:%02d (day)\0", ui32Time / 3600, (ui32Time / 60) % 60);
+				snprintf(ga_cTimeText, 20, "Time: %02d:%02d (day)\0", g_ui8TimeHours, g_ui8TimeMinutes);
 
 			CanvasTextSet(&g_sMainTime, ga_cTimeText);
 			WidgetPaint((tWidget *)&g_sMainTime);
