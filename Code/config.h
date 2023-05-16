@@ -1,4 +1,7 @@
+#pragma once
+
 #define NIGHT_LIGHT_THRESHOLD 5
+#define GUI_PULSE_PERIOD 100
 #define DISPLAY_DATE "16/05/23"
 #define MAX_SPEED 255
 #define MAX_POWER 255

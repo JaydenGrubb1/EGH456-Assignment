@@ -60,7 +60,7 @@ bool g_bGraphLight = false;
 bool g_bGraphAccel = false;
 volatile bool g_bDoUpdate = false;
 uint32_t g_ui32PrevTime = UINT32_MAX;
-uint32_t g_ui32PrevLight = UINT32_MAX;
+bool g_bPrevIsNight = false;
 int16_t g_i16PrevSpeed = INT16_MAX;
 char ga_cTimeText[25];
 
@@ -1308,14 +1308,14 @@ void GUI_PulseInternal() {
 
 		/* Update time and light status */
 		uint32_t ui32Time = GUI_InvokeCallback(GUI_RETURN_TIME, NULL, NULL);
-		uint32_t ui32Light = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL);
-		if (ui32Time != g_ui32PrevTime || ui32Light != g_ui32PrevLight) {
+		bool bIsNight = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL) < NIGHT_LIGHT_THRESHOLD;
+		if (ui32Time != g_ui32PrevTime || bIsNight != g_bPrevIsNight) {
 			g_ui32PrevTime = ui32Time;
-			g_ui32PrevLight = ui32Light;
+			g_bPrevIsNight = bIsNight;
 
 			TicksToTime(ui32Time, &g_ui8TimeHours, &g_ui8TimeMinutes, NULL);
 
-			if (ui32Light < NIGHT_LIGHT_THRESHOLD)
+			if (bIsNight)
 				snprintf(ga_cTimeText, 25, DISPLAY_DATE " - %02d:%02d (night)\0", g_ui8TimeHours, g_ui8TimeMinutes);
 			else
 				snprintf(ga_cTimeText, 25, DISPLAY_DATE " - %02d:%02d (day)\0", g_ui8TimeHours, g_ui8TimeMinutes);

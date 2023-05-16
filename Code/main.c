@@ -23,10 +23,10 @@
 
 /* Project header files */
 #include "gui.h"
+#include "config.h"
 
 /* Global defines */
 #define TASK_STACK_SIZE 1024
-#define GUI_PULSE_PERIOD 100
 
 /* Task structs */
 Task_Struct g_sHandleGUITask;
