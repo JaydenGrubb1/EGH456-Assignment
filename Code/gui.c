@@ -103,7 +103,6 @@ tPushButtonWidget g_sSettingsOption3UpBtn;
 tCanvasWidget g_sSettingsOption4Panel;
 tPushButtonWidget g_sSettingsOption4DownBtn;
 tPushButtonWidget g_sSettingsOption4UpBtn;
-tCanvasWidget g_sSettingsLine;
 
 /* Graph panel widgets */
 tCanvasWidget g_sGraphPanel;
@@ -429,9 +428,9 @@ Canvas(
 	&g_sSettingsOption1DownBtn,																							   // child widget pointer
 	DISPLAY,																											   // display device pointer
 	138,																												   // x position
-	16,																													   // y position
+	8,																													   // y position
 	120,																												   // width
-	50,																													   // height
+	52,																													   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
 	ClrBlack,																											   // fill color
 	ClrWhite,																											   // outline color
@@ -448,9 +447,9 @@ RectangularButton(
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	82,																		 // x position
-	16,																		 // y position
+	8,																		 // y position
 	50,																		 // width
-	50,																		 // height
+	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
 	ClrGray,																 // press fill color
@@ -471,9 +470,9 @@ RectangularButton(
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	264,																	 // x position
-	16,																		 // y position
+	8,																		 // y position
 	50,																		 // width
-	50,																		 // height
+	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
 	ClrGray,																 // press fill color
@@ -494,9 +493,9 @@ Canvas(
 	&g_sSettingsOption2DownBtn,																							   // child widget pointer
 	DISPLAY,																											   // display device pointer
 	138,																												   // x position
-	72,																													   // y position
+	66,																													   // y position
 	120,																												   // width
-	50,																													   // height
+	52,																													   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
 	ClrBlack,																											   // fill color
 	ClrWhite,																											   // outline color
@@ -513,9 +512,9 @@ RectangularButton(
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	82,																		 // x position
-	72,																		 // y position
+	66,																		 // y position
 	50,																		 // width
-	50,																		 // height
+	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
 	ClrGray,																 // press fill color
@@ -536,9 +535,9 @@ RectangularButton(
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	264,																	 // x position
-	72,																		 // y position
+	66,																		 // y position
 	50,																		 // width
-	50,																		 // height
+	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
 	ClrGray,																 // press fill color
@@ -559,9 +558,9 @@ Canvas(
 	&g_sSettingsOption3DownBtn,																							   // child widget pointer
 	DISPLAY,																											   // display device pointer
 	138,																												   // x position
-	128,																												   // y position
+	124,																												   // y position
 	120,																												   // width
-	50,																													   // height
+	52,																													   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
 	ClrBlack,																											   // fill color
 	ClrWhite,																											   // outline color
@@ -578,9 +577,9 @@ RectangularButton(
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	82,																		 // x position
-	128,																	 // y position
+	124,																	 // y position
 	50,																		 // width
-	50,																		 // height
+	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
 	ClrGray,																 // press fill color
@@ -601,9 +600,9 @@ RectangularButton(
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	264,																	 // x position
-	128,																	 // y position
+	124,																	 // y position
 	50,																		 // width
-	50,																		 // height
+	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
 	ClrGray,																 // press fill color
@@ -620,13 +619,13 @@ RectangularButton(
 Canvas(
 	g_sSettingsOption4Panel,																							   // struct name
 	&g_sSettingsContent,																								   // parent widget pointer
-	&g_sSettingsLine,																									   // sibling widget pointer
+	NULL,																												   // sibling widget pointer
 	&g_sSettingsOption4DownBtn,																							   // child widget pointer
 	DISPLAY,																											   // display device pointer
 	138,																												   // x position
-	184,																												   // y position
+	182,																												   // y position
 	120,																												   // width
-	50,																													   // height
+	52,																													   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
 	ClrBlack,																											   // fill color
 	ClrWhite,																											   // outline color
@@ -643,9 +642,9 @@ RectangularButton(
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	82,																		 // x position
-	184,																	 // y position
+	182,																	 // y position
 	50,																		 // width
-	50,																		 // height
+	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
 	ClrGray,																 // press fill color
@@ -666,9 +665,9 @@ RectangularButton(
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	264,																	 // x position
-	184,																	 // y position
+	182,																	 // y position
 	50,																		 // width
-	50,																		 // height
+	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
 	ClrGray,																 // press fill color
@@ -681,25 +680,6 @@ RectangularButton(
 	AUTO_REPEAT_DELAY,														 // auto repeat delay
 	AUTO_REPEAT_RATE,														 // auto repeat rate
 	OnSettingsOption4UpBtnClick												 // on-click function pointer
-);
-Canvas(
-	g_sSettingsLine,	 // struct name
-	&g_sSettingsContent, // parent widget pointer
-	NULL,				 // sibling widget pointer
-	NULL,				 // child widget pointer
-	DISPLAY,			 // display device pointer
-	6,					 // x position
-	6,					 // y position
-	308,				 // width
-	4,					 // height
-	CANVAS_STYLE_FILL,	 // style
-	ClrBlue,			 // fill color
-	NULL,				 // outline color
-	NULL,				 // text color
-	NULL,				 // font pointer
-	NULL,				 // text
-	NULL,				 // image pointer
-	NULL				 // on-paint function pointer
 );
 #pragma endregion
 
@@ -861,12 +841,10 @@ void OnMainStartBtnClick(tWidget *pWidget) {
 		PushButtonTextSet(&g_sMainStartBtn, "STOP");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrRed);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkRed);
-		CanvasFillColorSet(&g_sSettingsLine, ClrRed);
 	} else {
 		PushButtonTextSet(&g_sMainStartBtn, "START");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrBlue);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkBlue);
-		CanvasFillColorSet(&g_sSettingsLine, ClrBlue);
 	}
 
 	GUI_InvokeCallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
