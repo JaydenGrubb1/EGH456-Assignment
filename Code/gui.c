@@ -1322,8 +1322,8 @@ void GUI_PulseInternal() {
 		/* Update time and light status */
 		uint32_t ui32Time = GUI_InvokeCallback(GUI_RETURN_TIME, NULL, NULL);
 		bool bIsNight = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL) < NIGHT_LIGHT_THRESHOLD;
-		if (ui32Time != g_ui32PrevTime || bIsNight != g_bPrevIsNight) {
-			g_ui32PrevTime = ui32Time;
+		if (ui32Time / 60 != g_ui32PrevTime || bIsNight != g_bPrevIsNight) {
+			g_ui32PrevTime = ui32Time / 60;
 			g_bPrevIsNight = bIsNight;
 
 			TicksToTime(ui32Time, &g_ui8TimeHours, &g_ui8TimeMinutes, NULL);
