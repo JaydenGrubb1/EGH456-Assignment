@@ -35,6 +35,7 @@
 #define AUTO_REPEAT_DELAY 250
 #define AUTO_REPEAT_RATE 20
 #define NIGHT_LIGHT_THRESHOLD 5
+#define DISPLAY_DATE "16/05/23"
 
 /* Global constants */
 const tRectangle gc_sDesiredSpeedRect = {38, 54, 93, 79};
@@ -58,7 +59,7 @@ volatile bool g_bDoUpdate = false;
 uint32_t g_ui32PrevTime = UINT32_MAX;
 uint32_t g_ui32PrevLight = UINT32_MAX;
 int16_t g_i16PrevSpeed = INT16_MAX;
-char ga_cTimeText[20];
+char ga_cTimeText[25];
 
 /* Callback function array */
 tGUICallbackFxn g_pfnCallbacks[GUI_CALLBACK_COUNT];
@@ -72,7 +73,6 @@ tPushButtonWidget g_sMainSettingsBtn;
 tPushButtonWidget g_sMainGraphBtn;
 tCanvasWidget g_sMainContent;
 tCanvasWidget g_sMainTime;
-tCanvasWidget g_sMainStatus;
 tCanvasWidget g_sMainDesiredSpeed;
 tCanvasWidget g_sMainCurrentSpeed;
 tPushButtonWidget g_sMainDesiredSpeedUpBtn;
@@ -246,42 +246,23 @@ Canvas(
 	NULL				  // on-paint function pointer
 );
 Canvas(
-	g_sMainTime,																			// struct name
-	&g_sMainPanel,																			// parent widget pointer
-	&g_sMainStatus,																			// sibling widget pointer
-	NULL,																					// child widget pointer
-	DISPLAY,																				// display device pointer
-	6,																						// x position
-	6,																						// y position
-	172,																					// width
-	22,																						// height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_LEFT | CANVAS_STYLE_TEXT_TOP, // style
-	ClrBlack,																				// fill color
-	NULL,																					// outline color
-	ClrWhite,																				// text color
-	&g_sFontNf16,																			// font pointer
-	"Time: 21:56 (night)",																	// text
-	NULL,																					// image pointer
-	NULL																					// on-paint function pointer
-);
-Canvas(
-	g_sMainStatus,																			 // struct name
-	&g_sMainPanel,																			 // parent widget pointer
-	NULL,																					 // sibling widget pointer
-	NULL,																					 // child widget pointer
-	DISPLAY,																				 // display device pointer
-	178,																					 // x position
-	6,																						 // y position
-	136,																					 // width
-	22,																						 // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_RIGHT | CANVAS_STYLE_TEXT_TOP, // style
-	ClrBlack,																				 // fill color
-	ClrWhite,																				 // outline color
-	ClrWhite,																				 // text color
-	&g_sFontNf16,																			 // font pointer
-	"Status: Off",																			 // text
-	NULL,																					 // image pointer
-	NULL																					 // on-paint function pointer
+	g_sMainTime,																			   // struct name
+	&g_sMainPanel,																			   // parent widget pointer
+	NULL,																					   // sibling widget pointer
+	NULL,																					   // child widget pointer
+	DISPLAY,																				   // display device pointer
+	6,																						   // x position
+	6,																						   // y position
+	308,																					   // width
+	22,																						   // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																				   // fill color
+	NULL,																					   // outline color
+	ClrWhite,																				   // text color
+	&g_sFontNf16,																			   // font pointer
+	DISPLAY_DATE " - 21:56 (night)",														   // text
+	NULL,																					   // image pointer
+	NULL																					   // on-paint function pointer
 );
 Canvas(
 	g_sMainDesiredSpeed,																								   // struct name
@@ -869,19 +850,15 @@ void OnMainStartBtnClick(tWidget *pWidget) {
 
 	if (g_bIsRunning) {
 		PushButtonTextSet(&g_sMainStartBtn, "STOP");
-		CanvasTextSet(&g_sMainStatus, "Status: On");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrRed);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkRed);
 		CanvasFillColorSet(&g_sSettingsLine, ClrRed);
 	} else {
 		PushButtonTextSet(&g_sMainStartBtn, "START");
-		CanvasTextSet(&g_sMainStatus, "Status: Off");
 		PushButtonFillColorSet(&g_sMainStartBtn, ClrBlue);
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkBlue);
 		CanvasFillColorSet(&g_sSettingsLine, ClrBlue);
 	}
-
-	WidgetPaint((tWidget *)&g_sMainStatus);
 
 	GUI_InvokeCallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
 }
@@ -1262,9 +1239,9 @@ void GUI_PulseInternal() {
 			TicksToTime(ui32Time, &g_ui8TimeHours, &g_ui8TimeMinutes, NULL);
 
 			if (ui32Light < NIGHT_LIGHT_THRESHOLD)
-				snprintf(ga_cTimeText, 20, "Time: %02d:%02d (night)\0", g_ui8TimeHours, g_ui8TimeMinutes);
+				snprintf(ga_cTimeText, 25, DISPLAY_DATE " - %02d:%02d (night)\0", g_ui8TimeHours, g_ui8TimeMinutes);
 			else
-				snprintf(ga_cTimeText, 20, "Time: %02d:%02d (day)\0", g_ui8TimeHours, g_ui8TimeMinutes);
+				snprintf(ga_cTimeText, 25, DISPLAY_DATE " - %02d:%02d (day)\0", g_ui8TimeHours, g_ui8TimeMinutes);
 
 			CanvasTextSet(&g_sMainTime, ga_cTimeText);
 			WidgetPaint((tWidget *)&g_sMainTime);
