@@ -427,9 +427,9 @@ Canvas(
 	&g_sSettingsOption2Panel,																							   // sibling widget pointer
 	&g_sSettingsOption1DownBtn,																							   // child widget pointer
 	DISPLAY,																											   // display device pointer
-	138,																												   // x position
+	128,																												   // x position
 	8,																													   // y position
-	120,																												   // width
+	140,																												   // width
 	52,																													   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
 	ClrBlack,																											   // fill color
@@ -448,7 +448,7 @@ RectangularButton(
 	DISPLAY,																 // display device pointer
 	82,																		 // x position
 	8,																		 // y position
-	50,																		 // width
+	40,																		 // width
 	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
@@ -469,9 +469,9 @@ RectangularButton(
 	NULL,																	 // sibling widget pointer
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
-	264,																	 // x position
+	274,																	 // x position
 	8,																		 // y position
-	50,																		 // width
+	40,																		 // width
 	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
@@ -492,9 +492,9 @@ Canvas(
 	&g_sSettingsOption3Panel,																							   // sibling widget pointer
 	&g_sSettingsOption2DownBtn,																							   // child widget pointer
 	DISPLAY,																											   // display device pointer
-	138,																												   // x position
+	128,																												   // x position
 	66,																													   // y position
-	120,																												   // width
+	140,																												   // width
 	52,																													   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
 	ClrBlack,																											   // fill color
@@ -513,7 +513,7 @@ RectangularButton(
 	DISPLAY,																 // display device pointer
 	82,																		 // x position
 	66,																		 // y position
-	50,																		 // width
+	40,																		 // width
 	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
@@ -534,9 +534,9 @@ RectangularButton(
 	NULL,																	 // sibling widget pointer
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
-	264,																	 // x position
+	274,																	 // x position
 	66,																		 // y position
-	50,																		 // width
+	40,																		 // width
 	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
@@ -557,9 +557,9 @@ Canvas(
 	&g_sSettingsOption4Panel,																							   // sibling widget pointer
 	&g_sSettingsOption3DownBtn,																							   // child widget pointer
 	DISPLAY,																											   // display device pointer
-	138,																												   // x position
+	128,																												   // x position
 	124,																												   // y position
-	120,																												   // width
+	140,																												   // width
 	52,																													   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
 	ClrBlack,																											   // fill color
@@ -578,7 +578,7 @@ RectangularButton(
 	DISPLAY,																 // display device pointer
 	82,																		 // x position
 	124,																	 // y position
-	50,																		 // width
+	40,																		 // width
 	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
@@ -599,9 +599,9 @@ RectangularButton(
 	NULL,																	 // sibling widget pointer
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
-	264,																	 // x position
+	274,																	 // x position
 	124,																	 // y position
-	50,																		 // width
+	40,																		 // width
 	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
@@ -622,9 +622,9 @@ Canvas(
 	NULL,																												   // sibling widget pointer
 	&g_sSettingsOption4DownBtn,																							   // child widget pointer
 	DISPLAY,																											   // display device pointer
-	138,																												   // x position
+	128,																												   // x position
 	182,																												   // y position
-	120,																												   // width
+	140,																												   // width
 	52,																													   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
 	ClrBlack,																											   // fill color
@@ -643,7 +643,7 @@ RectangularButton(
 	DISPLAY,																 // display device pointer
 	82,																		 // x position
 	182,																	 // y position
-	50,																		 // width
+	40,																		 // width
 	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
@@ -664,9 +664,9 @@ RectangularButton(
 	NULL,																	 // sibling widget pointer
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
-	264,																	 // x position
+	274,																	 // x position
 	182,																	 // y position
-	50,																		 // width
+	40,																		 // width
 	52,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
