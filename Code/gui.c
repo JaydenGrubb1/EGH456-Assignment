@@ -1,6 +1,7 @@
 #pragma region Includes
 #include "gui.h"
 #include "util.h"
+#include "config.h"
 
 /* Standard header files */
 #include <stdio.h>
@@ -34,8 +35,6 @@
 #define DISPLAY &g_sKentec320x240x16_SSD2119
 #define AUTO_REPEAT_DELAY 250
 #define AUTO_REPEAT_RATE 20
-#define NIGHT_LIGHT_THRESHOLD 5
-#define DISPLAY_DATE "16/05/23"
 
 /* Global constants */
 const tRectangle gc_sDesiredSpeedRect = {38, 54, 93, 79};
@@ -760,7 +759,7 @@ CheckBox(
 	&g_sFontNf10,					   // font pointer
 	" Speed (RPM)",					   // text
 	NULL,							   // image pointer
-	NULL							   // on-change function pointer
+	OnGraphSpeedChkClick			   // on-change function pointer
 );
 CheckBox(
 	g_sGraphPowerChk,				   // struct name
@@ -780,47 +779,47 @@ CheckBox(
 	&g_sFontNf10,					   // font pointer
 	" Power (W)",					   // text
 	NULL,							   // image pointer
-	NULL							   // on-change function pointer
+	OnGraphPowerChkClick			   // on-change function pointer
 );
 CheckBox(
-	g_sGraphLightChk,  // struct name
-	&g_sGraphPanel,	   // parent widget pointer
-	&g_sGraphAccelChk, // sibling widget pointer
-	NULL,			   // child widget pointer
-	DISPLAY,		   // display device pointer
-	196,			   // x position
-	184,			   // y position
-	128,			   // width
-	22,				   // height
-	CB_STYLE_TEXT,	   // style
-	22,				   // box size
-	NULL,			   // fill color
-	ClrWhite,		   // outline color
-	ClrLime,		   // text color
-	&g_sFontNf10,	   // font pointer
-	" Light (lux)",	   // text
-	NULL,			   // image pointer
-	NULL			   // on-change function pointer
+	g_sGraphLightChk,	 // struct name
+	&g_sGraphPanel,		 // parent widget pointer
+	&g_sGraphAccelChk,	 // sibling widget pointer
+	NULL,				 // child widget pointer
+	DISPLAY,			 // display device pointer
+	196,				 // x position
+	184,				 // y position
+	128,				 // width
+	22,					 // height
+	CB_STYLE_TEXT,		 // style
+	22,					 // box size
+	NULL,				 // fill color
+	ClrWhite,			 // outline color
+	ClrLime,			 // text color
+	&g_sFontNf10,		 // font pointer
+	" Light (lux)",		 // text
+	NULL,				 // image pointer
+	OnGraphLightChkClick // on-change function pointer
 );
 CheckBox(
-	g_sGraphAccelChk, // struct name
-	&g_sGraphPanel,	  // parent widget pointer
-	&g_sGraphContent, // sibling widget pointer
-	NULL,			  // child widget pointer
-	DISPLAY,		  // display device pointer
-	196,			  // x position
-	212,			  // y position
-	128,			  // width
-	22,				  // height
-	CB_STYLE_TEXT,	  // style
-	22,				  // box size
-	NULL,			  // fill color
-	ClrWhite,		  // outline color
-	ClrYellow,		  // text color
-	&g_sFontNf10,	  // font pointer
-	" Accel (m/s/s)", // text
-	NULL,			  // image pointer
-	NULL			  // on-change function pointer
+	g_sGraphAccelChk,	 // struct name
+	&g_sGraphPanel,		 // parent widget pointer
+	&g_sGraphContent,	 // sibling widget pointer
+	NULL,				 // child widget pointer
+	DISPLAY,			 // display device pointer
+	196,				 // x position
+	212,				 // y position
+	128,				 // width
+	22,					 // height
+	CB_STYLE_TEXT,		 // style
+	22,					 // box size
+	NULL,				 // fill color
+	ClrWhite,			 // outline color
+	ClrYellow,			 // text color
+	&g_sFontNf10,		 // font pointer
+	" Accel (m/s/s)",	 // text
+	NULL,				 // image pointer
+	OnGraphAccelChkClick // on-change function pointer
 );
 Canvas(
 	g_sGraphContent,							   // struct name
@@ -1223,7 +1222,7 @@ uint8_t g_ui8PrevAccel = 0;
  */
 void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 	/* Draw lead line */
-	GrContextForegroundSet(psContext, ClrWhite);
+	GrContextForegroundSet(psContext, ClrCyan);
 	GrLineDrawV(psContext, g_ui16GraphIndex + 1, psContext->sClipRegion.i16YMin, psContext->sClipRegion.i16YMax);
 
 	/* Clear current line */
@@ -1232,11 +1231,38 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 
 	/* Draw speed */
 	if (g_bGraphSpeed) {
-		int i16Speed = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
-		int y = Map(i16Speed, 0, 255, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		uint16_t i16Speed = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
+		uint16_t i16SpeedVal = Map(i16Speed, 0, MAX_SPEED, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
 		GrContextForegroundSet(psContext, ClrRed);
-		GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevSpeed, g_ui16GraphIndex, y);
-		g_ui8PrevSpeed = y;
+		GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevSpeed, g_ui16GraphIndex, i16SpeedVal);
+		g_ui8PrevSpeed = i16SpeedVal;
+	}
+
+	/* Draw power */
+	if (g_bGraphPower) {
+		uint16_t i16Power = GUI_InvokeCallback(GUI_RETURN_POWER, NULL, NULL);
+		uint16_t i16PowerVal = Map(i16Power, 0, MAX_POWER, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		GrContextForegroundSet(psContext, ClrBlue);
+		GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevPower, g_ui16GraphIndex, i16PowerVal);
+		g_ui8PrevPower = i16PowerVal;
+	}
+
+	/* Draw light */
+	if (g_bGraphLight) {
+		uint16_t i16Light = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL);
+		uint16_t i16LightVal = Map(i16Light, 0, MAX_LIGHT, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		GrContextForegroundSet(psContext, ClrLime);
+		GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevLight, g_ui16GraphIndex, i16LightVal);
+		g_ui8PrevLight = i16LightVal;
+	}
+
+	/* Draw accel */
+	if (g_bGraphAccel) {
+		uint16_t i16Accel = GUI_InvokeCallback(GUI_RETURN_ACCEL, NULL, NULL);
+		uint16_t i16AccelVal = Map(i16Accel, 0, MAX_ACCEL, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		GrContextForegroundSet(psContext, ClrYellow);
+		GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevAccel, g_ui16GraphIndex, i16AccelVal);
+		g_ui8PrevAccel = i16AccelVal;
 	}
 
 	/* Increment the graph */
