@@ -21,6 +21,16 @@ typedef enum GUICallbackOption {
 } tGUICallbackOption;
 
 /**
+ * @brief Possible current panels
+ *
+ */
+typedef enum tCurrentPanel {
+	MAIN_PANEL,
+	SETTINGS_PANEL,
+	GRAPH_PANEL
+} tCurrentPanel;
+
+/**
  * @brief GUI callback function type
  *
  */
@@ -34,20 +44,20 @@ typedef uint32_t (*tGUICallbackFxn)(uint32_t arg1, uint32_t arg2);
 void GUI_Init(uint32_t ui32SysClock);
 
 /**
- * @brief Handles processing the messages for the widget message queue
- *
- * @note This function does not return and should be called in its own task
- *
- */
-void GUI_Handle();
-
-/**
  * @brief Triggers a periodic GUI update
  *
  * @note This function should be called periodically from a clock task
  *
  */
 void GUI_Pulse();
+
+/**
+ * @brief Handles processing the messages for the widget message queue
+ *
+ * @note This function does not return and should be called in its own task
+ *
+ */
+void GUI_Handle();
 
 /**
  * @brief Sets the callback function for a specific callback

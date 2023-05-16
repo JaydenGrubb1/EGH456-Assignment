@@ -33,10 +33,12 @@
 #define DISPLAY &g_sKentec320x240x16_SSD2119
 #define AUTO_REPEAT_DELAY 250
 #define AUTO_REPEAT_RATE 20
+#define NIGHT_LIGHT_THRESHOLD 5
 
 /* Global variables */
 tContext g_sContext;
 tRectangle g_sScreenRect;
+tCurrentPanel g_eCurrentPanel = MAIN_PANEL;
 int16_t g_i16DesiredSpeed = 0;
 int16_t g_i16CurrentSpeed = 0;
 uint8_t g_ui8MaxPower = 10;
@@ -49,6 +51,9 @@ bool g_bGraphPower = true;
 bool g_bGraphLight = false;
 bool g_bGraphAccel = false;
 volatile bool g_bDoUpdate = false;
+uint32_t g_ui32PrevTime = UINT32_MAX;
+uint32_t g_ui32PrevLight = UINT32_MAX;
+char ga_cTimeText[20];
 
 /* Callback function array */
 tGUICallbackFxn g_pfnCallbacks[GUI_CALLBACK_COUNT];
@@ -909,6 +914,7 @@ void OnMainSettingsBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sMainPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sSettingsPanel);
 	WidgetPaint(WIDGET_ROOT);
+	g_eCurrentPanel = SETTINGS_PANEL;
 }
 
 /**
@@ -920,6 +926,7 @@ void OnMainGraphBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sMainPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sGraphPanel);
 	WidgetPaint(WIDGET_ROOT);
+	g_eCurrentPanel = GRAPH_PANEL;
 }
 
 /**
@@ -931,6 +938,7 @@ void OnSettingsBackBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sSettingsPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
 	WidgetPaint(WIDGET_ROOT);
+	g_eCurrentPanel = MAIN_PANEL;
 }
 
 /**
@@ -1050,6 +1058,7 @@ void OnGraphBackBtnClick(tWidget *pWidget) {
 	WidgetRemove((tWidget *)&g_sGraphPanel);
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
 	WidgetPaint(WIDGET_ROOT);
+	g_eCurrentPanel = MAIN_PANEL;
 }
 
 /**
@@ -1215,6 +1224,48 @@ void GUI_Init(uint32_t ui32SysClock) {
 }
 
 /**
+ * @brief Internal function to handle updating the GUI
+ *
+ * @note This function is not intended to be called by the user
+ */
+void GUI_PulseInternal() {
+	if (g_eCurrentPanel == MAIN_PANEL) {
+		/* Update current speed */
+		WidgetPaint((tWidget *)&g_sMainCurrentSpeed);
+
+		/* Update time and light status */
+		uint32_t ui32Time = GUI_InvokeCallback(GUI_RETURN_TIME, NULL, NULL);
+		uint32_t ui32Light = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL);
+		if (ui32Time != g_ui32PrevTime || ui32Light != g_ui32PrevLight) {
+			g_ui32PrevTime = ui32Time;
+			g_ui32PrevLight = ui32Light;
+
+			if (ui32Light < NIGHT_LIGHT_THRESHOLD)
+				snprintf(ga_cTimeText, 20, "Time: %02d:%02d (night)\0", ui32Time / 3600, (ui32Time / 60) % 60);
+			else
+				snprintf(ga_cTimeText, 20, "Time: %02d:%02d (day)\0", ui32Time / 3600, (ui32Time / 60) % 60);
+
+			CanvasTextSet(&g_sMainTime, ga_cTimeText);
+			WidgetPaint((tWidget *)&g_sMainTime);
+		}
+	}
+	if (g_eCurrentPanel == GRAPH_PANEL) {
+		/* Update graph content */
+		WidgetPaint((tWidget *)&g_sGraphContent);
+	}
+}
+
+/**
+ * @brief Triggers a periodic GUI update
+ *
+ * @note This function should be called periodically from a clock task
+ *
+ */
+void GUI_Pulse() {
+	g_bDoUpdate = true; // VERIFY: Is this sufficient? Does it need to be atomic?
+}
+
+/**
  * @brief Handles processing the messages for the widget message queue
  *
  * @note This function does not return and should be called in its own task
@@ -1229,25 +1280,6 @@ void GUI_Handle() {
 
 		WidgetMessageQueueProcess();
 	}
-}
-
-/**
- * @brief Triggers a periodic GUI update
- *
- * @note This function should be called periodically from a clock task
- *
- */
-void GUI_Pulse() {
-	g_bDoUpdate = true;	// VERIFY: Is this sufficient? Does it need to be atomic?
-}
-
-/**
- * @brief Internal function to handle updating the GUI
- *
- * @note This function is not intended to be called by the user
- */
-void GUI_PulseInternal() {
-	// TODO: Update GUI
 }
 
 /**
