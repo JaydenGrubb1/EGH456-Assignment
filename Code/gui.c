@@ -971,7 +971,7 @@ void OnSettingsOption3UpBtnClick(tWidget *psWidget) {
 
 	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
 
-	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
+	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, TimeToTicks(g_ui8TimeHours, g_ui8TimeMinutes, 0), NULL);
 }
 
 /**
@@ -987,7 +987,7 @@ void OnSettingsOption3DownBtnClick(tWidget *psWidget) {
 	g_ui8TimeHours = g_ui8TimeHours % 24;
 	WidgetPaint((tWidget *)&g_sSettingsOption3Panel);
 
-	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
+	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, TimeToTicks(g_ui8TimeHours, g_ui8TimeMinutes, 0), NULL);
 }
 
 /**
@@ -1001,7 +1001,7 @@ void OnSettingsOption4UpBtnClick(tWidget *psWidget) {
 		g_ui8TimeMinutes = 0;
 	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
 
-	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
+	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, TimeToTicks(g_ui8TimeHours, g_ui8TimeMinutes, 0), NULL);
 }
 
 /**
@@ -1016,7 +1016,7 @@ void OnSettingsOption4DownBtnClick(tWidget *psWidget) {
 
 	WidgetPaint((tWidget *)&g_sSettingsOption4Panel);
 
-	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, g_ui8TimeHours, g_ui8TimeMinutes);
+	GUI_InvokeCallback(GUI_SET_TIME_CHANGE, TimeToTicks(g_ui8TimeHours, g_ui8TimeMinutes, 0), NULL);
 }
 
 /**

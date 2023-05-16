@@ -66,12 +66,11 @@ uint32_t GetClock() {
 /**
  * @brief Set the clock counter value
  *
- * @param ui8Hours The hours to set the clock to
- * @param ui8Minutes The minutes to set the clock to
+ * @param ui32Time The new clock counter value
  */
-void SetClock(uint8_t ui8Hours, uint8_t ui8Minutes) {
+void SetClock(uint32_t ui32Time) {
 	// TODO: Add semaphore
-	g_ui32ClockCounter = TimeToTicks(ui8Hours, ui8Minutes, 0);
+	g_ui32ClockCounter = ui32Time;
 }
 
 float rpmCounter = 0;
