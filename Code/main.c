@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h> // rand()
 #include <math.h>
 
 /* XDCtools header files */
@@ -12,6 +13,7 @@
 /* BIOS header files */
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Task.h>
+#include <ti/sysbios/knl/Clock.h>
 
 /* TI-RTOS header files */
 #include <ti/drivers/GPIO.h>
@@ -24,6 +26,7 @@
 
 /* Global defines */
 #define TASK_STACK_SIZE 1024
+#define GUI_PULSE_PERIOD 500
 
 /* Task structs */
 Task_Struct g_sHandleGUITask;
@@ -52,6 +55,15 @@ void TimeChanged(uint32_t hours, uint32_t minutes) {
 }
 
 /**
+ * @brief Callback function to get the current RPM
+ *
+ * @return The current RPM
+ */
+int16_t GetCurrentRPM() {
+	return rand() / 100;
+}
+
+/**
  * @brief Application entry point
  *
  * @return Unused
@@ -69,15 +81,23 @@ int main(void) {
 	GUI_Init(cpuFreq.lo);
 	GUI_SetCallback(GUI_MOTOR_STATE_CHANGE, (tGUICallbackFxn)MotorStateChanged);
 	GUI_SetCallback(GUI_SET_TIME_CHANGE, (tGUICallbackFxn)TimeChanged);
+	GUI_SetCallback(GUI_RETURN_RPM, (tGUICallbackFxn)GetCurrentRPM);
 
 	/* Construct task threads */
 	Task_Params taskParams;
 	Task_Params_init(&taskParams);
 	taskParams.stackSize = TASK_STACK_SIZE;
 	taskParams.stack = &ga_cHandleGUIStack;
-	Task_construct(&g_sHandleGUITask, (Task_FuncPtr)GUI_Handle, &taskParams, NULL);
+	Task_construct(&g_sHandleGUITask, GUI_Handle, &taskParams, NULL);
 
-	/* Draw the GUI */
+	/* Construct clock threads */
+	Clock_Params clockParams;
+	Clock_Params_init(&clockParams);
+	clockParams.period = GUI_PULSE_PERIOD;
+	clockParams.startFlag = true;
+	Clock_create(GUI_Pulse, GUI_PULSE_PERIOD, &clockParams, NULL);
+
+	/* Start the GUI */
 	GUI_Start();
 
 	/* Start BIOS */

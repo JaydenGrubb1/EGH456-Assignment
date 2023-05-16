@@ -11,6 +11,11 @@ typedef enum GUICallbackOption {
 	GUI_MAX_POWER_CHANGE,
 	GUI_MAX_ACCEL_CHANGE,
 	GUI_SET_TIME_CHANGE,
+	GUI_RETURN_RPM,
+	GUI_RETURN_POWER,
+	GUI_RETURN_LIGHT,
+	GUI_RETURN_ACCEL,
+	GUI_RETURN_TIME,
 
 	GUI_CALLBACK_COUNT
 } tGUICallbackOption;
@@ -19,7 +24,7 @@ typedef enum GUICallbackOption {
  * @brief GUI callback function type
  *
  */
-typedef void (*tGUICallbackFxn)(uint32_t arg1, uint32_t arg2);
+typedef uint32_t (*tGUICallbackFxn)(uint32_t arg1, uint32_t arg2);
 
 /**
  * @brief Initialize the GUI
@@ -37,6 +42,14 @@ void GUI_Init(uint32_t ui32SysClock);
 void GUI_Handle();
 
 /**
+ * @brief Triggers a periodic GUI update
+ *
+ * @note This function should be called periodically from a clock task
+ *
+ */
+void GUI_Pulse();
+
+/**
  * @brief Sets the callback function for a specific callback
  *
  * @param tCallbackOpt The callback to set
@@ -48,12 +61,13 @@ void GUI_SetCallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbac
  * @brief Invokes the callback function for a specific callback
  *
  * @param tCallbackOpt The callback to invoke
- * @param arg1 The first argument to pass to the callback
- * @param arg2 The second argument to pass to the callback
+ * @param arg1 The first argument to pass to the callback (optional)
+ * @param arg2 The second argument to pass to the callback (optional)
+ * @return The result of the callback function (optional)
  *
  * @note This function is not intended to be called by the user
  */
-void GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2);
+uint32_t GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2);
 
 /**
  * @brief Starts the GUI

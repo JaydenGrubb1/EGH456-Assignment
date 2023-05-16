@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 #include <math.h>
 
 /* GRLib header files */
@@ -1111,6 +1112,8 @@ void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext) {
  * @param psContext The graphics context
  */
 void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
+	g_i16CurrentSpeed = GUI_InvokeCallback(GUI_RETURN_RPM, NULL, NULL);
+
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf36);
 	char text[8];
@@ -1203,6 +1206,9 @@ void GUI_Init(uint32_t ui32SysClock) {
 	g_sScreenRect.i16YMin = 0;
 	g_sScreenRect.i16XMax = GrContextDpyWidthGet(&g_sContext);
 	g_sScreenRect.i16YMax = GrContextDpyHeightGet(&g_sContext);
+
+	/* Erase the function callbacks array */
+	memset(g_pfnCallbacks, NULL, sizeof(g_pfnCallbacks));
 }
 
 /**
@@ -1215,6 +1221,16 @@ void GUI_Handle() {
 	while (1) {
 		WidgetMessageQueueProcess();
 	}
+}
+
+/**
+ * @brief Triggers a periodic GUI update
+ *
+ * @note This function should be called periodically from a clock task
+ *
+ */
+void GUI_Pulse() {
+	// TODO: Trigger periodic GUI update
 }
 
 /**
@@ -1231,19 +1247,22 @@ void GUI_SetCallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbac
 }
 
 /**
- * @brief Invokes a callback
+ * @brief Invokes the callback function for a specific callback
  *
  * @param tCallbackOpt The callback to invoke
- * @param arg1 The first argument to pass to the callback
- * @param arg2 The second argument to pass to the callback
+ * @param arg1 The first argument to pass to the callback (optional)
+ * @param arg2 The second argument to pass to the callback (optional)
+ * @return The result of the callback function (optional)
+ *
+ * @note This function is not intended to be called by the user
  */
-void GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2) {
+uint32_t GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2) {
 	if (tCallbackOpt >= GUI_CALLBACK_COUNT)
-		return;
+		return 0;
 	if (g_pfnCallbacks[tCallbackOpt] == NULL)
-		return;
+		return 0;
 
-	g_pfnCallbacks[tCallbackOpt](arg1, arg2);
+	return g_pfnCallbacks[tCallbackOpt](arg1, arg2);
 }
 
 /**
