@@ -38,8 +38,8 @@
 #define DEFULT_GRAPH_INDEX 6
 
 /* Global constants */
-const tRectangle gc_sDesiredSpeedRect = {38, 54, 93, 79};
-const tRectangle gc_sCurrentSpeedRect = {38, 132, 93, 157};
+const tRectangle gc_sDesiredSpeedRect = {61, 54, 156, 79};
+const tRectangle gc_sCurrentSpeedRect = {61, 132, 156, 157};
 const tRectangle gc_sOption1Rect = {180, 34, 216, 51};
 const tRectangle gc_sOption2Rect = {180, 90, 216, 107};
 const tRectangle gc_sOption3Rect = {180, 146, 216, 163};
@@ -63,7 +63,7 @@ volatile bool g_bDoUpdate = false;
 uint32_t g_ui32PrevTime = UINT32_MAX;
 bool g_bPrevIsNight = false;
 int16_t g_i16PrevRPM = INT16_MAX;
-char ga_cTimeText[25];
+char ga_cTimeText[33];
 uint16_t g_ui16GraphIndex = DEFULT_GRAPH_INDEX;
 uint8_t g_ui8PrevSpeed = UINT8_MAX;
 uint8_t g_ui8PrevPower = UINT8_MAX;
@@ -269,7 +269,7 @@ Canvas(
 	NULL,																					   // outline color
 	ClrWhite,																				   // text color
 	&g_sFontNf16,																			   // font pointer
-	DISPLAY_DATE " - 21:56 (night)",														   // text
+	__DATE__ " - 21:56 (night)",															   // text
 	NULL,																					   // image pointer
 	NULL																					   // on-paint function pointer
 );
@@ -288,7 +288,7 @@ Canvas(
 	ClrWhite,																											   // outline color
 	ClrWhite,																											   // text color
 	&g_sFontNf10,																										   // font pointer
-	"Target Speed",																										   // text
+	"Target Speed (RPM)",																								   // text
 	NULL,																												   // image pointer
 	OnMainDesiredSpeedPaint																								   // on-paint function pointer
 );
@@ -307,7 +307,7 @@ Canvas(
 	ClrWhite,																											   // outline color
 	ClrWhite,																											   // text color
 	&g_sFontNf10,																										   // font pointer
-	"Actual Speed",																										   // text
+	"Actual Speed (RPM)",																								   // text
 	NULL,																												   // image pointer
 	OnMainCurrentSpeedPaint																								   // on-paint function pointer
 );
@@ -1114,7 +1114,7 @@ void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf36);
 	char text[8];
-	snprintf(text, 8, "%03d RPM\0", g_i16DesiredSpeed);
+	snprintf(text, 8, "%d\0", g_i16DesiredSpeed);
 	GrStringDrawCentered(psContext, text, -1, 107, 64, false);
 }
 
@@ -1139,7 +1139,7 @@ void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf36);
 	char text[8];
-	snprintf(text, 8, "%03d RPM\0", i16CurrentRPM);
+	snprintf(text, 8, "%d\0", i16CurrentRPM);
 	GrStringDrawCentered(psContext, text, -1, 107, 142, false);
 }
 
@@ -1158,7 +1158,7 @@ void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
 	char text[4];
-	snprintf(text, 4, "%03d\0", g_ui8MaxPower);
+	snprintf(text, 4, "%d\0", g_ui8MaxPower);
 	GrStringDrawCentered(psContext, text, -1, 198, 41, false);
 }
 
@@ -1177,7 +1177,7 @@ void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
 	char text[4];
-	snprintf(text, 4, "%03d\0", g_ui8MaxAccel);
+	snprintf(text, 4, "%d\0", g_ui8MaxAccel);
 	GrStringDrawCentered(psContext, text, -1, 198, 97, false);
 }
 
@@ -1329,9 +1329,9 @@ void GUI_PulseInternal() {
 			TicksToTime(ui32Time, &g_ui8TimeHours, &g_ui8TimeMinutes, NULL);
 
 			if (bIsNight)
-				snprintf(ga_cTimeText, 25, DISPLAY_DATE " - %02d:%02d (night)\0", g_ui8TimeHours, g_ui8TimeMinutes);
+				snprintf(ga_cTimeText, 33, __DATE__ " - %02d:%02d (night)\0", g_ui8TimeHours, g_ui8TimeMinutes);
 			else
-				snprintf(ga_cTimeText, 25, DISPLAY_DATE " - %02d:%02d (day)\0", g_ui8TimeHours, g_ui8TimeMinutes);
+				snprintf(ga_cTimeText, 33, __DATE__ " - %02d:%02d (day)\0", g_ui8TimeHours, g_ui8TimeMinutes);
 
 			CanvasTextSet(&g_sMainTime, ga_cTimeText);
 			WidgetPaint((tWidget *)&g_sMainTime);
