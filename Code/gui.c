@@ -28,6 +28,7 @@
 #include "fonts/fontnf36.h"
 #pragma endregion
 
+#pragma region Variables and Defines
 /* Global defines */
 #define DISPLAY &g_sKentec320x240x16_SSD2119
 #define AUTO_REPEAT_DELAY 250
@@ -47,9 +48,11 @@ bool g_bGraphSpeed = true;
 bool g_bGraphPower = true;
 bool g_bGraphLight = false;
 bool g_bGraphAccel = false;
+volatile bool g_bDoUpdate = false;
 
 /* Callback function array */
 tGUICallbackFxn g_pfnCallbacks[GUI_CALLBACK_COUNT];
+#pragma endregion
 
 #pragma region Forward widget and function declerations
 /* Main panel widgets */
@@ -1219,6 +1222,11 @@ void GUI_Init(uint32_t ui32SysClock) {
  */
 void GUI_Handle() {
 	while (1) {
+		if (g_bDoUpdate) {
+			g_bDoUpdate = false;
+			GUI_PulseInternal();
+		}
+
 		WidgetMessageQueueProcess();
 	}
 }
@@ -1230,7 +1238,16 @@ void GUI_Handle() {
  *
  */
 void GUI_Pulse() {
-	// TODO: Trigger periodic GUI update
+	g_bDoUpdate = true;	// VERIFY: Is this sufficient? Does it need to be atomic?
+}
+
+/**
+ * @brief Internal function to handle updating the GUI
+ *
+ * @note This function is not intended to be called by the user
+ */
+void GUI_PulseInternal() {
+	// TODO: Update GUI
 }
 
 /**
