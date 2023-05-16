@@ -172,9 +172,9 @@ RectangularButton(
 	NULL,											  // child widget pointer
 	DISPLAY,										  // display device pointer
 	6,												  // x position
-	184,											  // y position
+	182,											  // y position
 	98,												  // width
-	50,												  // height
+	52,												  // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
 	ClrBlue,										  // fill color
 	ClrDarkBlue,									  // press fill color
@@ -195,9 +195,9 @@ RectangularButton(
 	NULL,											  // child widget pointer
 	DISPLAY,										  // display device pointer
 	110,											  // x position
-	184,											  // y position
+	182,											  // y position
 	98,												  // width
-	50,												  // height
+	52,												  // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
 	ClrGray,										  // fill color
 	ClrGray,										  // press fill color
@@ -218,9 +218,9 @@ RectangularButton(
 	NULL,											  // child widget pointer
 	DISPLAY,										  // display device pointer
 	214,											  // x position
-	184,											  // y position
+	182,											  // y position
 	98,												  // width
-	50,												  // height
+	52,												  // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
 	ClrGray,										  // fill color
 	ClrGray,										  // press fill color
@@ -243,7 +243,7 @@ Canvas(
 	6,					  // x position
 	6,					  // y position
 	308,				  // width
-	172,				  // height
+	170,				  // height
 	CANVAS_STYLE_FILL,	  // style
 	ClrBlack,			  // fill color
 	NULL,				  // outline color
@@ -279,9 +279,9 @@ Canvas(
 	NULL,																												   // child widget pointer
 	DISPLAY,																											   // display device pointer
 	6,																													   // x position
-	28,																													   // y position
+	29,																													   // y position
 	202,																												   // width
-	72,																													   // height
+	70,																													   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
 	ClrBlack,																											   // fill color
 	ClrWhite,																											   // outline color
@@ -300,7 +300,7 @@ Canvas(
 	6,																													   // x position
 	106,																												   // y position
 	202,																												   // width
-	72,																													   // height
+	70,																													   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
 	ClrBlack,																											   // fill color
 	ClrWhite,																											   // outline color
@@ -317,9 +317,9 @@ RectangularButton(
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	214,																	 // x position
-	28,																		 // y position
+	29,																		 // y position
 	98,																		 // width
-	33,																		 // height
+	32,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
 	ClrGray,																 // press fill color
@@ -342,7 +342,7 @@ RectangularButton(
 	214,																	 // x position
 	67,																		 // y position
 	98,																		 // width
-	33,																		 // height
+	32,																		 // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL | PB_STYLE_AUTO_REPEAT, // style
 	ClrGray,																 // fill color
 	ClrGray,																 // press fill color
@@ -386,9 +386,9 @@ RectangularButton(
 	NULL,											  // child widget pointer
 	DISPLAY,										  // display device pointer
 	6,												  // x position
-	184,											  // y position
+	182,											  // y position
 	70,												  // width
-	50,												  // height
+	52,												  // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
 	ClrGray,										  // fill color
 	ClrGray,										  // press fill color
@@ -711,9 +711,9 @@ RectangularButton(
 	NULL,											  // child widget pointer
 	DISPLAY,										  // display device pointer
 	6,												  // x position
-	184,											  // y position
+	182,											  // y position
 	70,												  // width
-	50,												  // height
+	52,												  // height
 	PB_STYLE_OUTLINE | PB_STYLE_TEXT | PB_STYLE_FILL, // style
 	ClrGray,										  // fill color
 	ClrGray,										  // press fill color
@@ -734,11 +734,11 @@ CheckBox(
 	NULL,							   // child widget pointer
 	DISPLAY,						   // display device pointer
 	82,								   // x position
-	184,							   // y position
+	182,							   // y position
 	108,							   // width
-	22,								   // height
+	23,								   // height
 	CB_STYLE_TEXT | CB_STYLE_SELECTED, // style
-	22,								   // box size
+	23,								   // box size
 	NULL,							   // fill color
 	ClrWhite,						   // outline color
 	ClrRed,							   // text color
@@ -754,11 +754,11 @@ CheckBox(
 	NULL,							   // child widget pointer
 	DISPLAY,						   // display device pointer
 	82,								   // x position
-	212,							   // y position
+	211,							   // y position
 	108,							   // width
-	22,								   // height
+	23,								   // height
 	CB_STYLE_TEXT | CB_STYLE_SELECTED, // style
-	22,								   // box size
+	23,								   // box size
 	NULL,							   // fill color
 	ClrWhite,						   // outline color
 	ClrBlue,						   // text color
@@ -774,11 +774,11 @@ CheckBox(
 	NULL,				 // child widget pointer
 	DISPLAY,			 // display device pointer
 	196,				 // x position
-	184,				 // y position
+	182,				 // y position
 	128,				 // width
-	22,					 // height
+	23,					 // height
 	CB_STYLE_TEXT,		 // style
-	22,					 // box size
+	23,					 // box size
 	NULL,				 // fill color
 	ClrWhite,			 // outline color
 	ClrLime,			 // text color
@@ -794,11 +794,11 @@ CheckBox(
 	NULL,				 // child widget pointer
 	DISPLAY,			 // display device pointer
 	196,				 // x position
-	212,				 // y position
+	211,				 // y position
 	128,				 // width
-	22,					 // height
+	23,					 // height
 	CB_STYLE_TEXT,		 // style
-	22,					 // box size
+	23,					 // box size
 	NULL,				 // fill color
 	ClrWhite,			 // outline color
 	ClrYellow,			 // text color
@@ -816,7 +816,7 @@ Canvas(
 	6,											   // x position
 	6,											   // y position
 	308,										   // width
-	172,										   // height
+	170,										   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_APP_DRAWN, // style
 	NULL,										   // fill color
 	ClrWhite,									   // outline color
