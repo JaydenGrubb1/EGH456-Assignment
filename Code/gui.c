@@ -35,6 +35,7 @@
 #define DISPLAY &g_sKentec320x240x16_SSD2119
 #define AUTO_REPEAT_DELAY 250
 #define AUTO_REPEAT_RATE 20
+#define DEFULT_GRAPH_INDEX 6
 
 /* Global constants */
 const tRectangle gc_sDesiredSpeedRect = {38, 54, 93, 79};
@@ -61,8 +62,13 @@ bool g_bGraphAccel = false;
 volatile bool g_bDoUpdate = false;
 uint32_t g_ui32PrevTime = UINT32_MAX;
 bool g_bPrevIsNight = false;
-int16_t g_i16PrevSpeed = INT16_MAX;
+int16_t g_i16PrevRPM = INT16_MAX;
 char ga_cTimeText[25];
+uint16_t g_ui16GraphIndex = DEFULT_GRAPH_INDEX;
+uint8_t g_ui8PrevSpeed = UINT8_MAX;
+uint8_t g_ui8PrevPower = UINT8_MAX;
+uint8_t g_ui8PrevLight = UINT8_MAX;
+uint8_t g_ui8PrevAccel = UINT8_MAX;
 
 /* Callback function array */
 tGUICallbackFxn g_pfnCallbacks[GUI_CALLBACK_COUNT];
@@ -912,6 +918,7 @@ void OnMainGraphBtnClick(tWidget *pWidget) {
 	WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sGraphPanel);
 	WidgetPaint(WIDGET_ROOT);
 	g_eCurrentPanel = GRAPH_PANEL;
+	g_ui16GraphIndex = DEFULT_GRAPH_INDEX;
 }
 
 /**
@@ -1054,6 +1061,7 @@ void OnGraphBackBtnClick(tWidget *pWidget) {
  */
 void OnGraphSpeedChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphSpeed = bSelected;
+	g_ui8PrevSpeed = UINT8_MAX;
 }
 
 /**
@@ -1064,6 +1072,7 @@ void OnGraphSpeedChkClick(tWidget *psWidget, uint32_t bSelected) {
  */
 void OnGraphPowerChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphPower = bSelected;
+	g_ui8PrevPower = UINT8_MAX;
 }
 
 /**
@@ -1074,6 +1083,7 @@ void OnGraphPowerChkClick(tWidget *psWidget, uint32_t bSelected) {
  */
 void OnGraphLightChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphLight = bSelected;
+	g_ui8PrevLight = UINT8_MAX;
 }
 
 /**
@@ -1084,6 +1094,7 @@ void OnGraphLightChkClick(tWidget *psWidget, uint32_t bSelected) {
  */
 void OnGraphAccelChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphAccel = bSelected;
+	g_ui8PrevAccel = UINT8_MAX;
 }
 #pragma endregion
 
@@ -1115,10 +1126,10 @@ void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext) {
  */
 void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	/* Check if speed has updated */
-	int16_t i16CurrentSpeed = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
-	if (i16CurrentSpeed == g_i16PrevSpeed)
+	int16_t i16CurrentRPM = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
+	if (i16CurrentRPM == g_i16PrevRPM)
 		return;
-	g_i16PrevSpeed = i16CurrentSpeed;
+	g_i16PrevRPM = i16CurrentRPM;
 
 	/* Clear the previous speed */
 	GrContextForegroundSet(psContext, ClrBlack);
@@ -1128,7 +1139,7 @@ void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf36);
 	char text[8];
-	snprintf(text, 8, "%03d RPM\0", i16CurrentSpeed);
+	snprintf(text, 8, "%03d RPM\0", i16CurrentRPM);
 	GrStringDrawCentered(psContext, text, -1, 107, 142, false);
 }
 
@@ -1208,12 +1219,6 @@ void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
 	GrStringDrawCentered(psContext, text, -1, 198, 209, false);
 }
 
-uint16_t g_ui16GraphIndex = 6;
-uint8_t g_ui8PrevSpeed = 0;
-uint8_t g_ui8PrevPower = 0;
-uint8_t g_ui8PrevLight = 0;
-uint8_t g_ui8PrevAccel = 0;
-
 /**
  * @brief Function to handle painting the graph content
  *
@@ -1233,8 +1238,10 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 	if (g_bGraphSpeed) {
 		uint16_t i16Speed = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
 		uint16_t i16SpeedVal = Map(i16Speed, 0, MAX_SPEED, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
-		GrContextForegroundSet(psContext, ClrRed);
-		GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevSpeed, g_ui16GraphIndex, i16SpeedVal);
+		if (g_ui8PrevSpeed != UINT8_MAX) {
+			GrContextForegroundSet(psContext, ClrRed);
+			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevSpeed, g_ui16GraphIndex, i16SpeedVal);
+		}
 		g_ui8PrevSpeed = i16SpeedVal;
 	}
 
@@ -1242,8 +1249,10 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 	if (g_bGraphPower) {
 		uint16_t i16Power = GUI_InvokeCallback(GUI_RETURN_POWER, NULL, NULL);
 		uint16_t i16PowerVal = Map(i16Power, 0, MAX_POWER, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
-		GrContextForegroundSet(psContext, ClrBlue);
-		GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevPower, g_ui16GraphIndex, i16PowerVal);
+		if (g_ui8PrevPower != UINT8_MAX) {
+			GrContextForegroundSet(psContext, ClrBlue);
+			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevPower, g_ui16GraphIndex, i16PowerVal);
+		}
 		g_ui8PrevPower = i16PowerVal;
 	}
 
@@ -1251,8 +1260,10 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 	if (g_bGraphLight) {
 		uint16_t i16Light = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL);
 		uint16_t i16LightVal = Map(i16Light, 0, MAX_LIGHT, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
-		GrContextForegroundSet(psContext, ClrLime);
-		GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevLight, g_ui16GraphIndex, i16LightVal);
+		if (g_ui8PrevLight != UINT8_MAX) {
+			GrContextForegroundSet(psContext, ClrLime);
+			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevLight, g_ui16GraphIndex, i16LightVal);
+		}
 		g_ui8PrevLight = i16LightVal;
 	}
 
@@ -1260,8 +1271,10 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 	if (g_bGraphAccel) {
 		uint16_t i16Accel = GUI_InvokeCallback(GUI_RETURN_ACCEL, NULL, NULL);
 		uint16_t i16AccelVal = Map(i16Accel, 0, MAX_ACCEL, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
-		GrContextForegroundSet(psContext, ClrYellow);
-		GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevAccel, g_ui16GraphIndex, i16AccelVal);
+		if (g_ui8PrevAccel != UINT8_MAX) {
+			GrContextForegroundSet(psContext, ClrYellow);
+			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevAccel, g_ui16GraphIndex, i16AccelVal);
+		}
 		g_ui8PrevAccel = i16AccelVal;
 	}
 
