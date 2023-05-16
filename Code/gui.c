@@ -1116,7 +1116,7 @@ void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext) {
  */
 void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
 	/* Check if speed has updated */
-	int16_t i16CurrentSpeed = GUI_InvokeCallback(GUI_RETURN_RPM, NULL, NULL);
+	int16_t i16CurrentSpeed = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
 	if (i16CurrentSpeed == g_i16PrevSpeed)
 		return;
 	g_i16PrevSpeed = i16CurrentSpeed;
@@ -1209,6 +1209,12 @@ void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
 	GrStringDrawCentered(psContext, text, -1, 198, 209, false);
 }
 
+uint16_t g_ui16GraphIndex = 6;
+uint8_t g_ui8PrevSpeed = 0;
+uint8_t g_ui8PrevPower = 0;
+uint8_t g_ui8PrevLight = 0;
+uint8_t g_ui8PrevAccel = 0;
+
 /**
  * @brief Function to handle painting the graph content
  *
@@ -1216,7 +1222,28 @@ void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
  * @param psContext The graphics context
  */
 void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
-	// TODO: Draw graph content
+	/* Draw lead line */
+	GrContextForegroundSet(psContext, ClrWhite);
+	GrLineDrawV(psContext, g_ui16GraphIndex + 1, psContext->sClipRegion.i16YMin, psContext->sClipRegion.i16YMax);
+
+	/* Clear current line */
+	GrContextForegroundSet(psContext, ClrBlack);
+	GrLineDrawV(psContext, g_ui16GraphIndex, psContext->sClipRegion.i16YMin, psContext->sClipRegion.i16YMax);
+
+	/* Draw speed */
+	if (g_bGraphSpeed) {
+		int i16Speed = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
+		int y = Map(i16Speed, 0, 255, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		GrContextForegroundSet(psContext, ClrRed);
+		GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevSpeed, g_ui16GraphIndex, y);
+		g_ui8PrevSpeed = y;
+	}
+
+	/* Increment the graph */
+	g_ui16GraphIndex++;
+	if (g_ui16GraphIndex >= psContext->sClipRegion.i16XMax) {
+		g_ui16GraphIndex = psContext->sClipRegion.i16XMin;
+	}
 }
 #pragma endregion
 

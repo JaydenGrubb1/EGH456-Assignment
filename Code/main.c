@@ -26,7 +26,7 @@
 
 /* Global defines */
 #define TASK_STACK_SIZE 1024
-#define GUI_PULSE_PERIOD 500
+#define GUI_PULSE_PERIOD 100
 
 /* Task structs */
 Task_Struct g_sHandleGUITask;
@@ -43,24 +43,28 @@ void MotorStateChanged(bool bMotorState) {
 	GPIO_write(Board_LED0, bMotorState);
 }
 
-/**
- * @brief Callback function for when the time settings change
- *
- * @param hours The new hours value
- * @param minutes The new minutes value
- */
-void TimeChanged(uint32_t hours, uint32_t minutes) {
-	// System_printf("Time changed to %02d:%02d\n", hours, minutes);
-	// System_flush();
+float rpmCounter = 0;
+int16_t GetCurrentSpeed() {
+	rpmCounter++;
+	return ((sin(rpmCounter / 5) * 80) + (255 / 2));
 }
 
-/**
- * @brief Callback function to get the current RPM
- *
- * @return The current RPM
- */
-int16_t GetCurrentRPM() {
-	return rand() / 100;
+float powerCounter = 0;
+int16_t GetCurrentPower() {
+	powerCounter++;
+	return ((sin(powerCounter / 10) * 80) + (255 / 2));
+}
+
+float lightCounter = 0;
+int16_t GetCurrentLight() {
+	lightCounter++;
+	return ((sin(lightCounter / 20) * 40) + (255 / 2));
+}
+
+float accelCounter = 0;
+int16_t GetCurrentAccel() {
+	accelCounter++;
+	return (((sin(accelCounter / 20) * 40) + (255 / 2)) + ((sin(accelCounter / 10) * 80) + (255 / 2))) / 2;
 }
 
 /**
@@ -80,8 +84,10 @@ int main(void) {
 	/* Initialize the GUI */
 	GUI_Init(cpuFreq.lo);
 	GUI_SetCallback(GUI_MOTOR_STATE_CHANGE, (tGUICallbackFxn)MotorStateChanged);
-	GUI_SetCallback(GUI_SET_TIME_CHANGE, (tGUICallbackFxn)TimeChanged);
-	GUI_SetCallback(GUI_RETURN_RPM, (tGUICallbackFxn)GetCurrentRPM);
+	GUI_SetCallback(GUI_RETURN_SPEED, (tGUICallbackFxn)GetCurrentSpeed);
+	GUI_SetCallback(GUI_RETURN_POWER, (tGUICallbackFxn)GetCurrentPower);
+	GUI_SetCallback(GUI_RETURN_LIGHT, (tGUICallbackFxn)GetCurrentLight);
+	GUI_SetCallback(GUI_RETURN_ACCEL, (tGUICallbackFxn)GetCurrentAccel);
 
 	/* Construct task threads */
 	Task_Params taskParams;
