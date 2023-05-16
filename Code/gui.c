@@ -40,6 +40,10 @@
 /* Global constants */
 const tRectangle gc_sDesiredSpeedRect = {38, 54, 93, 79};
 const tRectangle gc_sCurrentSpeedRect = {38, 132, 93, 157};
+const tRectangle gc_sOption1Rect = {180, 34, 216, 51};
+const tRectangle gc_sOption2Rect = {180, 90, 216, 107};
+const tRectangle gc_sOption3Rect = {180, 146, 216, 163};
+const tRectangle gc_sOption4Rect = {180, 202, 216, 219};
 
 /* Global variables */
 tContext g_sContext;
@@ -414,23 +418,23 @@ Canvas(
 	NULL					  // on-paint function pointer
 );
 Canvas(
-	g_sSettingsOption1Panel,																												   // struct name
-	&g_sSettingsContent,																													   // parent widget pointer
-	&g_sSettingsOption2Panel,																												   // sibling widget pointer
-	&g_sSettingsOption1DownBtn,																												   // child widget pointer
-	DISPLAY,																																   // display device pointer
-	138,																																	   // x position
-	16,																																		   // y position
-	120,																																	   // width
-	50,																																		   // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
-	ClrBlack,																																   // fill color
-	ClrWhite,																																   // outline color
-	ClrWhite,																																   // text color
-	&g_sFontNf10,																															   // font pointer
-	"Max Power (W)",																														   // text
-	NULL,																																	   // image pointer
-	OnSettingsOption1Paint																													   // on-paint function pointer
+	g_sSettingsOption1Panel,																							   // struct name
+	&g_sSettingsContent,																								   // parent widget pointer
+	&g_sSettingsOption2Panel,																							   // sibling widget pointer
+	&g_sSettingsOption1DownBtn,																							   // child widget pointer
+	DISPLAY,																											   // display device pointer
+	138,																												   // x position
+	16,																													   // y position
+	120,																												   // width
+	50,																													   // height
+	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
+	ClrBlack,																											   // fill color
+	ClrWhite,																											   // outline color
+	ClrWhite,																											   // text color
+	&g_sFontNf10,																										   // font pointer
+	"Max Power (W)",																									   // text
+	NULL,																												   // image pointer
+	OnSettingsOption1Paint																								   // on-paint function pointer
 );
 RectangularButton(
 	g_sSettingsOption1DownBtn,												 // struct name
@@ -479,23 +483,23 @@ RectangularButton(
 	OnSettingsOption1UpBtnClick												 // on-click function pointer
 );
 Canvas(
-	g_sSettingsOption2Panel,																												   // struct name
-	&g_sSettingsContent,																													   // parent widget pointer
-	&g_sSettingsOption3Panel,																												   // sibling widget pointer
-	&g_sSettingsOption2DownBtn,																												   // child widget pointer
-	DISPLAY,																																   // display device pointer
-	138,																																	   // x position
-	72,																																		   // y position
-	120,																																	   // width
-	50,																																		   // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
-	ClrBlack,																																   // fill color
-	ClrWhite,																																   // outline color
-	ClrWhite,																																   // text color
-	&g_sFontNf10,																															   // font pointer
-	"Max Accel (m/s/s)",																													   // text
-	NULL,																																	   // image pointer
-	OnSettingsOption2Paint																													   // on-paint function pointer
+	g_sSettingsOption2Panel,																							   // struct name
+	&g_sSettingsContent,																								   // parent widget pointer
+	&g_sSettingsOption3Panel,																							   // sibling widget pointer
+	&g_sSettingsOption2DownBtn,																							   // child widget pointer
+	DISPLAY,																											   // display device pointer
+	138,																												   // x position
+	72,																													   // y position
+	120,																												   // width
+	50,																													   // height
+	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
+	ClrBlack,																											   // fill color
+	ClrWhite,																											   // outline color
+	ClrWhite,																											   // text color
+	&g_sFontNf10,																										   // font pointer
+	"Max Accel (m/s/s)",																								   // text
+	NULL,																												   // image pointer
+	OnSettingsOption2Paint																								   // on-paint function pointer
 );
 RectangularButton(
 	g_sSettingsOption2DownBtn,												 // struct name
@@ -544,23 +548,23 @@ RectangularButton(
 	OnSettingsOption2UpBtnClick												 // on-click function pointer
 );
 Canvas(
-	g_sSettingsOption3Panel,																												   // struct name
-	&g_sSettingsContent,																													   // parent widget pointer
-	&g_sSettingsOption4Panel,																												   // sibling widget pointer
-	&g_sSettingsOption3DownBtn,																												   // child widget pointer
-	DISPLAY,																																   // display device pointer
-	138,																																	   // x position
-	128,																																	   // y position
-	120,																																	   // width
-	50,																																		   // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
-	ClrBlack,																																   // fill color
-	ClrWhite,																																   // outline color
-	ClrWhite,																																   // text color
-	&g_sFontNf10,																															   // font pointer
-	"Time Hour",																															   // text
-	NULL,																																	   // image pointer
-	OnSettingsOption3Paint																													   // on-paint function pointer
+	g_sSettingsOption3Panel,																							   // struct name
+	&g_sSettingsContent,																								   // parent widget pointer
+	&g_sSettingsOption4Panel,																							   // sibling widget pointer
+	&g_sSettingsOption3DownBtn,																							   // child widget pointer
+	DISPLAY,																											   // display device pointer
+	138,																												   // x position
+	128,																												   // y position
+	120,																												   // width
+	50,																													   // height
+	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
+	ClrBlack,																											   // fill color
+	ClrWhite,																											   // outline color
+	ClrWhite,																											   // text color
+	&g_sFontNf10,																										   // font pointer
+	"Time Hour",																										   // text
+	NULL,																												   // image pointer
+	OnSettingsOption3Paint																								   // on-paint function pointer
 );
 RectangularButton(
 	g_sSettingsOption3DownBtn,												 // struct name
@@ -609,23 +613,23 @@ RectangularButton(
 	OnSettingsOption3UpBtnClick												 // on-click function pointer
 );
 Canvas(
-	g_sSettingsOption4Panel,																												   // struct name
-	&g_sSettingsContent,																													   // parent widget pointer
-	&g_sSettingsLine,																														   // sibling widget pointer
-	&g_sSettingsOption4DownBtn,																												   // child widget pointer
-	DISPLAY,																																   // display device pointer
-	138,																																	   // x position
-	184,																																	   // y position
-	120,																																	   // width
-	50,																																		   // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
-	ClrBlack,																																   // fill color
-	ClrWhite,																																   // outline color
-	ClrWhite,																																   // text color
-	&g_sFontNf10,																															   // font pointer
-	"Time Minute",																															   // text
-	NULL,																																	   // image pointer
-	OnSettingsOption4Paint																													   // on-paint function pointer
+	g_sSettingsOption4Panel,																							   // struct name
+	&g_sSettingsContent,																								   // parent widget pointer
+	&g_sSettingsLine,																									   // sibling widget pointer
+	&g_sSettingsOption4DownBtn,																							   // child widget pointer
+	DISPLAY,																											   // display device pointer
+	138,																												   // x position
+	184,																												   // y position
+	120,																												   // width
+	50,																													   // height
+	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
+	ClrBlack,																											   // fill color
+	ClrWhite,																											   // outline color
+	ClrWhite,																											   // text color
+	&g_sFontNf10,																										   // font pointer
+	"Time Minute",																										   // text
+	NULL,																												   // image pointer
+	OnSettingsOption4Paint																								   // on-paint function pointer
 );
 RectangularButton(
 	g_sSettingsOption4DownBtn,												 // struct name
@@ -1136,6 +1140,11 @@ void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
  * @param psContext The graphics context
  */
 void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext) {
+	/* Clear the previous text */
+	GrContextForegroundSet(psContext, ClrBlack);
+	GrRectFill(psContext, &gc_sOption1Rect);
+
+	/* Draw the new text */
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
 	char text[4];
@@ -1150,6 +1159,11 @@ void OnSettingsOption1Paint(tWidget *psWidget, tContext *psContext) {
  * @param psContext The graphics context
  */
 void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext) {
+	/* Clear the previous text */
+	GrContextForegroundSet(psContext, ClrBlack);
+	GrRectFill(psContext, &gc_sOption2Rect);
+
+	/* Draw the new text */
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
 	char text[4];
@@ -1164,6 +1178,11 @@ void OnSettingsOption2Paint(tWidget *psWidget, tContext *psContext) {
  * @param psContext The graphics context
  */
 void OnSettingsOption3Paint(tWidget *psWidget, tContext *psContext) {
+	/* Clear the previous text */
+	GrContextForegroundSet(psContext, ClrBlack);
+	GrRectFill(psContext, &gc_sOption3Rect);
+
+	/* Draw the new text */
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
 	char text[4];
@@ -1178,6 +1197,11 @@ void OnSettingsOption3Paint(tWidget *psWidget, tContext *psContext) {
  * @param psContext The graphics context
  */
 void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
+	/* Clear the previous text */
+	GrContextForegroundSet(psContext, ClrBlack);
+	GrRectFill(psContext, &gc_sOption4Rect);
+
+	/* Draw the new text */
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf24);
 	char text[4];
