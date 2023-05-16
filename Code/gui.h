@@ -6,15 +6,45 @@
  *
  */
 typedef enum GUICallbackOption {
+	/**
+	 * @brief Callback for when the motor state (on/off) is changed
+	 */
 	GUI_MOTOR_STATE_CHANGE = 0,
+	/**
+	 * @brief Callback for when the motor speed is changed
+	 */
 	GUI_MOTOR_SPEED_CHANGE,
+	/**
+	 * @brief Callback for when the max allowed power is changed
+	 */
 	GUI_MAX_POWER_CHANGE,
+	/**
+	 * @brief Callback for when the max allowed acceleration is changed
+	 */
 	GUI_MAX_ACCEL_CHANGE,
+	/**
+	 * @brief Callback for when the set time is changed
+	 */
 	GUI_SET_TIME_CHANGE,
+	/**
+	 * @brief Callback for when the current speed is requested
+	 */
 	GUI_RETURN_SPEED,
+	/**
+	 * @brief Callback for when the current power is requested
+	 */
 	GUI_RETURN_POWER,
+	/**
+	 * @brief Callback for when the current light level is requested
+	 */
 	GUI_RETURN_LIGHT,
+	/**
+	 * @brief Callback for when the current acceleration is requested
+	 */
 	GUI_RETURN_ACCEL,
+	/**
+	 * @brief Callback for when the current time is requested
+	 */
 	GUI_RETURN_TIME,
 
 	GUI_CALLBACK_COUNT
