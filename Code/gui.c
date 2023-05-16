@@ -35,12 +35,15 @@
 #define AUTO_REPEAT_RATE 20
 #define NIGHT_LIGHT_THRESHOLD 5
 
+/* Global constants */
+const tRectangle gc_sDesiredSpeedRect = {38, 54, 93, 79};
+const tRectangle gc_sCurrentSpeedRect = {38, 132, 93, 157};
+
 /* Global variables */
 tContext g_sContext;
 tRectangle g_sScreenRect;
 tCurrentPanel g_eCurrentPanel = MAIN_PANEL;
 int16_t g_i16DesiredSpeed = 0;
-int16_t g_i16CurrentSpeed = 0;
 uint8_t g_ui8MaxPower = 10;
 uint8_t g_ui8MaxAccel = 10;
 uint8_t g_ui8TimeHours = 0;
@@ -53,6 +56,7 @@ bool g_bGraphAccel = false;
 volatile bool g_bDoUpdate = false;
 uint32_t g_ui32PrevTime = UINT32_MAX;
 uint32_t g_ui32PrevLight = UINT32_MAX;
+int16_t g_i16PrevSpeed = INT16_MAX;
 char ga_cTimeText[20];
 
 /* Callback function array */
@@ -279,42 +283,42 @@ Canvas(
 	NULL																					 // on-paint function pointer
 );
 Canvas(
-	g_sMainDesiredSpeed,																													   // struct name
-	&g_sMainContent,																														   // parent widget pointer
-	&g_sMainCurrentSpeed,																													   // sibling widget pointer
-	NULL,																																	   // child widget pointer
-	DISPLAY,																																   // display device pointer
-	6,																																		   // x position
-	28,																																		   // y position
-	202,																																	   // width
-	72,																																		   // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
-	ClrBlack,																																   // fill color
-	ClrWhite,																																   // outline color
-	ClrWhite,																																   // text color
-	&g_sFontNf10,																															   // font pointer
-	"Target Speed",																															   // text
-	NULL,																																	   // image pointer
-	OnMainDesiredSpeedPaint																													   // on-paint function pointer
+	g_sMainDesiredSpeed,																								   // struct name
+	&g_sMainContent,																									   // parent widget pointer
+	&g_sMainCurrentSpeed,																								   // sibling widget pointer
+	NULL,																												   // child widget pointer
+	DISPLAY,																											   // display device pointer
+	6,																													   // x position
+	28,																													   // y position
+	202,																												   // width
+	72,																													   // height
+	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
+	ClrBlack,																											   // fill color
+	ClrWhite,																											   // outline color
+	ClrWhite,																											   // text color
+	&g_sFontNf10,																										   // font pointer
+	"Target Speed",																										   // text
+	NULL,																												   // image pointer
+	OnMainDesiredSpeedPaint																								   // on-paint function pointer
 );
 Canvas(
-	g_sMainCurrentSpeed,																													   // struct name
-	&g_sMainContent,																														   // parent widget pointer
-	&g_sMainDesiredSpeedUpBtn,																												   // sibling widget pointer
-	NULL,																																	   // child widget pointer
-	DISPLAY,																																   // display device pointer
-	6,																																		   // x position
-	106,																																	   // y position
-	202,																																	   // width
-	72,																																		   // height
-	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
-	ClrBlack,																																   // fill color
-	ClrWhite,																																   // outline color
-	ClrWhite,																																   // text color
-	&g_sFontNf10,																															   // font pointer
-	"Actual Speed",																															   // text
-	NULL,																																	   // image pointer
-	OnMainCurrentSpeedPaint																													   // on-paint function pointer
+	g_sMainCurrentSpeed,																								   // struct name
+	&g_sMainContent,																									   // parent widget pointer
+	&g_sMainDesiredSpeedUpBtn,																							   // sibling widget pointer
+	NULL,																												   // child widget pointer
+	DISPLAY,																											   // display device pointer
+	6,																													   // x position
+	106,																												   // y position
+	202,																												   // width
+	72,																													   // height
+	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP | CANVAS_STYLE_APP_DRAWN, // style
+	ClrBlack,																											   // fill color
+	ClrWhite,																											   // outline color
+	ClrWhite,																											   // text color
+	&g_sFontNf10,																										   // font pointer
+	"Actual Speed",																										   // text
+	NULL,																												   // image pointer
+	OnMainCurrentSpeedPaint																								   // on-paint function pointer
 );
 RectangularButton(
 	g_sMainDesiredSpeedUpBtn,												 // struct name
@@ -1110,6 +1114,11 @@ void OnGraphAccelChkClick(tWidget *psWidget, uint32_t bSelected) {
  * @param psContext The graphics context
  */
 void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext) {
+	/* Clear the previous speed */
+	GrContextForegroundSet(psContext, ClrBlack);
+	GrRectFill(psContext, &gc_sDesiredSpeedRect);
+
+	/* Draw the new speed */
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf36);
 	char text[8];
@@ -1124,12 +1133,21 @@ void OnMainDesiredSpeedPaint(tWidget *psWidget, tContext *psContext) {
  * @param psContext The graphics context
  */
 void OnMainCurrentSpeedPaint(tWidget *psWidget, tContext *psContext) {
-	g_i16CurrentSpeed = GUI_InvokeCallback(GUI_RETURN_RPM, NULL, NULL);
+	/* Check if speed has updated */
+	int16_t i16CurrentSpeed = GUI_InvokeCallback(GUI_RETURN_RPM, NULL, NULL);
+	if (i16CurrentSpeed == g_i16PrevSpeed)
+		return;
+	g_i16PrevSpeed = i16CurrentSpeed;
 
+	/* Clear the previous speed */
+	GrContextForegroundSet(psContext, ClrBlack);
+	GrRectFill(psContext, &gc_sCurrentSpeedRect);
+
+	/* Draw the new speed */
 	GrContextForegroundSet(psContext, ClrRed);
 	GrContextFontSet(psContext, &g_sFontNf36);
 	char text[8];
-	snprintf(text, 8, "%03d RPM\0", g_i16CurrentSpeed);
+	snprintf(text, 8, "%03d RPM\0", i16CurrentSpeed);
 	GrStringDrawCentered(psContext, text, -1, 107, 142, false);
 }
 
