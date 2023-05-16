@@ -13,7 +13,8 @@
 			"defines": [
 				"_DEBUG",
 				"UNICODE",
-				"_UNICODE"
+				"_UNICODE",
+				"_USE_MATH_DEFINES"
 			],
 			"windowsSdkVersion": "10.0.22621.0",
 			"compilerPath": "cl.exe",

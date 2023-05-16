@@ -44,7 +44,7 @@ void MotorStateChanged(bool bMotorState) {
 
 /**
  * @brief Pulse the clock and increment the counter
- * 
+ *
  */
 void PulseClock() {
 	// TODO: Add semaphore
@@ -55,7 +55,7 @@ void PulseClock() {
 
 /**
  * @brief Get the current clock counter value
- * 
+ *
  * @return The current clock counter value
  */
 uint32_t GetClock() {
@@ -65,7 +65,7 @@ uint32_t GetClock() {
 
 /**
  * @brief Set the clock counter value
- * 
+ *
  * @param ui8Hours The hours to set the clock to
  * @param ui8Minutes The minutes to set the clock to
  */
@@ -89,7 +89,7 @@ int16_t GetCurrentPower() {
 float lightCounter = 0;
 int16_t GetCurrentLight() {
 	lightCounter++;
-	return ((sin(lightCounter / 20) * 40) + (255 / 2));
+	return ((sin(lightCounter / (38.5 / M_PI)) * 40) + (255 / 2));
 }
 
 float accelCounter = 0;
