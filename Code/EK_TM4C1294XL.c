@@ -292,6 +292,16 @@ GPIO_PinConfig gpioPinConfigs[] = {
     /* EK_TM4C1294XL_USR_SW2 */
     GPIOTiva_PJ_1 | GPIO_CFG_IN_PU | GPIO_CFG_IN_INT_RISING,
 
+    //---------------------------------
+    // GPIO Pins for motor Hall Sensors
+    // EK_TM4C1294XL_DRV832X_HALL_A_EDGES
+    GPIOTiva_PM_3 | GPIO_CFG_IN_PU | GPIO_CFG_IN_INT_BOTH_EDGES,
+    // EK_TM4C1294XL_DRV832X_HALL_B_EDGES
+    GPIOTiva_PH_2 | GPIO_CFG_IN_PU | GPIO_CFG_IN_INT_BOTH_EDGES,
+    // EK_TM4C1294XL_DRV832X_HALL_C_EDGES
+    GPIOTiva_PN_2 | GPIO_CFG_IN_PU | GPIO_CFG_IN_INT_BOTH_EDGES,
+    //---------------------------------
+
     /* Output pins */
     /* EK_TM4C1294XL_USR_D1 */
     GPIOTiva_PN_1 | GPIO_CFG_OUT_STD | GPIO_CFG_OUT_STR_HIGH | GPIO_CFG_OUT_LOW,
@@ -308,7 +318,14 @@ GPIO_PinConfig gpioPinConfigs[] = {
  */
 GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /* EK_TM4C1294XL_USR_SW1 */
-    NULL   /* EK_TM4C1294XL_USR_SW2 */
+    NULL,  /* EK_TM4C1294XL_USR_SW2 */
+
+    ///---------------------------------
+    /// GPIO Pins for motor Hall Sensors
+    NULL, // EK_TM4C1294XL_DRV832X_HALL_A_EDGES
+    NULL, // EK_TM4C1294XL_DRV832X_HALL_B_EDGES
+    NULL, // EK_TM4C1294XL_DRV832X_HALL_C_EDGES
+    ///---------------------------------
 };
 
 /* The device-specific GPIO_config structure */
@@ -409,7 +426,7 @@ void EK_TM4C1294XL_initI2C(void)
  */
 /* Place into subsections to allow the TI linker to remove items properly */
 #if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_SECTION(PWM_config, ".const:PWM_config")
+// #pragma DATA_SECTION(PWM_config, ".const:PWM_config")
 #pragma DATA_SECTION(pwmTivaHWAttrs, ".const:pwmTivaHWAttrs")
 #endif
 
@@ -426,14 +443,14 @@ const PWMTiva_HWAttrs pwmTivaHWAttrs[EK_TM4C1294XL_PWMCOUNT] = {
     }
 };
 
-const PWM_Config PWM_config[] = {
+/*const PWM_Config PWM_config[] = {
     {
         .fxnTablePtr = &PWMTiva_fxnTable,
         .object = &pwmTivaObjects[0],
         .hwAttrs = &pwmTivaHWAttrs[0]
     },
     {NULL, NULL, NULL}
-};
+};*/
 
 /*
  *  ======== EK_TM4C1294XL_initPWM ========

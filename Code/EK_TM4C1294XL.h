@@ -71,6 +71,14 @@ typedef enum EK_TM4C1294XL_EMACName {
 typedef enum EK_TM4C1294XL_GPIOName {
     EK_TM4C1294XL_USR_SW1 = 0,
     EK_TM4C1294XL_USR_SW2,
+
+    ///---------------------------------
+    /// GPIO Pins for motor Hall Sensors
+    EK_TM4C1294XL_DRV832X_HALL_A_EDGES, ///< Interrupt on both edges of the Hall A sensor
+    EK_TM4C1294XL_DRV832X_HALL_B_EDGES, ///< Interrupt on both edges of the Hall B sensor
+    EK_TM4C1294XL_DRV832X_HALL_C_EDGES, ///< Interrupt on both edges of the Hall C sensor
+    ///---------------------------------
+
     EK_TM4C1294XL_D1,
     EK_TM4C1294XL_D2,
 
