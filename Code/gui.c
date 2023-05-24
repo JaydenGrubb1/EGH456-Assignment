@@ -10,6 +10,9 @@
 #include <string.h>
 #include <math.h>
 
+#include <ti/sysbios/knl/Task.h>
+#include <ti/sysbios/knl/Clock.h>
+
 /* GRLib header files */
 #include "grlib/grlib.h"
 #include "grlib/widget.h"
@@ -1339,6 +1342,7 @@ void GUI_Pulse() {
  */
 void GUI_Handle() {
 	while (1) {
+	    Task_sleep(1);
 		if (g_bDoUpdate) {
 			g_bDoUpdate = false;
 			GUI_PulseInternal();

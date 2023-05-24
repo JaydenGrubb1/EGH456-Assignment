@@ -47,6 +47,10 @@ void MotorStateChanged(bool bMotorState) {
 	GPIO_write(Board_LED0, bMotorState);
 }
 
+void SetMotorSpeed(UArg rpm) {
+    drv832x_setSpeed(rpm);
+}
+
 /**
  * @brief Pulse the clock and increment the counter
  *
@@ -117,6 +121,7 @@ int main(void) {
 	/* Initialize the GUI */
 	GUI_Init(cpuFreq.lo);
 	GUI_SetCallback(GUI_MOTOR_STATE_CHANGE, (tGUICallbackFxn)MotorStateChanged);
+    GUI_SetCallback(GUI_MOTOR_SPEED_CHANGE, (tGUICallbackFxn)SetMotorSpeed);
 	GUI_SetCallback(GUI_SET_TIME_CHANGE, (tGUICallbackFxn)SetClock);
 	GUI_SetCallback(GUI_RETURN_TIME, (tGUICallbackFxn)GetClock);
 	GUI_SetCallback(GUI_RETURN_SPEED, (tGUICallbackFxn)GetCurrentSpeed);

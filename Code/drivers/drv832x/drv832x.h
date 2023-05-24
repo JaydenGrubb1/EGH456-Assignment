@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "detail/HallSensor.h"
-
 /// Maximum acceleration under normal conditions
 #define DRV832X_MAX_ACCELERATION_RPM 500
 
@@ -16,21 +14,27 @@
 #define DRV832X_ESTOP_DECELERATION_RPM 1000
 
 /// Number of bytes to allocate for the stack of the motor drivers tasks
-#define DRV832X_TASK_STACK_SIZE 1024
+#define DRV832X_TASK_STACK_SIZE 256
 
 /// Number of rising and falling edges seen on the hall effect sensors for 1 rotation of the motor
-/// Measured as 130 for 5 rotations
-#define DRV832X_HALLEFFECT_EDGES_PER_ROTATION 26
+#define DRV832X_HALLEFFECT_EDGES_PER_ROTATION 30
 
-#define DRV832X_CONTROLLER_GAIN   0.01
-#define DRV832X_CONTROLLER_GAIN_P 0.01
-#define DRV832X_CONTROLLER_GAIN_I 0.0005
+/// Resolution of the speed sensor in ticks
+#define SPEED_SENSE_PERIOD 5
+
+/// Pins used by the motor control driver.
+typedef struct _drv832x_Pins
+{
+    uint32_t hallA;
+    uint32_t hallB;
+    uint32_t hallC;
+} drv832x_Pins;
 
 /// Configuration options passed to drv382x_init
 /// used to initialize the motor driver.
 typedef struct _drv832x_Config
 {
-    uint32_t hallPin[HallSensors_Count];
+    drv832x_Pins pin;
     uint32_t pwmPeriod;
 } drv832x_Config;
 
@@ -74,8 +78,6 @@ void drv832x_stop();
 /// @pre drv328x_init has been called successfully.
 /// @returns The current speed of the motor in RPM.
 uint32_t drv832x_getSpeed();
-
-uint32_t drv832x_getTargetSpeed();
 
 /// Trigger an emergency stop.
 /// @pre drv328x_init has been called successfully.
