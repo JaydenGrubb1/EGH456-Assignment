@@ -17,7 +17,7 @@
 #define DRV832X_TASK_STACK_SIZE 256
 
 /// Number of rising and falling edges seen on the hall effect sensors for 1 rotation of the motor
-#define DRV832X_HALLEFFECT_EDGES_PER_ROTATION 30
+#define DRV832X_HALLEFFECT_EDGES_PER_ROTATION 26
 
 /// Resolution of the speed sensor in ticks
 #define SPEED_SENSE_PERIOD 5

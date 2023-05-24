@@ -1,6 +1,6 @@
 #include "drv832x.h"
 #include "motorlib/motorlib.h"
-
+#include "detail/TimeSampler.h"
 #include "Board.h"
 
 #include <xdc/runtime/System.h>
@@ -31,6 +31,9 @@ volatile uint32_t g_currentMotorPhase = 0;
 
 // LUT used to get the phase from the sensor states
 volatile uint8_t g_phaseLUT[8] = {};
+
+/// Responsible for calculating time between hall sensor signal edges.
+TimeSampler g_hallEdgeTimer;
 
 uint8_t calcPhaseTableIndex(bool a, bool b, bool c) {
     return ((a & 0b1) << 0)
@@ -84,7 +87,7 @@ void drv832x_motorController(UArg a0, UArg a1)
 // Motor speed sensing
 void speedSensor_edgeInterruptHandler(unsigned int pin)
 {
-    ++g_numHallEdges;
+    TimeSampler_addSample(&g_hallEdgeTimer, Clock_getTicks());
 
     bool stateA = GPIO_read(g_config.pin.hallA);
     bool stateB = GPIO_read(g_config.pin.hallB);
@@ -127,6 +130,8 @@ bool drv832x_init(drv832x_Config const * pConfig)
 
     // Pre-calculate phase lookup for different hall sensor states
     initMotorPhaseTable();
+
+    TimeSampler_init(&g_hallEdgeTimer);
 
     Task_Params taskParams;
     Task_Params_init(&taskParams);
@@ -192,10 +197,14 @@ void drv832x_stop()
 
 uint32_t drv832x_getSpeed()
 {
-    const float ticksPerRotation = DRV832X_HALLEFFECT_EDGES_PER_ROTATION * g_avgEdgeTicks;
-    const uint32_t ticksPerSecond   = 1000000 / Clock_tickPeriod;
+    const uint32_t ticksPerSecond = 1000000 / Clock_tickPeriod;
 
-    return (ticksPerSecond * 60) / ticksPerRotation; // Convert from ticks-per-rotation to RPM
+    float avgEdgeTicks = TimeSampler_calculateSpeed(&g_hallEdgeTimer);
+    float ticksPerRotation = DRV832X_HALLEFFECT_EDGES_PER_ROTATION * avgEdgeTicks;
+    if (ticksPerRotation == 0)
+        return 0;
+
+    return (uint32_t)((ticksPerSecond * 60) / ticksPerRotation); // Convert from ticks-per-rotation to RPM
 }
 
 void drv832x_estop()
