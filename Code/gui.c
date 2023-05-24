@@ -39,6 +39,7 @@
 #define AUTO_REPEAT_DELAY 250
 #define AUTO_REPEAT_RATE 20
 #define DEFULT_GRAPH_INDEX 6
+#define RPM_INCREMENT 50
 
 /* Global constants */
 const tRectangle gc_sDesiredSpeedRect = {61, 54, 156, 79};
@@ -859,7 +860,7 @@ void OnMainStartBtnClick(tWidget *pWidget) {
  * @param pWidget The widget that triggered the event
  */
 void OnMainSpeedUpBtnClick(tWidget *pWidget) {
-	g_i16DesiredSpeed++;
+	g_i16DesiredSpeed += RPM_INCREMENT;
 	WidgetPaint((tWidget *)&g_sMainDesiredSpeed);
 
 	GUI_InvokeCallback(GUI_MOTOR_SPEED_CHANGE, g_i16DesiredSpeed, NULL);
@@ -871,7 +872,7 @@ void OnMainSpeedUpBtnClick(tWidget *pWidget) {
  * @param pWidget The widget that triggered the event
  */
 void OnMainSpeedDownBtnClick(tWidget *pWidget) {
-	g_i16DesiredSpeed--;
+	g_i16DesiredSpeed -= RPM_INCREMENT;
 	WidgetPaint((tWidget *)&g_sMainDesiredSpeed);
 
 	GUI_InvokeCallback(GUI_MOTOR_SPEED_CHANGE, g_i16DesiredSpeed, NULL);

@@ -6,7 +6,7 @@
 
 #include "HallSensor.h"
 
-#define SPEED_MAX_SAMPLES 30
+#define SPEED_MAX_SAMPLES 5
 
 typedef enum _SensorState {
     SensorState_Unknown = -1,

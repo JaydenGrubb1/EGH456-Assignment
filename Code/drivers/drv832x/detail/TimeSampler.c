@@ -7,7 +7,7 @@
 void TimeSampler_init(TimeSampler *pSampler)
 {
     pSampler->sampleCount = 0;
-    pSampler->sampleExpireTime = 100;
+    pSampler->sampleExpireTime = 10;
     pSampler->startOffset = 0;
     memset(pSampler->buffer, sizeof(pSampler->buffer), 0);
 }

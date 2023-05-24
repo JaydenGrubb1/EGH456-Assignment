@@ -1,6 +1,7 @@
 #include "drv832x.h"
 #include "motorlib/motorlib.h"
 #include "detail/TimeSampler.h"
+#include "detail/PIController.h"
 #include "Board.h"
 
 #include <xdc/runtime/System.h>
@@ -15,8 +16,7 @@
 
 drv832x_Config g_config;
 
-// Requested motor RPM
-volatile uint32_t g_targetRPM = 0;
+volatile float g_currentDutyCycle = 0.0f;
 
 // Current speed of the motor
 volatile uint32_t g_currentSpeed = 0;
@@ -34,6 +34,8 @@ volatile uint8_t g_phaseLUT[8] = {};
 
 /// Responsible for calculating time between hall sensor signal edges.
 TimeSampler g_hallEdgeTimer;
+
+PIController g_controller;
 
 uint8_t calcPhaseTableIndex(bool a, bool b, bool c) {
     return ((a & 0b1) << 0)
@@ -56,61 +58,46 @@ uint8_t getMotorPhase(bool a, bool b, bool c) {
 
 //----------------------
 // Motor controller task
-Task_Struct g_motorControlTask;
-volatile Char g_motorControlStack[DRV832X_TASK_STACK_SIZE];
-volatile uint32_t g_numHallEdges = 0;
-void drv832x_motorController(UArg a0, UArg a1)
+
+void setMotorPhase(uint32_t phase) {
+    updateMotor(
+            (phase) < 3,
+            ((phase - 2) % 6) < 3,
+            ((phase - 4) % 6) < 3);
+}
+
+uint32_t pollMotorPhase() {
+    bool stateA = GPIO_read(g_config.pin.hallA);
+    bool stateB = GPIO_read(g_config.pin.hallB);
+    bool stateC = GPIO_read(g_config.pin.hallC);
+
+    return getMotorPhase(stateA, stateB, stateC);
+}
+
+Clock_Struct g_controlClock;
+static void Driver_motorControlClock(UArg arg0)
 {
-    uint32_t lastTick = Clock_getTicks();
-    while (1) {
-        Task_sleep(1);
-        const uint32_t currentTick = Clock_getTicks();
-        uint32_t nextPhase = g_currentMotorPhase + 1;
-        updateMotor(
-                (nextPhase) < 3,
-                ((nextPhase - 2) % 6) < 3,
-                ((nextPhase - 4) % 6) < 3);
-
-        uint32_t speed = drv832x_getSpeed();
-
-        if (currentTick - lastTick > 500) {
-            System_printf("RPM: %u, Phase: %u\n", speed, g_currentMotorPhase);
-            System_flush();
-            lastTick = currentTick;
-        }
-    }
+    const uint32_t currentTick = Clock_getTicks();
+    TimeSampler_discardExpiredSamples(&g_hallEdgeTimer, currentTick);
+    const uint32_t speed = drv832x_getSpeed();
+    PIController_update(&g_controller, speed, currentTick);
+    float controlAction = PIController_getSignal(&g_controller) * DRV832X_CONTROLLER_GAIN;
+    g_currentDutyCycle += controlAction;
+    g_currentDutyCycle = g_currentDutyCycle < 0 ? 0.0f: g_currentDutyCycle;
+    g_currentDutyCycle = g_currentDutyCycle > g_config.pwmPeriod ? g_config.pwmPeriod : g_currentDutyCycle;
+    setDuty((uint32_t)g_currentDutyCycle);
+    setMotorPhase(g_currentMotorPhase + 1);
 }
 
 //----------------------
 
 //----------------------
 // Motor speed sensing
-void speedSensor_edgeInterruptHandler(unsigned int pin)
+static void Driver_edgeInterruptHandler(unsigned int pin)
 {
     TimeSampler_addSample(&g_hallEdgeTimer, Clock_getTicks());
-
-    bool stateA = GPIO_read(g_config.pin.hallA);
-    bool stateB = GPIO_read(g_config.pin.hallB);
-    bool stateC = GPIO_read(g_config.pin.hallC);
-
-    g_currentMotorPhase = getMotorPhase(stateA, stateB, stateC);
-}
-
-volatile uint32_t g_lastCalcTick = 0;
-volatile float g_avgEdgeTicks = 0.0f;
-Clock_Struct g_speedClock;
-void speedSensor_calcSpeed(UArg arg0)
-{
-    // Calculate current speed from g_motorEdgeTicks
-    const uint32_t currentTick = Clock_getTicks();
-    const uint32_t period = currentTick - g_lastCalcTick;
-    if (g_numHallEdges == 0)
-        g_avgEdgeTicks = FLT_MAX;
-    else
-        g_avgEdgeTicks = (float)period / g_numHallEdges;
-
-    g_lastCalcTick = currentTick;
-    g_numHallEdges = 0;
+    g_currentMotorPhase = pollMotorPhase();
+    setMotorPhase(g_currentMotorPhase + 1);
 }
 
 //----------------------
@@ -123,7 +110,6 @@ void drv832x_Config_init(drv832x_Config *pConfig)
     pConfig->pwmPeriod = 50;
 }
 
-
 bool drv832x_init(drv832x_Config const * pConfig)
 {
     g_config = *pConfig;
@@ -132,26 +118,20 @@ bool drv832x_init(drv832x_Config const * pConfig)
     initMotorPhaseTable();
 
     TimeSampler_init(&g_hallEdgeTimer);
-
-    Task_Params taskParams;
-    Task_Params_init(&taskParams);
-    taskParams.stackSize = DRV832X_TASK_STACK_SIZE;
-    taskParams.stack     = &g_motorControlStack;
-    taskParams.priority  = 1;
-    Task_construct(&g_motorControlTask, (Task_FuncPtr)drv832x_motorController, &taskParams, 0);
+    PIController_init(&g_controller, DRV832X_CONTROLLER_GAIN_P, DRV832X_CONTROLLER_GAIN_I);
 
     /* Construct clock threads */
     Clock_Params clockParams;
     Clock_Params_init(&clockParams);
     clockParams.startFlag = true;
-    clockParams.period = SPEED_SENSE_PERIOD;
-    Clock_construct(&g_speedClock, (Clock_FuncPtr)speedSensor_calcSpeed, SPEED_SENSE_PERIOD, &clockParams);
+    clockParams.period = 1;
+    Clock_construct(&g_controlClock, (Clock_FuncPtr)Driver_motorControlClock, 1, &clockParams);
 
     // Set up GPIO hwi for speed sensing.
     // We just want to detect all edges on the hall sensor signals and measure the time between them
-    GPIO_setCallback(pConfig->pin.hallA, speedSensor_edgeInterruptHandler);
-    GPIO_setCallback(pConfig->pin.hallB, speedSensor_edgeInterruptHandler);
-    GPIO_setCallback(pConfig->pin.hallC, speedSensor_edgeInterruptHandler);
+    GPIO_setCallback(pConfig->pin.hallA, Driver_edgeInterruptHandler);
+    GPIO_setCallback(pConfig->pin.hallB, Driver_edgeInterruptHandler);
+    GPIO_setCallback(pConfig->pin.hallC, Driver_edgeInterruptHandler);
 
     GPIO_enableInt(pConfig->pin.hallA);
     GPIO_enableInt(pConfig->pin.hallB);
@@ -166,7 +146,8 @@ bool drv832x_init(drv832x_Config const * pConfig)
         return false;
     }
 
-    setDuty(5);
+    g_currentMotorPhase = pollMotorPhase();
+
     enableMotor();
 
     return true;
@@ -174,8 +155,7 @@ bool drv832x_init(drv832x_Config const * pConfig)
 
 void drv832x_setSpeed(uint32_t rpm)
 {
-    setDuty(rpm); // TODO: Actually set motor speed
-    g_targetRPM = rpm;
+    PIController_setTarget(&g_controller, rpm);
 }
 
 bool drv832x_start()
@@ -193,6 +173,7 @@ bool drv832x_start()
 void drv832x_stop()
 {
     drv832x_setSpeed(0); // Set target speed to 0 to stop the motor.
+    PIController_reset(&g_controller);
 }
 
 uint32_t drv832x_getSpeed()

@@ -20,7 +20,11 @@
 #define DRV832X_HALLEFFECT_EDGES_PER_ROTATION 26
 
 /// Resolution of the speed sensor in ticks
-#define SPEED_SENSE_PERIOD 5
+#define DRV832X_CONTROLLER_PERIOD 5
+
+#define DRV832X_CONTROLLER_GAIN 0.01
+#define DRV832X_CONTROLLER_GAIN_P 0.01
+#define DRV832X_CONTROLLER_GAIN_I 0.00001
 
 /// Pins used by the motor control driver.
 typedef struct _drv832x_Pins
