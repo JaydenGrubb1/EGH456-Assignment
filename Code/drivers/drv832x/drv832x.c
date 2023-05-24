@@ -35,15 +35,6 @@ typedef struct _Driver {
 
 static Driver g_driver;
 
-static SensorState g_phaseTable[][HallSensors_Count] = {
-    { SensorState_Rising,  SensorState_Low,     SensorState_High    },
-    { SensorState_High,    SensorState_Low,     SensorState_Falling },
-    { SensorState_High,    SensorState_Rising,  SensorState_Low     },
-    { SensorState_Falling, SensorState_High,    SensorState_Low     },
-    { SensorState_Low,     SensorState_High,    SensorState_Rising  },
-    { SensorState_Low,     SensorState_Falling, SensorState_High    },
-};
-
 static bool g_phaseMotorStateTable[][HallSensors_Count] = {
     { false, false, true  },
     { true,  false, true  },
@@ -52,20 +43,6 @@ static bool g_phaseMotorStateTable[][HallSensors_Count] = {
     { false, true,  false },
     { false, true,  true  },
 };
-
-static int calcMotorPhase(SensorState a, SensorState b, SensorState c)
-{
-    int phase = 0;
-    for (phase = 0; phase < 6; ++phase)
-    {
-        if (a == g_phaseTable[phase][HallSensors_A]
-            && b == g_phaseTable[phase][HallSensors_B]
-            && c == g_phaseTable[phase][HallSensors_C])
-            return phase;
-    }
-
-    return 0;
-}
 
 static int calcMotorPhaseFromInput(bool a, bool b, bool c)
 {
@@ -83,42 +60,39 @@ static int calcMotorPhaseFromInput(bool a, bool b, bool c)
 
 static void Driver_setMotorPhase(int phase)
 {
-    // Lookup for `updateMotor` parameter for each hall sensor
-    static bool g_stateLookup[SensorState_Count] = { false, true, false, true };
-
-    // Lookup sensor state for `phase`
-    SensorState aState = g_phaseTable[phase][HallSensors_A];
-    SensorState bState = g_phaseTable[phase][HallSensors_B];
-    SensorState cState = g_phaseTable[phase][HallSensors_C];
-
     updateMotor(
-       g_stateLookup[aState],
-       g_stateLookup[bState],
-       g_stateLookup[cState]);
+            g_phaseMotorStateTable[phase][HallSensors_A],
+            g_phaseMotorStateTable[phase][HallSensors_B],
+            g_phaseMotorStateTable[phase][HallSensors_C]);
 }
 
 static void Driver_edgeInterruptHandler(unsigned int pin)
 {
     const uint32_t currentTick = Clock_getTicks();
 
-    TimeSampler_addSample(&g_driver.hallEdgeTimer, currentTick);
+    // TimeSampler_addSample(&g_driver.hallEdgeTimer, currentTick);
 
     // Record current motor states.
-    SensorState states[HallSensors_Count];
+    // SensorState states[HallSensors_Count];
+    bool states[HallSensors_Count];
     int sensor = 0;
     for (; sensor < HallSensors_Count; ++sensor)
     {
         int currentSensor = g_driver.config.hallPin[sensor];
-        int state = GPIO_read(currentSensor);
-        if (pin == currentSensor)
-            states[sensor] = state ? SensorState_Rising : SensorState_Falling;
-        else
-            states[sensor] = state ? SensorState_High : SensorState_Low;
+        states[sensor] = GPIO_read(currentSensor);
+        // if (currentSensor == pin)
+        //      = state ? SensorState_Falling : SensorState_Rising;
+        // else
+        //     states[sensor] = state ? SensorState_High   : SensorState_Low;
     }
 
-    g_driver.motorPhase = calcMotorPhase(states[HallSensors_A], states[HallSensors_B], states[HallSensors_C]);
+    g_driver.motorPhase = calcMotorPhaseFromInput(
+            states[HallSensors_A],
+            states[HallSensors_B],
+            states[HallSensors_C]);
 
-    Driver_setMotorPhase(g_driver.motorPhase);
+    System_printf("Phase: %u\n", g_driver.motorPhase);
+    System_flush();
 }
 
 //----------------------
@@ -127,8 +101,11 @@ static Task_Struct g_motorControlTask;
 static Char g_motorControlStack[DRV832X_TASK_STACK_SIZE];
 static void Driver_motorControlTask(UArg a0, UArg a1)
 {
-    uint32_t lastNumLines = 0;
-    float lastControlAction = 0.0f;
+    uint32_t lastNumLines      = 0;
+    float    lastControlAction = 0.0f;
+
+    setDuty((uint32_t)20); // max(0.0f, g_driver.dutyCycle));
+
     while (1)
     {
         Task_sleep(1);
@@ -152,10 +129,9 @@ static void Driver_motorControlTask(UArg a0, UArg a1)
             g_driver.dutyCycle += controlAction;
             g_driver.dutyCycle = max(0, min(g_driver.dutyCycle, (float)g_driver.config.pwmPeriod));
             lastControlAction = controlAction;
-            
+
             // Set motor duty cycle
-            setDuty((uint32_t)g_driver.dutyCycle);
-            Driver_setMotorPhase(g_driver.motorPhase);
+            Driver_setMotorPhase(g_driver.motorPhase + 1);
             break;
         }
         case drv832x_EStopping:
@@ -192,11 +168,13 @@ void drv832x_Config_init(drv832x_Config *pConfig)
 
 bool drv832x_init(drv832x_Config const * pConfig)
 {
-    g_driver.estop = false;
+    g_driver.estop      = false;
+    g_driver.state      = drv832x_Idle;
+    g_driver.config     = *pConfig;
     g_driver.motorPhase = 0;
-    g_driver.state = drv832x_Idle;
-    g_driver.config = *pConfig;
+
     TimeSampler_init(&g_driver.hallEdgeTimer);
+
     PIController_init(
             &g_driver.speedController,
             DRV832X_CONTROLLER_GAIN_P,
@@ -215,7 +193,7 @@ bool drv832x_init(drv832x_Config const * pConfig)
     Task_Params_init(&taskParams);
     taskParams.stackSize = DRV832X_TASK_STACK_SIZE;
     taskParams.stack     = &g_motorControlStack;
-    Task_construct(&g_motorControlTask, Driver_motorControlTask, &taskParams, NULL);
+    // Task_construct(&g_motorControlTask, Driver_motorControlTask, &taskParams, NULL);
 
     // Set up GPIO hwi for speed sensing.
     // We just want to detect all edges on the hall sensor signals and measure the time between them
@@ -226,17 +204,14 @@ bool drv832x_init(drv832x_Config const * pConfig)
         GPIO_enableInt(pConfig->hallPin[pin]);
     }
 
-    pin = 0;
     bool pinState[HallSensors_Count];
-    for (; pin < HallSensors_Count; ++pin)
-        pinState[pin] = GPIO_read(pConfig->hallPin[pin]);
-
+    for (pin = 0; pin < HallSensors_Count; ++pin)
+        pinState[pin] = GPIO_read(g_driver.config.hallPin[pin]);
     g_driver.motorPhase = calcMotorPhaseFromInput(pinState[0], pinState[1], pinState[2]);
+    setDuty((uint32_t)0);
+    // disableMotor();
 
-    setDuty(0);
-    Driver_setMotorPhase(g_driver.motorPhase);
     enableMotor();
-
     return true;
 }
 
@@ -255,6 +230,15 @@ bool drv832x_start()
     // Reset the speed controller before starting the motor
     PIController_reset(&g_driver.speedController);
 
+    bool pinState[HallSensors_Count];
+    int pin = 0;
+    for (; pin < HallSensors_Count; ++pin)
+        pinState[pin] = GPIO_read(g_driver.config.hallPin[pin]);
+
+    g_driver.motorPhase = calcMotorPhaseFromInput(pinState[0], pinState[1], pinState[2]);
+    Driver_setMotorPhase(g_driver.motorPhase);
+    enableMotor();
+
     g_driver.state = drv832x_Starting;
 
     // TODO: Signal semaphore to wake up the driver task
@@ -264,6 +248,7 @@ bool drv832x_start()
 void drv832x_stop()
 {
     drv832x_setSpeed(0); // Set target speed to 0 to stop the motor.
+    disableMotor();
 }
 
 uint32_t drv832x_getSpeed()
@@ -276,6 +261,11 @@ uint32_t drv832x_getSpeed()
         return 0;
 
     return (uint32_t)((ticksPerSecond * 60) / ticksPerRotation); // Convert from ticks-per-rotation to RPM
+}
+
+uint32_t drv832x_getTargetSpeed()
+{
+    return (uint32_t)PIController_getTarget(&g_driver.speedController);
 }
 
 void drv832x_estop()

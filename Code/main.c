@@ -21,7 +21,7 @@
 #include "Board.h"
 
 /* Project header files */
-#include "driver/drv832x/drv832x.h"
+#include "drivers/drv832x/drv832x.h"
 #include "gui.h"
 #include "util.h"
 #include "config.h"
@@ -40,6 +40,10 @@ uint32_t g_ui32ClockCounter = 0;
  * @param bMotorState The new state of the motor
  */
 void MotorStateChanged(bool bMotorState) {
+    if (bMotorState)
+        drv832x_start();
+    else
+        drv832x_stop();
 	GPIO_write(Board_LED0, bMotorState);
 }
 

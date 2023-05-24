@@ -75,6 +75,8 @@ void drv832x_stop();
 /// @returns The current speed of the motor in RPM.
 uint32_t drv832x_getSpeed();
 
+uint32_t drv832x_getTargetSpeed();
+
 /// Trigger an emergency stop.
 /// @pre drv328x_init has been called successfully.
 void drv832x_estop();
