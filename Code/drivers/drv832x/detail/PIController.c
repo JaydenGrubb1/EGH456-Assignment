@@ -8,7 +8,6 @@ void PIController_init(PIController *pController, float gainP, float gainI)
     pController->sampleCount = 0;
 }
 
-
 void PIController_reset(PIController *pController)
 {
     pController->sampleCount = 0;

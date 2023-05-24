@@ -21,6 +21,7 @@
 #include "Board.h"
 
 /* Project header files */
+#include "driver/drv832x/drv832x.h"
 #include "gui.h"
 #include "util.h"
 #include "config.h"
@@ -73,10 +74,8 @@ void SetClock(uint32_t ui32Time) {
 	g_ui32ClockCounter = ui32Time;
 }
 
-float rpmCounter = 0;
 int16_t GetCurrentSpeed() {
-	rpmCounter++;
-	return ((sin(rpmCounter / 5) * 80) + (255 / 2));
+    return (int16_t)drv832x_getSpeed();
 }
 
 float powerCounter = 0;
@@ -136,6 +135,11 @@ int main(void) {
 	Clock_create((Clock_FuncPtr)GUI_Pulse, GUI_PULSE_PERIOD, &clockParams, NULL);
 	clockParams.period = 1000;
 	Clock_create((Clock_FuncPtr)PulseClock, 1000, &clockParams, NULL);
+
+	/* Start motor driver */
+	drv832x_Config motorConfig;
+	drv832x_Config_init(&motorConfig);
+	drv832x_init(&motorConfig);
 
 	/* Start the GUI */
 	GUI_Start();
