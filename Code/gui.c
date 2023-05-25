@@ -38,11 +38,11 @@
 #define DEFULT_GRAPH_INDEX 6
 #define GRAPH_GRID_SIZE_X 28
 #define GRAPH_GRID_SIZE_Y 28
-#define GRAPH_UNIT_SPEED "dY:45RPM"		// MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
-#define GRAPH_UNIT_POWER "dY:45W"		// MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
-#define GRAPH_UNIT_LIGHT "dY:45lux"		// MAX_LIGHT / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
-#define GRAPH_UNIT_ACCEL "dY:45m/s^2"	// MAX_ACCEL / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
-#define GRAPH_UNIT_TIME "dX:2.8s"		// GUI_PULSE_PERIOD * GRAPH_GRID_SIZE_X / 1000
+#define GRAPH_UNIT_SPEED "dY:45RPM"	  // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_POWER "dY:45W"	  // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_LIGHT "dY:45lux"	  // MAX_LIGHT / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_ACCEL "dY:45m/s^2" // MAX_ACCEL / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_TIME "dX:2.8s"	  // GUI_PULSE_PERIOD * GRAPH_GRID_SIZE_X / 1000
 
 /* Global constants */
 const tRectangle gc_sDesiredSpeedRect = {61, 54, 156, 79};
@@ -56,6 +56,7 @@ const tRectangle gc_sOption4Rect = {180, 202, 216, 219};
 tContext g_sContext;
 tCurrentPanel g_eCurrentPanel = MAIN_PANEL;
 int16_t g_i16DesiredSpeed = 0;
+bool g_bEStopTriggered = false;
 uint8_t g_ui8MaxPower = 10;
 uint8_t g_ui8MaxAccel = 10;
 uint8_t g_ui8TimeHours = 0;
@@ -93,6 +94,7 @@ tCanvasWidget g_sMainDesiredSpeed;
 tCanvasWidget g_sMainCurrentSpeed;
 tPushButtonWidget g_sMainDesiredSpeedUpBtn;
 tPushButtonWidget g_sMainDesiredSpeedDownBtn;
+tCanvasWidget g_sMainEStop;
 
 /* Settings panel widgets */
 tCanvasWidget g_sSettingsPanel;
@@ -349,7 +351,7 @@ RectangularButton(
 RectangularButton(
 	g_sMainDesiredSpeedDownBtn,												 // struct name
 	&g_sMainContent,														 // parent widget pointer
-	NULL,																	 // sibling widget pointer
+	&g_sMainEStop,															 // sibling widget pointer
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	214,																	 // x position
@@ -368,6 +370,25 @@ RectangularButton(
 	AUTO_REPEAT_DELAY,														 // auto repeat delay
 	AUTO_REPEAT_RATE,														 // auto repeat rate
 	OnMainSpeedDownBtnClick													 // on-click function pointer
+);
+Canvas(
+	g_sMainEStop,										   // struct name
+	&g_sMainContent,									   // parent widget pointer
+	NULL,												   // sibling widget pointer
+	NULL,												   // child widget pointer
+	DISPLAY,											   // display device pointer
+	214,												   // x position
+	106,												   // y position
+	98,													   // width
+	70,													   // height
+	CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_VCENTER, // style
+	ClrRed,												   // fill color
+	NULL,												   // outline color
+	ClrWhite,											   // text color
+	&g_sFontNf24,										   // font pointer
+	"E-Stop",											   // text
+	NULL,												   // image pointer
+	NULL												   // on-paint function pointer
 );
 #pragma endregion
 
@@ -1483,6 +1504,27 @@ void GUI_Init(uint32_t ui32SysClock) {
  * @note This function is not intended to be called by the user
  */
 void GUI_PulseInternal() {
+	/* Update e-stop status */
+	if (GUI_InvokeCallback(GUI_RETURN_ESTOP, NULL, NULL) && !g_bEStopTriggered) {
+		g_bEStopTriggered = true;
+		CanvasFillOn((tCanvasWidget *)&g_sMainEStop);
+		CanvasTextOn((tCanvasWidget *)&g_sMainEStop);
+		PushButtonFillColorSet((tPushButtonWidget *)&g_sMainStartBtn, ClrGray);
+		PushButtonFillColorPressedSet((tPushButtonWidget *)&g_sMainStartBtn, ClrGray);
+		PushButtonCallbackSet((tPushButtonWidget *)&g_sMainStartBtn, NULL);
+
+		if (g_eCurrentPanel == SETTINGS_PANEL) {
+			WidgetRemove((tWidget *)&g_sSettingsPanel);
+			WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
+		}
+		if (g_eCurrentPanel == GRAPH_PANEL) {
+			WidgetRemove((tWidget *)&g_sGraphPanel);
+			WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
+		}
+		g_eCurrentPanel = MAIN_PANEL;
+		WidgetPaint(WIDGET_ROOT);
+	}
+
 	if (g_eCurrentPanel == MAIN_PANEL) {
 		/* Update current speed */
 		WidgetPaint((tWidget *)&g_sMainCurrentSpeed);

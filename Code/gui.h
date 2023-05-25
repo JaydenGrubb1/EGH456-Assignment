@@ -46,6 +46,10 @@ typedef enum GUICallbackOption {
 	 * @brief Callback for when the current time is requested
 	 */
 	GUI_RETURN_TIME,
+	/**
+	 * @brief Callback for when the current e-stop state is requested
+	 */
+	GUI_RETURN_ESTOP,
 
 	GUI_CALLBACK_COUNT
 } tGUICallbackOption;

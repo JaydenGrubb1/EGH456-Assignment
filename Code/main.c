@@ -1,5 +1,6 @@
 /* Standard header files */
 #include <stdio.h>
+#include <stdlib.h> // rand()
 #include <stdint.h>
 #include <stdbool.h>
 #include <math.h>
@@ -97,6 +98,11 @@ int16_t GetCurrentAccel() {
 	return (((sin(accelCounter / 2) * 40) + (255 / 2)) + ((sin(accelCounter / 10) * 80) + (255 / 2))) / 2;
 }
 
+bool GetEStop() {
+	// return rand() > RAND_MAX / 100 * 99;	// 1% chance of e-stop
+	return false;
+}
+
 /**
  * @brief Application entry point
  *
@@ -120,6 +126,7 @@ int main(void) {
 	GUI_SetCallback(GUI_RETURN_POWER, (tGUICallbackFxn)GetCurrentPower);
 	GUI_SetCallback(GUI_RETURN_LIGHT, (tGUICallbackFxn)GetCurrentLight);
 	GUI_SetCallback(GUI_RETURN_ACCEL, (tGUICallbackFxn)GetCurrentAccel);
+	GUI_SetCallback(GUI_RETURN_ESTOP, (tGUICallbackFxn)GetEStop);
 
 	/* Construct task threads */
 	Task_Params taskParams;
