@@ -111,6 +111,12 @@ tCheckBoxWidget g_sGraphPowerChk;
 tCheckBoxWidget g_sGraphLightChk;
 tCheckBoxWidget g_sGraphAccelChk;
 tCanvasWidget g_sGraphContent;
+tCanvasWidget g_sGraphUnits;
+tCanvasWidget g_sGraphUnitSpeed;
+tCanvasWidget g_sGraphUnitPower;
+tCanvasWidget g_sGraphUnitLight;
+tCanvasWidget g_sGraphUnitAccel;
+tCanvasWidget g_sGraphUnitTime;
 
 /* Forward button click function declerations */
 void OnMainStartBtnClick(tWidget *psWidget);
@@ -809,13 +815,13 @@ CheckBox(
 Canvas(
 	g_sGraphContent,							   // struct name
 	&g_sGraphPanel,								   // parent widget pointer
-	NULL,										   // sibling widget pointer
+	&g_sGraphUnits,								   // sibling widget pointer
 	NULL,										   // child widget pointer
 	DISPLAY,									   // display device pointer
 	6,											   // x position
-	6,											   // y position
+	18,											   // y position
 	308,										   // width
-	170,										   // height
+	158,										   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_APP_DRAWN, // style
 	NULL,										   // fill color
 	ClrWhite,									   // outline color
@@ -824,6 +830,120 @@ Canvas(
 	NULL,										   // text
 	NULL,										   // image pointer
 	OnGraphContentPaint							   // on-paint function pointer
+);
+Canvas(
+	g_sGraphUnits,		// struct name
+	&g_sGraphPanel,		// parent widget pointer
+	NULL,				// sibling widget pointer
+	&g_sGraphUnitSpeed, // child widget pointer
+	DISPLAY,			// display device pointer
+	6,					// x position
+	6,					// y position
+	308,				// width
+	13,					// height
+	NULL,				// style
+	NULL,				// fill color
+	NULL,				// outline color
+	NULL,				// text color
+	NULL,				// font pointer
+	NULL,				// text
+	NULL,				// image pointer
+	NULL				// on-paint function pointer
+);
+Canvas(
+	g_sGraphUnitSpeed,																								  // struct name
+	&g_sGraphUnits,																									  // parent widget pointer
+	&g_sGraphUnitPower,																								  // sibling widget pointer
+	NULL,																											  // child widget pointer
+	DISPLAY,																										  // display device pointer
+	6,																												  // x position
+	6,																												  // y position
+	62,																												  // width
+	13,																												  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																										  // fill color
+	ClrRed,																											  // outline color
+	ClrRed,																											  // text color
+	&g_sFontNf10,																									  // font pointer
+	"dV: 24",																										  // text
+	NULL,																											  // image pointer
+	NULL																											  // on-paint function pointer
+);
+Canvas(
+	g_sGraphUnitPower,																								  // struct name
+	&g_sGraphUnits,																									  // parent widget pointer
+	&g_sGraphUnitLight,																								  // sibling widget pointer
+	NULL,																											  // child widget pointer
+	DISPLAY,																										  // display device pointer
+	68,																												  // x position
+	6,																												  // y position
+	62,																												  // width
+	13,																												  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																										  // fill color
+	ClrBlue,																										  // outline color
+	ClrBlue,																										  // text color
+	&g_sFontNf10,																									  // font pointer
+	"dP: 24",																										  // text
+	NULL,																											  // image pointer
+	NULL																											  // on-paint function pointer
+);
+Canvas(
+	g_sGraphUnitLight,																								  // struct name
+	&g_sGraphUnits,																									  // parent widget pointer
+	&g_sGraphUnitAccel,																								  // sibling widget pointer
+	NULL,																											  // child widget pointer
+	DISPLAY,																										  // display device pointer
+	130,																											  // x position
+	6,																												  // y position
+	62,																												  // width
+	13,																												  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																										  // fill color
+	ClrLime,																										  // outline color
+	ClrLime,																										  // text color
+	&g_sFontNf10,																									  // font pointer
+	"dL: 24",																										  // text
+	NULL,																											  // image pointer
+	NULL																											  // on-paint function pointer
+);
+Canvas(
+	g_sGraphUnitAccel,																								  // struct name
+	&g_sGraphUnits,																									  // parent widget pointer
+	&g_sGraphUnitTime,																								  // sibling widget pointer
+	NULL,																											  // child widget pointer
+	DISPLAY,																										  // display device pointer
+	192,																											  // x position
+	6,																												  // y position
+	62,																												  // width
+	13,																												  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																										  // fill color
+	ClrYellow,																										  // outline color
+	ClrYellow,																										  // text color
+	&g_sFontNf10,																									  // font pointer
+	"dA: 24",																										  // text
+	NULL,																											  // image pointer
+	NULL																											  // on-paint function pointer
+);
+Canvas(
+	g_sGraphUnitTime,																								  // struct name
+	&g_sGraphUnits,																									  // parent widget pointer
+	NULL,																											  // sibling widget pointer
+	NULL,																											  // child widget pointer
+	DISPLAY,																										  // display device pointer
+	254,																											  // x position
+	6,																												  // y position
+	60,																												  // width
+	13,																												  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																										  // fill color
+	ClrWhite,																										  // outline color
+	ClrWhite,																										  // text color
+	&g_sFontNf10,																									  // font pointer
+	"dT: 24",																										  // text
+	NULL,																											  // image pointer
+	NULL																											  // on-paint function pointer
 );
 #pragma endregion
 
@@ -1039,6 +1159,16 @@ void OnGraphBackBtnClick(tWidget *pWidget) {
 void OnGraphSpeedChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphSpeed = bSelected;
 	g_ui8PrevSpeed = UINT8_MAX;
+
+	if (bSelected) {
+		CanvasOutlineOn((tCanvasWidget *)&g_sGraphUnitSpeed);
+		CanvasTextOn((tCanvasWidget *)&g_sGraphUnitSpeed);
+	} else {
+		CanvasOutlineOff((tCanvasWidget *)&g_sGraphUnitSpeed);
+		CanvasTextOff((tCanvasWidget *)&g_sGraphUnitSpeed);
+	}
+
+	WidgetPaint((tWidget *)&g_sGraphUnitSpeed);
 }
 
 /**
@@ -1050,6 +1180,16 @@ void OnGraphSpeedChkClick(tWidget *psWidget, uint32_t bSelected) {
 void OnGraphPowerChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphPower = bSelected;
 	g_ui8PrevPower = UINT8_MAX;
+
+	if (bSelected) {
+		CanvasOutlineOn((tCanvasWidget *)&g_sGraphUnitPower);
+		CanvasTextOn((tCanvasWidget *)&g_sGraphUnitPower);
+	} else {
+		CanvasOutlineOff((tCanvasWidget *)&g_sGraphUnitPower);
+		CanvasTextOff((tCanvasWidget *)&g_sGraphUnitPower);
+	}
+
+	WidgetPaint((tWidget *)&g_sGraphUnitPower);
 }
 
 /**
@@ -1061,6 +1201,16 @@ void OnGraphPowerChkClick(tWidget *psWidget, uint32_t bSelected) {
 void OnGraphLightChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphLight = bSelected;
 	g_ui8PrevLight = UINT8_MAX;
+
+	if (bSelected) {
+		CanvasOutlineOn((tCanvasWidget *)&g_sGraphUnitLight);
+		CanvasTextOn((tCanvasWidget *)&g_sGraphUnitLight);
+	} else {
+		CanvasOutlineOff((tCanvasWidget *)&g_sGraphUnitLight);
+		CanvasTextOff((tCanvasWidget *)&g_sGraphUnitLight);
+	}
+
+	WidgetPaint((tWidget *)&g_sGraphUnitLight);
 }
 
 /**
@@ -1072,6 +1222,16 @@ void OnGraphLightChkClick(tWidget *psWidget, uint32_t bSelected) {
 void OnGraphAccelChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphAccel = bSelected;
 	g_ui8PrevAccel = UINT8_MAX;
+
+	if (bSelected) {
+		CanvasOutlineOn((tCanvasWidget *)&g_sGraphUnitAccel);
+		CanvasTextOn((tCanvasWidget *)&g_sGraphUnitAccel);
+	} else {
+		CanvasOutlineOff((tCanvasWidget *)&g_sGraphUnitAccel);
+		CanvasTextOff((tCanvasWidget *)&g_sGraphUnitAccel);
+	}
+
+	WidgetPaint((tWidget *)&g_sGraphUnitAccel);
 }
 #pragma endregion
 
