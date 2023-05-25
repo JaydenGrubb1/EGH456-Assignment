@@ -47,7 +47,6 @@ const tRectangle gc_sOption4Rect = {180, 202, 216, 219};
 
 /* Global variables */
 tContext g_sContext;
-tRectangle g_sScreenRect;
 tCurrentPanel g_eCurrentPanel = MAIN_PANEL;
 int16_t g_i16DesiredSpeed = 0;
 uint8_t g_ui8MaxPower = 10;
@@ -1276,12 +1275,6 @@ void GUI_Init(uint32_t ui32SysClock) {
 	GrContextInit(&g_sContext, &g_sKentec320x240x16_SSD2119);
 	TouchScreenInit(ui32SysClock);
 	TouchScreenCallbackSet(WidgetPointerMessage);
-
-	/* Initialize screen rect */
-	g_sScreenRect.i16XMin = 0;
-	g_sScreenRect.i16YMin = 0;
-	g_sScreenRect.i16XMax = GrContextDpyWidthGet(&g_sContext);
-	g_sScreenRect.i16YMax = GrContextDpyHeightGet(&g_sContext);
 
 	/* Erase the function callbacks array */
 	memset(g_pfnCallbacks, NULL, sizeof(g_pfnCallbacks));
