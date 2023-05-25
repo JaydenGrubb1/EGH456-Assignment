@@ -38,6 +38,11 @@
 #define DEFULT_GRAPH_INDEX 6
 #define GRAPH_GRID_SIZE_X 28
 #define GRAPH_GRID_SIZE_Y 28
+#define GRAPH_UNIT_SPEED "dS:45RPM"	  // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_POWER "dP:45W"	  // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_LIGHT "dL:45lux"	  // MAX_LIGHT / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_ACCEL "dA:45m/s/s" // MAX_ACCEL / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_TIME "dT:2.8s"	  // GUI_PULSE_PERIOD * GRAPH_GRID_SIZE_X / 1000
 
 /* Global constants */
 const tRectangle gc_sDesiredSpeedRect = {61, 54, 156, 79};
@@ -867,7 +872,7 @@ Canvas(
 	ClrRed,																											  // outline color
 	ClrRed,																											  // text color
 	&g_sFontNf10,																									  // font pointer
-	"dS: 24",																										  // text
+	GRAPH_UNIT_SPEED,																								  // text
 	NULL,																											  // image pointer
 	NULL																											  // on-paint function pointer
 );
@@ -886,7 +891,7 @@ Canvas(
 	ClrBlue,																										  // outline color
 	ClrBlue,																										  // text color
 	&g_sFontNf10,																									  // font pointer
-	"dP: 24",																										  // text
+	GRAPH_UNIT_POWER,																								  // text
 	NULL,																											  // image pointer
 	NULL																											  // on-paint function pointer
 );
@@ -905,7 +910,7 @@ Canvas(
 	ClrLime,															   // outline color
 	ClrLime,															   // text color
 	&g_sFontNf10,														   // font pointer
-	"dL: 24",															   // text
+	GRAPH_UNIT_LIGHT,													   // text
 	NULL,																   // image pointer
 	NULL																   // on-paint function pointer
 );
@@ -924,7 +929,7 @@ Canvas(
 	ClrYellow,															   // outline color
 	ClrYellow,															   // text color
 	&g_sFontNf10,														   // font pointer
-	"dA: 24",															   // text
+	GRAPH_UNIT_ACCEL,													   // text
 	NULL,																   // image pointer
 	NULL																   // on-paint function pointer
 );
@@ -943,7 +948,7 @@ Canvas(
 	ClrWhite,																										  // outline color
 	ClrWhite,																										  // text color
 	&g_sFontNf10,																									  // font pointer
-	"dT: 24",																										  // text
+	GRAPH_UNIT_TIME,																								  // text
 	NULL,																											  // image pointer
 	NULL																											  // on-paint function pointer
 );
