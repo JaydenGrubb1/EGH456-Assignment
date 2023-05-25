@@ -21,7 +21,7 @@
 #include "Board.h"
 
 /* Project header files */
-#include "drivers/drv832x/drv832x.h"
+#include "drivers/drv832x/MotorControl.h"
 #include "gui.h"
 #include "util.h"
 #include "config.h"
@@ -41,14 +41,14 @@ uint32_t g_ui32ClockCounter = 0;
  */
 void MotorStateChanged(bool bMotorState) {
     if (bMotorState)
-        Driver_start();
+        MotorControl_start();
     else
-        Driver_stop();
+        MotorControl_stop();
 	GPIO_write(Board_LED0, bMotorState);
 }
 
 void SetMotorSpeed(UArg rpm) {
-    Driver_setSpeed(rpm);
+    MotorControl_setSpeed(rpm);
 }
 
 /**
@@ -83,7 +83,7 @@ void SetClock(uint32_t ui32Time) {
 }
 
 int16_t GetCurrentSpeed() {
-    return (int16_t)Driver_getSpeed();
+    return (int16_t)MotorControl_getSpeed();
 }
 
 float powerCounter = 0;
@@ -145,10 +145,10 @@ int main(void) {
 	clockParams.period = 1000;
 	Clock_create((Clock_FuncPtr)PulseClock, 1000, &clockParams, NULL);
 
-	/* Start motor driver */
-	drv832x_Config motorConfig;
-	Driver_Config_init(&motorConfig);
-	Driver_init(&motorConfig);
+	/* Start motor control driver */
+	MotorControl_Config motorConfig;
+	MotorControl_Config_init(&motorConfig);
+	MotorControl_init(&motorConfig);
 
 	/* Start the GUI */
 	GUI_Start();

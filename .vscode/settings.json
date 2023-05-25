@@ -7,7 +7,9 @@
 		"cmath": "c",
 		"states.h": "c",
 		"motorlib.h": "c",
-		"timesampler.h": "c"
+		"timesampler.h": "c",
+		"drv832x.h": "c",
+		"motorcontrol.h": "c"
 	},
 	"C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: LLVM, UseTab: Always, IndentWidth: 4, TabWidth: 4, BreakBeforeBraces: Attach, AllowShortIfStatementsOnASingleLine: false, IndentCaseLabels: true, ColumnLimit: 0, NamespaceIndentation: All, FixNamespaceComments: false, SortIncludes: Never }"
 }
