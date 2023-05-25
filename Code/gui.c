@@ -41,7 +41,7 @@
 #define GRAPH_UNIT_SPEED "dS:45RPM"	  // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
 #define GRAPH_UNIT_POWER "dP:45W"	  // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
 #define GRAPH_UNIT_LIGHT "dL:45lux"	  // MAX_LIGHT / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
-#define GRAPH_UNIT_ACCEL "dA:45m/s/s" // MAX_ACCEL / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_ACCEL "dA:45m/s^2" // MAX_ACCEL / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
 #define GRAPH_UNIT_TIME "dT:2.8s"	  // GUI_PULSE_PERIOD * GRAPH_GRID_SIZE_X / 1000
 
 /* Global constants */
@@ -513,7 +513,7 @@ Canvas(
 	ClrWhite,																											   // outline color
 	ClrWhite,																											   // text color
 	&g_sFontNf10,																										   // font pointer
-	"Max Accel (m/s/s)",																								   // text
+	"Max Accel (m/s^2)",																								   // text
 	NULL,																												   // image pointer
 	OnSettingsOption2Paint																								   // on-paint function pointer
 );
@@ -815,7 +815,7 @@ CheckBox(
 	ClrWhite,			 // outline color
 	ClrYellow,			 // text color
 	&g_sFontNf10,		 // font pointer
-	" Accel (m/s/s)",	 // text
+	" Accel (m/s^2)",	 // text
 	NULL,				 // image pointer
 	OnGraphAccelChkClick // on-change function pointer
 );
