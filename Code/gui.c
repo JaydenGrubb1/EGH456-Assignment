@@ -75,6 +75,7 @@ uint8_t g_ui8PrevSpeed = UINT8_MAX;
 uint8_t g_ui8PrevPower = UINT8_MAX;
 uint8_t g_ui8PrevLight = UINT8_MAX;
 uint8_t g_ui8PrevAccel = UINT8_MAX;
+bool g_bGraphFirstPaint = true;
 
 /* Callback function array */
 tGUICallbackFxn g_pfnCallbacks[GUI_CALLBACK_COUNT];
@@ -1023,6 +1024,7 @@ void OnMainGraphBtnClick(tWidget *pWidget) {
 	WidgetPaint(WIDGET_ROOT);
 	g_eCurrentPanel = GRAPH_PANEL;
 	g_ui16GraphIndex = DEFULT_GRAPH_INDEX;
+	g_bGraphFirstPaint = true;
 }
 
 /**
@@ -1370,6 +1372,24 @@ void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
  * @param psContext The graphics context
  */
 void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
+	/* Draw entire graph background if first paint */
+	if (g_bGraphFirstPaint) {
+		g_bGraphFirstPaint = false;
+		GrContextForegroundSet(psContext, ClrDimGray);
+
+		/* Draw vertical lines */
+		int16_t i16X = psContext->sClipRegion.i16XMin;
+		for (i16X; i16X < psContext->sClipRegion.i16XMax; i16X += GRAPH_GRID_SIZE_X) {
+			GrLineDrawV(psContext, i16X, psContext->sClipRegion.i16YMin, psContext->sClipRegion.i16YMax);
+		}
+
+		/* Draw horizontal lines */
+		int16_t i16Y = psContext->sClipRegion.i16YMax;
+		for (i16Y; i16Y > psContext->sClipRegion.i16YMin; i16Y -= GRAPH_GRID_SIZE_Y) {
+			GrLineDrawH(psContext, psContext->sClipRegion.i16XMin, psContext->sClipRegion.i16XMax, i16Y);
+		}
+	}
+
 	/* Draw lead line */
 	GrContextForegroundSet(psContext, ClrCyan);
 	GrLineDrawV(psContext, g_ui16GraphIndex + 1, psContext->sClipRegion.i16YMin, psContext->sClipRegion.i16YMax);
