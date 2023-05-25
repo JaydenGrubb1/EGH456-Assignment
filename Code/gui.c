@@ -36,6 +36,8 @@
 #define AUTO_REPEAT_DELAY 250
 #define AUTO_REPEAT_RATE 20
 #define DEFULT_GRAPH_INDEX 6
+#define GRAPH_GRID_SIZE_X 28
+#define GRAPH_GRID_SIZE_Y 28
 
 /* Global constants */
 const tRectangle gc_sDesiredSpeedRect = {61, 54, 156, 79};
@@ -865,7 +867,7 @@ Canvas(
 	ClrRed,																											  // outline color
 	ClrRed,																											  // text color
 	&g_sFontNf10,																									  // font pointer
-	"dV: 24",																										  // text
+	"dS: 24",																										  // text
 	NULL,																											  // image pointer
 	NULL																											  // on-paint function pointer
 );
@@ -889,42 +891,42 @@ Canvas(
 	NULL																											  // on-paint function pointer
 );
 Canvas(
-	g_sGraphUnitLight,																								  // struct name
-	&g_sGraphUnits,																									  // parent widget pointer
-	&g_sGraphUnitAccel,																								  // sibling widget pointer
-	NULL,																											  // child widget pointer
-	DISPLAY,																										  // display device pointer
-	130,																											  // x position
-	6,																												  // y position
-	62,																												  // width
-	13,																												  // height
+	g_sGraphUnitLight,													   // struct name
+	&g_sGraphUnits,														   // parent widget pointer
+	&g_sGraphUnitAccel,													   // sibling widget pointer
+	NULL,																   // child widget pointer
+	DISPLAY,															   // display device pointer
+	130,																   // x position
+	6,																	   // y position
+	62,																	   // width
+	13,																	   // height
 	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
-	ClrBlack,																										  // fill color
-	ClrLime,																										  // outline color
-	ClrLime,																										  // text color
-	&g_sFontNf10,																									  // font pointer
-	"dL: 24",																										  // text
-	NULL,																											  // image pointer
-	NULL																											  // on-paint function pointer
+	ClrBlack,															   // fill color
+	ClrLime,															   // outline color
+	ClrLime,															   // text color
+	&g_sFontNf10,														   // font pointer
+	"dL: 24",															   // text
+	NULL,																   // image pointer
+	NULL																   // on-paint function pointer
 );
 Canvas(
-	g_sGraphUnitAccel,																								  // struct name
-	&g_sGraphUnits,																									  // parent widget pointer
-	&g_sGraphUnitTime,																								  // sibling widget pointer
-	NULL,																											  // child widget pointer
-	DISPLAY,																										  // display device pointer
-	192,																											  // x position
-	6,																												  // y position
-	62,																												  // width
-	13,																												  // height
+	g_sGraphUnitAccel,													   // struct name
+	&g_sGraphUnits,														   // parent widget pointer
+	&g_sGraphUnitTime,													   // sibling widget pointer
+	NULL,																   // child widget pointer
+	DISPLAY,															   // display device pointer
+	192,																   // x position
+	6,																	   // y position
+	62,																	   // width
+	13,																	   // height
 	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
-	ClrBlack,																										  // fill color
-	ClrYellow,																										  // outline color
-	ClrYellow,																										  // text color
-	&g_sFontNf10,																									  // font pointer
-	"dA: 24",																										  // text
-	NULL,																											  // image pointer
-	NULL																											  // on-paint function pointer
+	ClrBlack,															   // fill color
+	ClrYellow,															   // outline color
+	ClrYellow,															   // text color
+	&g_sFontNf10,														   // font pointer
+	"dA: 24",															   // text
+	NULL,																   // image pointer
+	NULL																   // on-paint function pointer
 );
 Canvas(
 	g_sGraphUnitTime,																								  // struct name
@@ -1367,9 +1369,19 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 	GrContextForegroundSet(psContext, ClrCyan);
 	GrLineDrawV(psContext, g_ui16GraphIndex + 1, psContext->sClipRegion.i16YMin, psContext->sClipRegion.i16YMax);
 
-	/* Clear current line */
-	GrContextForegroundSet(psContext, ClrBlack);
+	/* Draw vertical grid line or clear */
+	if ((g_ui16GraphIndex - psContext->sClipRegion.i16XMin) % GRAPH_GRID_SIZE_X == 0)
+		GrContextForegroundSet(psContext, ClrDimGray);
+	else
+		GrContextForegroundSet(psContext, ClrBlack);
 	GrLineDrawV(psContext, g_ui16GraphIndex, psContext->sClipRegion.i16YMin, psContext->sClipRegion.i16YMax);
+
+	/* Draw horizontal grid lines */
+	GrContextForegroundSet(psContext, ClrDimGray);
+	int16_t i16Y = psContext->sClipRegion.i16YMax;
+	for (i16Y; i16Y > psContext->sClipRegion.i16YMin; i16Y -= GRAPH_GRID_SIZE_Y) {
+		GrPixelDraw(psContext, g_ui16GraphIndex, i16Y);
+	}
 
 	/* Draw speed */
 	if (g_bGraphSpeed) {
