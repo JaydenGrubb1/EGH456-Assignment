@@ -8,15 +8,6 @@
 
 #define SPEED_MAX_SAMPLES 5
 
-typedef enum _SensorState {
-    SensorState_Unknown = -1,
-    SensorState_Low,
-    SensorState_High,
-    SensorState_Rising,
-    SensorState_Falling,
-    SensorState_Count,
-} SensorState;
-
 typedef struct _TimeSampler {
     /// How long until a sample is discarded
     uint32_t sampleExpireTime;

@@ -41,14 +41,14 @@ uint32_t g_ui32ClockCounter = 0;
  */
 void MotorStateChanged(bool bMotorState) {
     if (bMotorState)
-        drv832x_start();
+        Driver_start();
     else
-        drv832x_stop();
+        Driver_stop();
 	GPIO_write(Board_LED0, bMotorState);
 }
 
 void SetMotorSpeed(UArg rpm) {
-    drv832x_setSpeed(rpm);
+    Driver_setSpeed(rpm);
 }
 
 /**
@@ -83,7 +83,7 @@ void SetClock(uint32_t ui32Time) {
 }
 
 int16_t GetCurrentSpeed() {
-    return (int16_t)drv832x_getSpeed();
+    return (int16_t)Driver_getSpeed();
 }
 
 float powerCounter = 0;
@@ -147,8 +147,8 @@ int main(void) {
 
 	/* Start motor driver */
 	drv832x_Config motorConfig;
-	drv832x_Config_init(&motorConfig);
-	drv832x_init(&motorConfig);
+	Driver_Config_init(&motorConfig);
+	Driver_init(&motorConfig);
 
 	/* Start the GUI */
 	GUI_Start();
