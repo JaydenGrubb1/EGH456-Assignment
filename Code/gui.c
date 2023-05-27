@@ -10,6 +10,10 @@
 #include <string.h>
 #include <math.h>
 
+/* GPIO header files */
+#include <ti/drivers/GPIO.h>
+#include "Board.h"
+
 /* GRLib header files */
 #include "grlib/grlib.h"
 #include "grlib/widget.h"
@@ -43,6 +47,8 @@
 #define GRAPH_UNIT_LIGHT "dY:45lux"	  // MAX_LIGHT / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
 #define GRAPH_UNIT_ACCEL "dY:45m/s^2" // MAX_ACCEL / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
 #define GRAPH_UNIT_TIME "dX:2.8s"	  // GUI_PULSE_PERIOD * GRAPH_GRID_SIZE_X / 1000
+#define MOTOR_STATE_LED Board_LED0
+#define LIGHT_STATE_LED Board_LED1
 
 /* Global constants */
 const tRectangle gc_sDesiredSpeedRect = {61, 54, 156, 79};
@@ -56,7 +62,7 @@ const tRectangle gc_sOption4Rect = {180, 202, 216, 219};
 tContext g_sContext;
 tCurrentPanel g_eCurrentPanel = MAIN_PANEL;
 int16_t g_i16DesiredSpeed = 0;
-bool g_bEStopTriggered = false;
+bool g_bPrevEStop = false;
 uint8_t g_ui8MaxPower = 10;
 uint8_t g_ui8MaxAccel = 10;
 uint8_t g_ui8TimeHours = 0;
@@ -975,6 +981,7 @@ void OnMainStartBtnClick(tWidget *pWidget) {
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkBlue);
 	}
 
+	GPIO_write(MOTOR_STATE_LED, g_bIsRunning);
 	GUI_InvokeCallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
 }
 
@@ -1486,14 +1493,15 @@ void GUI_Init(uint32_t ui32SysClock) {
 void GUI_PulseInternal() {
 	/* Update e-stop status */
 	bool bEStop = GUI_InvokeCallback(GUI_RETURN_ESTOP, NULL, NULL);
-	if (bEStop && !g_bEStopTriggered) {
-		g_bEStopTriggered = true;
+	if (bEStop && !g_bPrevEStop) {
+		g_bPrevEStop = true;
 
 		/* Disable start button */
 		PushButtonFillColorSet((tPushButtonWidget *)&g_sMainStartBtn, ClrGray);
 		PushButtonFillColorPressedSet((tPushButtonWidget *)&g_sMainStartBtn, ClrGray);
 		PushButtonCallbackSet((tPushButtonWidget *)&g_sMainStartBtn, NULL);
 		PushButtonTextSet((tPushButtonWidget *)&g_sMainStartBtn, "E-STOP");
+		GPIO_write(MOTOR_STATE_LED, false);
 		g_bIsRunning = false;
 
 		/* Go to main panel */
@@ -1508,8 +1516,8 @@ void GUI_PulseInternal() {
 		g_eCurrentPanel = MAIN_PANEL;
 		WidgetPaint(WIDGET_ROOT);
 	}
-	if (!bEStop && g_bEStopTriggered) {
-		g_bEStopTriggered = false;
+	if (!bEStop && g_bPrevEStop) {
+		g_bPrevEStop = false;
 
 		/* Enable start button */
 		PushButtonFillColorSet((tPushButtonWidget *)&g_sMainStartBtn, ClrBlue);
@@ -1522,13 +1530,16 @@ void GUI_PulseInternal() {
 			WidgetPaint(WIDGET_ROOT);
 	}
 
+	/* Update light status */
+	bool bIsNight = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL) < NIGHT_LIGHT_THRESHOLD;
+	GPIO_write(LIGHT_STATE_LED, bIsNight);
+
 	if (g_eCurrentPanel == MAIN_PANEL) {
 		/* Update current speed */
 		WidgetPaint((tWidget *)&g_sMainCurrentSpeed);
 
 		/* Update time and light status */
 		uint32_t ui32Time = GUI_InvokeCallback(GUI_RETURN_TIME, NULL, NULL);
-		bool bIsNight = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL) < NIGHT_LIGHT_THRESHOLD;
 		if (ui32Time / 60 != g_ui32PrevTime || bIsNight != g_bPrevIsNight) {
 			g_ui32PrevTime = ui32Time / 60;
 			g_bPrevIsNight = bIsNight;

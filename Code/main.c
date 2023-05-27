@@ -40,7 +40,7 @@ uint32_t g_ui32ClockCounter = 0;
  * @param bMotorState The new state of the motor
  */
 void MotorStateChanged(bool bMotorState) {
-	GPIO_write(Board_LED0, bMotorState);
+	// TODO: Implement this
 }
 
 /**
@@ -89,7 +89,7 @@ int16_t GetCurrentPower() {
 float lightCounter = 0;
 int16_t GetCurrentLight() {
 	lightCounter++;
-	return ((sin(lightCounter / (38.5 / M_PI)) * 40) + (255 / 2));
+	return ((sin(lightCounter / (38.5 / M_PI)) * 40) + 35);
 }
 
 float accelCounter = 0;
