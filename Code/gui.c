@@ -94,7 +94,6 @@ tCanvasWidget g_sMainDesiredSpeed;
 tCanvasWidget g_sMainCurrentSpeed;
 tPushButtonWidget g_sMainDesiredSpeedUpBtn;
 tPushButtonWidget g_sMainDesiredSpeedDownBtn;
-tCanvasWidget g_sMainEStop;
 
 /* Settings panel widgets */
 tCanvasWidget g_sSettingsPanel;
@@ -351,7 +350,7 @@ RectangularButton(
 RectangularButton(
 	g_sMainDesiredSpeedDownBtn,												 // struct name
 	&g_sMainContent,														 // parent widget pointer
-	&g_sMainEStop,															 // sibling widget pointer
+	NULL,																	 // sibling widget pointer
 	NULL,																	 // child widget pointer
 	DISPLAY,																 // display device pointer
 	214,																	 // x position
@@ -370,25 +369,6 @@ RectangularButton(
 	AUTO_REPEAT_DELAY,														 // auto repeat delay
 	AUTO_REPEAT_RATE,														 // auto repeat rate
 	OnMainSpeedDownBtnClick													 // on-click function pointer
-);
-Canvas(
-	g_sMainEStop,										   // struct name
-	&g_sMainContent,									   // parent widget pointer
-	NULL,												   // sibling widget pointer
-	NULL,												   // child widget pointer
-	DISPLAY,											   // display device pointer
-	214,												   // x position
-	106,												   // y position
-	98,													   // width
-	70,													   // height
-	CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_VCENTER, // style
-	ClrRed,												   // fill color
-	NULL,												   // outline color
-	ClrWhite,											   // text color
-	&g_sFontNf24,										   // font pointer
-	"E-Stop",											   // text
-	NULL,												   // image pointer
-	NULL												   // on-paint function pointer
 );
 #pragma endregion
 
@@ -1505,14 +1485,18 @@ void GUI_Init(uint32_t ui32SysClock) {
  */
 void GUI_PulseInternal() {
 	/* Update e-stop status */
-	if (GUI_InvokeCallback(GUI_RETURN_ESTOP, NULL, NULL) && !g_bEStopTriggered) {
+	bool bEStop = GUI_InvokeCallback(GUI_RETURN_ESTOP, NULL, NULL);
+	if (bEStop && !g_bEStopTriggered) {
 		g_bEStopTriggered = true;
-		CanvasFillOn((tCanvasWidget *)&g_sMainEStop);
-		CanvasTextOn((tCanvasWidget *)&g_sMainEStop);
+
+		/* Disable start button */
 		PushButtonFillColorSet((tPushButtonWidget *)&g_sMainStartBtn, ClrGray);
 		PushButtonFillColorPressedSet((tPushButtonWidget *)&g_sMainStartBtn, ClrGray);
 		PushButtonCallbackSet((tPushButtonWidget *)&g_sMainStartBtn, NULL);
+		PushButtonTextSet((tPushButtonWidget *)&g_sMainStartBtn, "E-STOP");
+		g_bIsRunning = false;
 
+		/* Go to main panel */
 		if (g_eCurrentPanel == SETTINGS_PANEL) {
 			WidgetRemove((tWidget *)&g_sSettingsPanel);
 			WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
@@ -1523,6 +1507,19 @@ void GUI_PulseInternal() {
 		}
 		g_eCurrentPanel = MAIN_PANEL;
 		WidgetPaint(WIDGET_ROOT);
+	}
+	if (!bEStop && g_bEStopTriggered) {
+		g_bEStopTriggered = false;
+
+		/* Enable start button */
+		PushButtonFillColorSet((tPushButtonWidget *)&g_sMainStartBtn, ClrBlue);
+		PushButtonFillColorPressedSet((tPushButtonWidget *)&g_sMainStartBtn, ClrDarkBlue);
+		PushButtonCallbackSet((tPushButtonWidget *)&g_sMainStartBtn, OnMainStartBtnClick);
+		PushButtonTextSet((tPushButtonWidget *)&g_sMainStartBtn, "START");
+
+		/* Repaint GUI */
+		if (g_eCurrentPanel == MAIN_PANEL)
+			WidgetPaint(WIDGET_ROOT);
 	}
 
 	if (g_eCurrentPanel == MAIN_PANEL) {

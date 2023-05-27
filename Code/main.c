@@ -99,7 +99,8 @@ int16_t GetCurrentAccel() {
 }
 
 bool GetEStop() {
-	// return rand() > RAND_MAX / 100 * 99;	// 1% chance of e-stop
+	// uint32_t ticks = Clock_getTicks();		// Enables e-stop after 10 seconds
+	// return ticks < 20000 && ticks > 10000;	// Disables e-stop after 20 seconds
 	return false;
 }
 
