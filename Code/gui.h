@@ -68,7 +68,7 @@ typedef enum tCurrentPanel {
  * @brief GUI callback function type
  *
  */
-typedef uint32_t (*tGUICallbackFxn)(uint32_t arg1, uint32_t arg2);
+typedef int32_t (*tGUICallbackFxn)(uint32_t arg1, uint32_t arg2);
 
 /**
  * @brief Initialize the GUI
@@ -111,7 +111,7 @@ void GUI_SetCallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbac
  *
  * @note This function is not intended to be called by the user
  */
-uint32_t GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2);
+int32_t GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2);
 
 /**
  * @brief Starts the GUI

@@ -1418,8 +1418,8 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 
 	/* Draw speed */
 	if (g_bGraphSpeed) {
-		uint16_t i16Speed = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
-		uint16_t i16SpeedVal = Map(i16Speed, 0, MAX_SPEED, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		int16_t i16Speed = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
+		int16_t i16SpeedVal = Map(i16Speed, 0, MAX_SPEED, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
 		if (g_ui8PrevSpeed != UINT8_MAX) {
 			GrContextForegroundSet(psContext, ClrRed);
 			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevSpeed, g_ui16GraphIndex, i16SpeedVal);
@@ -1429,8 +1429,8 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 
 	/* Draw power */
 	if (g_bGraphPower) {
-		uint16_t i16Power = GUI_InvokeCallback(GUI_RETURN_POWER, NULL, NULL);
-		uint16_t i16PowerVal = Map(i16Power, 0, MAX_POWER, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		int16_t i16Power = GUI_InvokeCallback(GUI_RETURN_POWER, NULL, NULL);
+		int16_t i16PowerVal = Map(i16Power, 0, MAX_POWER, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
 		if (g_ui8PrevPower != UINT8_MAX) {
 			GrContextForegroundSet(psContext, ClrBlue);
 			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevPower, g_ui16GraphIndex, i16PowerVal);
@@ -1440,8 +1440,8 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 
 	/* Draw light */
 	if (g_bGraphLight) {
-		uint16_t i16Light = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL);
-		uint16_t i16LightVal = Map(i16Light, 0, MAX_LIGHT, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		int16_t i16Light = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL);
+		int16_t i16LightVal = Map(i16Light, 0, MAX_LIGHT, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
 		if (g_ui8PrevLight != UINT8_MAX) {
 			GrContextForegroundSet(psContext, ClrLime);
 			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevLight, g_ui16GraphIndex, i16LightVal);
@@ -1451,8 +1451,8 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 
 	/* Draw accel */
 	if (g_bGraphAccel) {
-		uint16_t i16Accel = GUI_InvokeCallback(GUI_RETURN_ACCEL, NULL, NULL);
-		uint16_t i16AccelVal = Map(i16Accel, 0, MAX_ACCEL, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		int16_t i16Accel = GUI_InvokeCallback(GUI_RETURN_ACCEL, NULL, NULL);
+		int16_t i16AccelVal = Map(i16Accel, 0, MAX_ACCEL, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
 		if (g_ui8PrevAccel != UINT8_MAX) {
 			GrContextForegroundSet(psContext, ClrYellow);
 			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevAccel, g_ui16GraphIndex, i16AccelVal);
@@ -1611,7 +1611,7 @@ void GUI_SetCallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbac
  *
  * @note This function is not intended to be called by the user
  */
-uint32_t GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2) {
+int32_t GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2) {
 	if (tCallbackOpt >= GUI_CALLBACK_COUNT)
 		return 0;
 	if (g_pfnCallbacks[tCallbackOpt] == NULL)
