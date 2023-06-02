@@ -10,8 +10,13 @@
 #include <string.h>
 #include <math.h>
 
+/* TI-ROTS header files */
 #include <ti/sysbios/knl/Task.h>
 #include <ti/sysbios/knl/Clock.h>
+
+/* GPIO header files */
+#include <ti/drivers/GPIO.h>
+#include "Board.h"
 
 /* GRLib header files */
 #include "grlib/grlib.h"
@@ -40,6 +45,15 @@
 #define AUTO_REPEAT_RATE 20
 #define DEFULT_GRAPH_INDEX 6
 #define RPM_INCREMENT 50
+#define GRAPH_GRID_SIZE_X 28
+#define GRAPH_GRID_SIZE_Y 28
+#define GRAPH_UNIT_SPEED "dY:45RPM"	  // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_POWER "dY:45W"	  // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_LIGHT "dY:45lux"	  // MAX_LIGHT / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_ACCEL "dY:45m/s^2" // MAX_ACCEL / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_TIME "dX:2.8s"	  // GUI_PULSE_PERIOD * GRAPH_GRID_SIZE_X / 1000
+#define MOTOR_STATE_LED Board_LED0
+#define LIGHT_STATE_LED Board_LED1
 
 /* Global constants */
 const tRectangle gc_sDesiredSpeedRect = {61, 54, 156, 79};
@@ -51,9 +65,9 @@ const tRectangle gc_sOption4Rect = {180, 202, 216, 219};
 
 /* Global variables */
 tContext g_sContext;
-tRectangle g_sScreenRect;
 tCurrentPanel g_eCurrentPanel = MAIN_PANEL;
 int16_t g_i16DesiredSpeed = 0;
+bool g_bPrevEStop = false;
 uint8_t g_ui8MaxPower = 10;
 uint8_t g_ui8MaxAccel = 10;
 uint8_t g_ui8TimeHours = 0;
@@ -73,6 +87,7 @@ uint8_t g_ui8PrevSpeed = UINT8_MAX;
 uint8_t g_ui8PrevPower = UINT8_MAX;
 uint8_t g_ui8PrevLight = UINT8_MAX;
 uint8_t g_ui8PrevAccel = UINT8_MAX;
+bool g_bGraphFirstPaint = true;
 
 /* Callback function array */
 tGUICallbackFxn g_pfnCallbacks[GUI_CALLBACK_COUNT];
@@ -116,6 +131,12 @@ tCheckBoxWidget g_sGraphPowerChk;
 tCheckBoxWidget g_sGraphLightChk;
 tCheckBoxWidget g_sGraphAccelChk;
 tCanvasWidget g_sGraphContent;
+tCanvasWidget g_sGraphUnits;
+tCanvasWidget g_sGraphUnitSpeed;
+tCanvasWidget g_sGraphUnitPower;
+tCanvasWidget g_sGraphUnitLight;
+tCanvasWidget g_sGraphUnitAccel;
+tCanvasWidget g_sGraphUnitTime;
 
 /* Forward button click function declerations */
 void OnMainStartBtnClick(tWidget *psWidget);
@@ -505,7 +526,7 @@ Canvas(
 	ClrWhite,																											   // outline color
 	ClrWhite,																											   // text color
 	&g_sFontNf10,																										   // font pointer
-	"Max Accel (m/s/s)",																								   // text
+	"Max Accel (m/s^2)",																								   // text
 	NULL,																												   // image pointer
 	OnSettingsOption2Paint																								   // on-paint function pointer
 );
@@ -807,20 +828,20 @@ CheckBox(
 	ClrWhite,			 // outline color
 	ClrYellow,			 // text color
 	&g_sFontNf10,		 // font pointer
-	" Accel (m/s/s)",	 // text
+	" Accel (m/s^2)",	 // text
 	NULL,				 // image pointer
 	OnGraphAccelChkClick // on-change function pointer
 );
 Canvas(
 	g_sGraphContent,							   // struct name
 	&g_sGraphPanel,								   // parent widget pointer
-	NULL,										   // sibling widget pointer
+	&g_sGraphUnits,								   // sibling widget pointer
 	NULL,										   // child widget pointer
 	DISPLAY,									   // display device pointer
 	6,											   // x position
-	6,											   // y position
+	18,											   // y position
 	308,										   // width
-	170,										   // height
+	158,										   // height
 	CANVAS_STYLE_OUTLINE | CANVAS_STYLE_APP_DRAWN, // style
 	NULL,										   // fill color
 	ClrWhite,									   // outline color
@@ -829,6 +850,120 @@ Canvas(
 	NULL,										   // text
 	NULL,										   // image pointer
 	OnGraphContentPaint							   // on-paint function pointer
+);
+Canvas(
+	g_sGraphUnits,		// struct name
+	&g_sGraphPanel,		// parent widget pointer
+	NULL,				// sibling widget pointer
+	&g_sGraphUnitSpeed, // child widget pointer
+	DISPLAY,			// display device pointer
+	6,					// x position
+	6,					// y position
+	308,				// width
+	13,					// height
+	NULL,				// style
+	NULL,				// fill color
+	NULL,				// outline color
+	NULL,				// text color
+	NULL,				// font pointer
+	NULL,				// text
+	NULL,				// image pointer
+	NULL				// on-paint function pointer
+);
+Canvas(
+	g_sGraphUnitSpeed,																								  // struct name
+	&g_sGraphUnits,																									  // parent widget pointer
+	&g_sGraphUnitPower,																								  // sibling widget pointer
+	NULL,																											  // child widget pointer
+	DISPLAY,																										  // display device pointer
+	6,																												  // x position
+	6,																												  // y position
+	62,																												  // width
+	13,																												  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																										  // fill color
+	ClrRed,																											  // outline color
+	ClrRed,																											  // text color
+	&g_sFontNf10,																									  // font pointer
+	GRAPH_UNIT_SPEED,																								  // text
+	NULL,																											  // image pointer
+	NULL																											  // on-paint function pointer
+);
+Canvas(
+	g_sGraphUnitPower,																								  // struct name
+	&g_sGraphUnits,																									  // parent widget pointer
+	&g_sGraphUnitLight,																								  // sibling widget pointer
+	NULL,																											  // child widget pointer
+	DISPLAY,																										  // display device pointer
+	68,																												  // x position
+	6,																												  // y position
+	62,																												  // width
+	13,																												  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																										  // fill color
+	ClrBlue,																										  // outline color
+	ClrBlue,																										  // text color
+	&g_sFontNf10,																									  // font pointer
+	GRAPH_UNIT_POWER,																								  // text
+	NULL,																											  // image pointer
+	NULL																											  // on-paint function pointer
+);
+Canvas(
+	g_sGraphUnitLight,													   // struct name
+	&g_sGraphUnits,														   // parent widget pointer
+	&g_sGraphUnitAccel,													   // sibling widget pointer
+	NULL,																   // child widget pointer
+	DISPLAY,															   // display device pointer
+	130,																   // x position
+	6,																	   // y position
+	62,																	   // width
+	13,																	   // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,															   // fill color
+	ClrLime,															   // outline color
+	ClrLime,															   // text color
+	&g_sFontNf10,														   // font pointer
+	GRAPH_UNIT_LIGHT,													   // text
+	NULL,																   // image pointer
+	NULL																   // on-paint function pointer
+);
+Canvas(
+	g_sGraphUnitAccel,													   // struct name
+	&g_sGraphUnits,														   // parent widget pointer
+	&g_sGraphUnitTime,													   // sibling widget pointer
+	NULL,																   // child widget pointer
+	DISPLAY,															   // display device pointer
+	192,																   // x position
+	6,																	   // y position
+	62,																	   // width
+	13,																	   // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,															   // fill color
+	ClrYellow,															   // outline color
+	ClrYellow,															   // text color
+	&g_sFontNf10,														   // font pointer
+	GRAPH_UNIT_ACCEL,													   // text
+	NULL,																   // image pointer
+	NULL																   // on-paint function pointer
+);
+Canvas(
+	g_sGraphUnitTime,																								  // struct name
+	&g_sGraphUnits,																									  // parent widget pointer
+	NULL,																											  // sibling widget pointer
+	NULL,																											  // child widget pointer
+	DISPLAY,																										  // display device pointer
+	254,																											  // x position
+	6,																												  // y position
+	60,																												  // width
+	13,																												  // height
+	CANVAS_STYLE_FILL | CANVAS_STYLE_OUTLINE | CANVAS_STYLE_TEXT | CANVAS_STYLE_TEXT_HCENTER | CANVAS_STYLE_TEXT_TOP, // style
+	ClrBlack,																										  // fill color
+	ClrWhite,																										  // outline color
+	ClrWhite,																										  // text color
+	&g_sFontNf10,																									  // font pointer
+	GRAPH_UNIT_TIME,																								  // text
+	NULL,																											  // image pointer
+	NULL																											  // on-paint function pointer
 );
 #pragma endregion
 
@@ -851,6 +986,7 @@ void OnMainStartBtnClick(tWidget *pWidget) {
 		PushButtonFillColorPressedSet(&g_sMainStartBtn, ClrDarkBlue);
 	}
 
+	GPIO_write(MOTOR_STATE_LED, g_bIsRunning);
 	GUI_InvokeCallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
 }
 
@@ -901,6 +1037,7 @@ void OnMainGraphBtnClick(tWidget *pWidget) {
 	WidgetPaint(WIDGET_ROOT);
 	g_eCurrentPanel = GRAPH_PANEL;
 	g_ui16GraphIndex = DEFULT_GRAPH_INDEX;
+	g_bGraphFirstPaint = true;
 }
 
 /**
@@ -1044,6 +1181,16 @@ void OnGraphBackBtnClick(tWidget *pWidget) {
 void OnGraphSpeedChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphSpeed = bSelected;
 	g_ui8PrevSpeed = UINT8_MAX;
+
+	if (bSelected) {
+		CanvasOutlineOn((tCanvasWidget *)&g_sGraphUnitSpeed);
+		CanvasTextOn((tCanvasWidget *)&g_sGraphUnitSpeed);
+	} else {
+		CanvasOutlineOff((tCanvasWidget *)&g_sGraphUnitSpeed);
+		CanvasTextOff((tCanvasWidget *)&g_sGraphUnitSpeed);
+	}
+
+	WidgetPaint((tWidget *)&g_sGraphUnitSpeed);
 }
 
 /**
@@ -1055,6 +1202,16 @@ void OnGraphSpeedChkClick(tWidget *psWidget, uint32_t bSelected) {
 void OnGraphPowerChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphPower = bSelected;
 	g_ui8PrevPower = UINT8_MAX;
+
+	if (bSelected) {
+		CanvasOutlineOn((tCanvasWidget *)&g_sGraphUnitPower);
+		CanvasTextOn((tCanvasWidget *)&g_sGraphUnitPower);
+	} else {
+		CanvasOutlineOff((tCanvasWidget *)&g_sGraphUnitPower);
+		CanvasTextOff((tCanvasWidget *)&g_sGraphUnitPower);
+	}
+
+	WidgetPaint((tWidget *)&g_sGraphUnitPower);
 }
 
 /**
@@ -1066,6 +1223,16 @@ void OnGraphPowerChkClick(tWidget *psWidget, uint32_t bSelected) {
 void OnGraphLightChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphLight = bSelected;
 	g_ui8PrevLight = UINT8_MAX;
+
+	if (bSelected) {
+		CanvasOutlineOn((tCanvasWidget *)&g_sGraphUnitLight);
+		CanvasTextOn((tCanvasWidget *)&g_sGraphUnitLight);
+	} else {
+		CanvasOutlineOff((tCanvasWidget *)&g_sGraphUnitLight);
+		CanvasTextOff((tCanvasWidget *)&g_sGraphUnitLight);
+	}
+
+	WidgetPaint((tWidget *)&g_sGraphUnitLight);
 }
 
 /**
@@ -1077,6 +1244,16 @@ void OnGraphLightChkClick(tWidget *psWidget, uint32_t bSelected) {
 void OnGraphAccelChkClick(tWidget *psWidget, uint32_t bSelected) {
 	g_bGraphAccel = bSelected;
 	g_ui8PrevAccel = UINT8_MAX;
+
+	if (bSelected) {
+		CanvasOutlineOn((tCanvasWidget *)&g_sGraphUnitAccel);
+		CanvasTextOn((tCanvasWidget *)&g_sGraphUnitAccel);
+	} else {
+		CanvasOutlineOff((tCanvasWidget *)&g_sGraphUnitAccel);
+		CanvasTextOff((tCanvasWidget *)&g_sGraphUnitAccel);
+	}
+
+	WidgetPaint((tWidget *)&g_sGraphUnitAccel);
 }
 #pragma endregion
 
@@ -1208,18 +1385,46 @@ void OnSettingsOption4Paint(tWidget *psWidget, tContext *psContext) {
  * @param psContext The graphics context
  */
 void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
+	/* Draw entire graph background if first paint */
+	if (g_bGraphFirstPaint) {
+		g_bGraphFirstPaint = false;
+		GrContextForegroundSet(psContext, ClrDimGray);
+
+		/* Draw vertical lines */
+		int16_t i16X = psContext->sClipRegion.i16XMin;
+		for (i16X; i16X < psContext->sClipRegion.i16XMax; i16X += GRAPH_GRID_SIZE_X) {
+			GrLineDrawV(psContext, i16X, psContext->sClipRegion.i16YMin, psContext->sClipRegion.i16YMax);
+		}
+
+		/* Draw horizontal lines */
+		int16_t i16Y = psContext->sClipRegion.i16YMax;
+		for (i16Y; i16Y > psContext->sClipRegion.i16YMin; i16Y -= GRAPH_GRID_SIZE_Y) {
+			GrLineDrawH(psContext, psContext->sClipRegion.i16XMin, psContext->sClipRegion.i16XMax, i16Y);
+		}
+	}
+
 	/* Draw lead line */
 	GrContextForegroundSet(psContext, ClrCyan);
 	GrLineDrawV(psContext, g_ui16GraphIndex + 1, psContext->sClipRegion.i16YMin, psContext->sClipRegion.i16YMax);
 
-	/* Clear current line */
-	GrContextForegroundSet(psContext, ClrBlack);
+	/* Draw vertical grid line or clear */
+	if ((g_ui16GraphIndex - psContext->sClipRegion.i16XMin) % GRAPH_GRID_SIZE_X == 0)
+		GrContextForegroundSet(psContext, ClrDimGray);
+	else
+		GrContextForegroundSet(psContext, ClrBlack);
 	GrLineDrawV(psContext, g_ui16GraphIndex, psContext->sClipRegion.i16YMin, psContext->sClipRegion.i16YMax);
+
+	/* Draw horizontal grid lines */
+	GrContextForegroundSet(psContext, ClrDimGray);
+	int16_t i16Y = psContext->sClipRegion.i16YMax;
+	for (i16Y; i16Y > psContext->sClipRegion.i16YMin; i16Y -= GRAPH_GRID_SIZE_Y) {
+		GrPixelDraw(psContext, g_ui16GraphIndex, i16Y);
+	}
 
 	/* Draw speed */
 	if (g_bGraphSpeed) {
-		uint16_t i16Speed = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
-		uint16_t i16SpeedVal = Map(i16Speed, 0, MAX_SPEED, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		int16_t i16Speed = GUI_InvokeCallback(GUI_RETURN_SPEED, NULL, NULL);
+		int16_t i16SpeedVal = Map(i16Speed, 0, MAX_SPEED, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
 		if (g_ui8PrevSpeed != UINT8_MAX) {
 			GrContextForegroundSet(psContext, ClrRed);
 			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevSpeed, g_ui16GraphIndex, i16SpeedVal);
@@ -1229,8 +1434,8 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 
 	/* Draw power */
 	if (g_bGraphPower) {
-		uint16_t i16Power = GUI_InvokeCallback(GUI_RETURN_POWER, NULL, NULL);
-		uint16_t i16PowerVal = Map(i16Power, 0, MAX_POWER, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		int16_t i16Power = GUI_InvokeCallback(GUI_RETURN_POWER, NULL, NULL);
+		int16_t i16PowerVal = Map(i16Power, 0, MAX_POWER, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
 		if (g_ui8PrevPower != UINT8_MAX) {
 			GrContextForegroundSet(psContext, ClrBlue);
 			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevPower, g_ui16GraphIndex, i16PowerVal);
@@ -1240,8 +1445,8 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 
 	/* Draw light */
 	if (g_bGraphLight) {
-		uint16_t i16Light = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL);
-		uint16_t i16LightVal = Map(i16Light, 0, MAX_LIGHT, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		int16_t i16Light = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL);
+		int16_t i16LightVal = Map(i16Light, 0, MAX_LIGHT, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
 		if (g_ui8PrevLight != UINT8_MAX) {
 			GrContextForegroundSet(psContext, ClrLime);
 			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevLight, g_ui16GraphIndex, i16LightVal);
@@ -1251,8 +1456,8 @@ void OnGraphContentPaint(tWidget *psWidget, tContext *psContext) {
 
 	/* Draw accel */
 	if (g_bGraphAccel) {
-		uint16_t i16Accel = GUI_InvokeCallback(GUI_RETURN_ACCEL, NULL, NULL);
-		uint16_t i16AccelVal = Map(i16Accel, 0, MAX_ACCEL, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
+		int16_t i16Accel = GUI_InvokeCallback(GUI_RETURN_ACCEL, NULL, NULL);
+		int16_t i16AccelVal = Map(i16Accel, 0, MAX_ACCEL, psContext->sClipRegion.i16YMax, psContext->sClipRegion.i16YMin);
 		if (g_ui8PrevAccel != UINT8_MAX) {
 			GrContextForegroundSet(psContext, ClrYellow);
 			GrLineDraw(psContext, g_ui16GraphIndex - 1, g_ui8PrevAccel, g_ui16GraphIndex, i16AccelVal);
@@ -1281,12 +1486,6 @@ void GUI_Init(uint32_t ui32SysClock) {
 	TouchScreenInit(ui32SysClock);
 	TouchScreenCallbackSet(WidgetPointerMessage);
 
-	/* Initialize screen rect */
-	g_sScreenRect.i16XMin = 0;
-	g_sScreenRect.i16YMin = 0;
-	g_sScreenRect.i16XMax = GrContextDpyWidthGet(&g_sContext);
-	g_sScreenRect.i16YMax = GrContextDpyHeightGet(&g_sContext);
-
 	/* Erase the function callbacks array */
 	memset(g_pfnCallbacks, NULL, sizeof(g_pfnCallbacks));
 }
@@ -1297,13 +1496,55 @@ void GUI_Init(uint32_t ui32SysClock) {
  * @note This function is not intended to be called by the user
  */
 void GUI_PulseInternal() {
+	/* Update e-stop status */
+	bool bEStop = GUI_InvokeCallback(GUI_RETURN_ESTOP, NULL, NULL);
+	if (bEStop && !g_bPrevEStop) {
+		g_bPrevEStop = true;
+
+		/* Disable start button */
+		PushButtonFillColorSet((tPushButtonWidget *)&g_sMainStartBtn, ClrGray);
+		PushButtonFillColorPressedSet((tPushButtonWidget *)&g_sMainStartBtn, ClrGray);
+		PushButtonCallbackSet((tPushButtonWidget *)&g_sMainStartBtn, NULL);
+		PushButtonTextSet((tPushButtonWidget *)&g_sMainStartBtn, "E-STOP");
+		GPIO_write(MOTOR_STATE_LED, false);
+		g_bIsRunning = false;
+
+		/* Go to main panel */
+		if (g_eCurrentPanel == SETTINGS_PANEL) {
+			WidgetRemove((tWidget *)&g_sSettingsPanel);
+			WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
+		}
+		if (g_eCurrentPanel == GRAPH_PANEL) {
+			WidgetRemove((tWidget *)&g_sGraphPanel);
+			WidgetAdd(WIDGET_ROOT, (tWidget *)&g_sMainPanel);
+		}
+		g_eCurrentPanel = MAIN_PANEL;
+		WidgetPaint(WIDGET_ROOT);
+	}
+	if (!bEStop && g_bPrevEStop) {
+		g_bPrevEStop = false;
+
+		/* Enable start button */
+		PushButtonFillColorSet((tPushButtonWidget *)&g_sMainStartBtn, ClrBlue);
+		PushButtonFillColorPressedSet((tPushButtonWidget *)&g_sMainStartBtn, ClrDarkBlue);
+		PushButtonCallbackSet((tPushButtonWidget *)&g_sMainStartBtn, OnMainStartBtnClick);
+		PushButtonTextSet((tPushButtonWidget *)&g_sMainStartBtn, "START");
+
+		/* Repaint GUI */
+		if (g_eCurrentPanel == MAIN_PANEL)
+			WidgetPaint(WIDGET_ROOT);
+	}
+
+	/* Update light status */
+	bool bIsNight = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL) < NIGHT_LIGHT_THRESHOLD;
+	GPIO_write(LIGHT_STATE_LED, bIsNight);
+
 	if (g_eCurrentPanel == MAIN_PANEL) {
 		/* Update current speed */
 		WidgetPaint((tWidget *)&g_sMainCurrentSpeed);
 
 		/* Update time and light status */
 		uint32_t ui32Time = GUI_InvokeCallback(GUI_RETURN_TIME, NULL, NULL);
-		bool bIsNight = GUI_InvokeCallback(GUI_RETURN_LIGHT, NULL, NULL) < NIGHT_LIGHT_THRESHOLD;
 		if (ui32Time / 60 != g_ui32PrevTime || bIsNight != g_bPrevIsNight) {
 			g_ui32PrevTime = ui32Time / 60;
 			g_bPrevIsNight = bIsNight;
@@ -1343,7 +1584,7 @@ void GUI_Pulse() {
  */
 void GUI_Handle() {
 	while (1) {
-	    Task_sleep(1);
+		Task_sleep(1);
 		if (g_bDoUpdate) {
 			g_bDoUpdate = false;
 			GUI_PulseInternal();
@@ -1376,7 +1617,7 @@ void GUI_SetCallback(tGUICallbackOption tCallbackOpt, tGUICallbackFxn pfnCallbac
  *
  * @note This function is not intended to be called by the user
  */
-uint32_t GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2) {
+int32_t GUI_InvokeCallback(tGUICallbackOption tCallbackOpt, uint32_t arg1, uint32_t arg2) {
 	if (tCallbackOpt >= GUI_CALLBACK_COUNT)
 		return 0;
 	if (g_pfnCallbacks[tCallbackOpt] == NULL)

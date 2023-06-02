@@ -1,5 +1,6 @@
 /* Standard header files */
 #include <stdio.h>
+#include <stdlib.h> // rand()
 #include <stdint.h>
 #include <stdbool.h>
 #include <math.h>
@@ -40,15 +41,14 @@ uint32_t g_ui32ClockCounter = 0;
  * @param bMotorState The new state of the motor
  */
 void MotorStateChanged(bool bMotorState) {
-    if (bMotorState)
-        MotorControl_start();
-    else
-        MotorControl_stop();
-	GPIO_write(Board_LED0, bMotorState);
+	if (bMotorState)
+		MotorControl_start();
+	else
+		MotorControl_stop();
 }
 
 void SetMotorSpeed(UArg rpm) {
-    MotorControl_setSpeed(rpm);
+	MotorControl_setSpeed(rpm);
 }
 
 /**
@@ -83,7 +83,7 @@ void SetClock(uint32_t ui32Time) {
 }
 
 int16_t GetCurrentSpeed() {
-    return (int16_t)MotorControl_getSpeed();
+	return (int16_t)MotorControl_getSpeed();
 }
 
 float powerCounter = 0;
@@ -95,13 +95,19 @@ int16_t GetCurrentPower() {
 float lightCounter = 0;
 int16_t GetCurrentLight() {
 	lightCounter++;
-	return ((sin(lightCounter / (38.5 / M_PI)) * 40) + (255 / 2));
+	return ((sin(lightCounter / (38.5 / M_PI)) * 40) + 35);
 }
 
 float accelCounter = 0;
 int16_t GetCurrentAccel() {
 	accelCounter++;
 	return (((sin(accelCounter / 2) * 40) + (255 / 2)) + ((sin(accelCounter / 10) * 80) + (255 / 2))) / 2;
+}
+
+bool GetEStop() {
+	// uint32_t ticks = Clock_getTicks();		// Enables e-stop after 10 seconds
+	// return ticks < 20000 && ticks > 10000;	// Disables e-stop after 20 seconds
+	return false;
 }
 
 /**
@@ -121,13 +127,14 @@ int main(void) {
 	/* Initialize the GUI */
 	GUI_Init(cpuFreq.lo);
 	GUI_SetCallback(GUI_MOTOR_STATE_CHANGE, (tGUICallbackFxn)MotorStateChanged);
-    GUI_SetCallback(GUI_MOTOR_SPEED_CHANGE, (tGUICallbackFxn)SetMotorSpeed);
+	GUI_SetCallback(GUI_MOTOR_SPEED_CHANGE, (tGUICallbackFxn)SetMotorSpeed);
 	GUI_SetCallback(GUI_SET_TIME_CHANGE, (tGUICallbackFxn)SetClock);
 	GUI_SetCallback(GUI_RETURN_TIME, (tGUICallbackFxn)GetClock);
 	GUI_SetCallback(GUI_RETURN_SPEED, (tGUICallbackFxn)GetCurrentSpeed);
 	GUI_SetCallback(GUI_RETURN_POWER, (tGUICallbackFxn)GetCurrentPower);
 	GUI_SetCallback(GUI_RETURN_LIGHT, (tGUICallbackFxn)GetCurrentLight);
 	GUI_SetCallback(GUI_RETURN_ACCEL, (tGUICallbackFxn)GetCurrentAccel);
+	GUI_SetCallback(GUI_RETURN_ESTOP, (tGUICallbackFxn)GetEStop);
 
 	/* Construct task threads */
 	Task_Params taskParams;
