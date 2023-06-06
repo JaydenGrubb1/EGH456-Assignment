@@ -53,7 +53,6 @@ typedef enum _MotorControl_State
     MotorControl_State_Idle,          ///< The motor is idle (speed == 0)
     MotorControl_State_Starting,      ///< The motor is starting up (i.e. accelerating from 0 RPM to the target RPM)
     MotorControl_State_Running,       ///< The motor is currently running.
-    MotorControl_State_Stopping,      ///< The motor is stopping.
     MotorControl_State_EStopping,     ///< The motor is performing an emergency stop.
     MotorControl_State_NumStates,     ///< The number of states the driver can be in.
 } MotorControl_State;

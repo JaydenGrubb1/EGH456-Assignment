@@ -29,6 +29,9 @@ volatile static uint32_t g_currentRpm = 0;
 // Target speed of the motor. This is used when starting/running
 volatile static uint32_t g_targetRpm = 0;
 
+// Flag indicating the motor has been stopped via MotorControl_stop
+volatile static bool g_stopped = true;
+
 // Current state of the motor driver.
 volatile static MotorControl_State g_motorState = MotorControl_State_Unknown;
 
@@ -46,7 +49,7 @@ static PIController g_controller;
 
 /// -------------------------
 /// State Machine
-typedef struct _DriverState
+typedef struct _IStateController
 {
     /// Test if the state transition is valid
     bool(*canTransition)(MotorControl_State newState);
@@ -242,12 +245,13 @@ void MotorControl_setSpeed(uint32_t rpm)
 
 bool MotorControl_start()
 {
+    g_stopped = false;
     return MotorControl_transition(MotorControl_State_Starting);
 }
 
 bool MotorControl_stop()
 {
-    return MotorControl_transition(MotorControl_State_Stopping);
+    g_stopped = true;
 }
 
 uint32_t MotorControl_getSpeed()
@@ -284,7 +288,7 @@ static void applyMotorControlAction(uint32_t targetRpm, uint32_t speed, uint32_t
         controlAction = g_maxDutyIncrease;
 
     g_currentDutyCycle += controlAction;
-    g_currentDutyCycle = g_currentDutyCycle < 0 ? 0.0f: g_currentDutyCycle;
+    g_currentDutyCycle = g_currentDutyCycle < 0 ? 0.0f : g_currentDutyCycle;
     g_currentDutyCycle = g_currentDutyCycle > g_config.pwmPeriod ? g_config.pwmPeriod : g_currentDutyCycle;
 
     setDuty((uint32_t)g_currentDutyCycle);
@@ -292,6 +296,11 @@ static void applyMotorControlAction(uint32_t targetRpm, uint32_t speed, uint32_t
 }
 
 // MOTOR CONTROL STATE MACHINE IMPLEMENTATION BELOW
+
+static uint32_t getTargetRPM()
+{
+    return g_stopped ? 0 : g_targetRpm;
+}
 
 //----------------------------------------------
 // Idle State implementation
@@ -327,9 +336,10 @@ static void starting_activate()
 
 static void starting_onMotorUpdate(uint32_t speed, uint32_t tick)
 {
-    applyMotorControlAction(g_targetRpm, speed, tick);
+    uint32_t target = getTargetRPM();
+    applyMotorControlAction(target, speed, tick);
 
-    if (abs(g_targetRpm - speed) < 500)
+    if (abs(target - speed) < 500)
         MotorControl_transition(MotorControl_State_Running);
 }
 //----------------------------------------------
@@ -339,7 +349,7 @@ static void starting_onMotorUpdate(uint32_t speed, uint32_t tick)
 static bool running_canTransition(MotorControl_State newState)
 {
     return newState == MotorControl_State_EStopping
-      || newState == MotorControl_State_Stopping;
+      || newState == MotorControl_State_Idle;
 }
 
 static void running_activate()
@@ -350,26 +360,13 @@ static void running_activate()
 
 static void running_onMotorUpdate(uint32_t speed, uint32_t tick)
 {
-    applyMotorControlAction(g_targetRpm, speed, tick);
-}
+    uint32_t target = getTargetRPM();
+    applyMotorControlAction(target, speed, tick);
 
-//----------------------------------------------
-
-//----------------------------------------------
-// Stopping State implementation
-static bool stopping_canTransition(MotorControl_State newState)
-{
-    // Stop can only transition from Running
-    return newState == MotorControl_State_Idle;
-}
-
-static void stopping_onMotorUpdate(uint32_t speed, uint32_t tick)
-{
-    if (speed == 0)
+    if (target == 0 && speed == 0)
         MotorControl_transition(MotorControl_State_Idle);
-    else
-        applyMotorControlAction(0, speed, tick);
 }
+
 //----------------------------------------------
 
 //----------------------------------------------
@@ -420,12 +417,6 @@ static void initStateInterfaces()
         pState->activate      = running_activate;
     }
 
-    { // Configure MotorControl_State_Stopping state
-        IStateController *pState = g_states + MotorControl_State_Stopping;
-        pState->canTransition = stopping_canTransition;
-        pState->onUpdateMotor = stopping_onMotorUpdate;
-    }
-    
     { // Configure MotorControl_State_EStopping state
         IStateController *pState = g_states + MotorControl_State_EStopping;
         pState->activate      = estop_activate;
