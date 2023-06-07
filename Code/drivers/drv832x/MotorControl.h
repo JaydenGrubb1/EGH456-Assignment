@@ -7,7 +7,7 @@
 /// The maximum RPM that the motor can reach.
 /// Used to calculate the maximum change in PWM signal to
 /// limit acceleration and deceleration
-#define DRV832X_MAX_MAX_RPM 4000
+#define DRV832X_MAX_RPM 4000
 
 /// Maximum acceleration under normal conditions
 #define DRV832X_MAX_ACCELERATION_RPM 500

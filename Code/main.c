@@ -43,6 +43,8 @@ char ga_opt3001Stack[TASK_STACK_SIZE];
 float ga_opt3001Lux = 0;
 void OPT3001_Handle();
 
+void estopTestInterrupt(unsigned int pin);
+
 /**
  * @brief Callback function for when the motor state changes
  *
@@ -134,14 +136,12 @@ int16_t GetCurrentAccel() {
 }
 
 /**
- * @brief Get the current e-stop status (placeholder)
+ * @brief Get the current e-stop status
  * 
  * @return The current e-stop status
  */
 bool GetEStop() {
-	// uint32_t ticks = Clock_getTicks();		// Enables e-stop after 10 seconds
-	// return ticks < 20000 && ticks > 10000;	// Disables e-stop after 20 seconds
-	return false;
+	return MotorControl_getState() == MotorControl_State_EStopping;
 }
 
 /**
@@ -192,6 +192,10 @@ int main(void) {
 	clockParams.period = 1000;
 	Clock_create((Clock_FuncPtr)PulseClock, 1000, &clockParams, NULL);
 
+	/* E-Stop test button */
+	GPIO_setCallback(Board_BUTTON1, estopTestInterrupt);
+	GPIO_enableInt(Board_BUTTON1);
+
 	/* Start motor control driver */
 	MotorControl_Config motorConfig;
 	MotorControl_Config_init(&motorConfig);
@@ -241,4 +245,9 @@ void OPT3001_Handle() {
 			ga_opt3001Lux = convertedLux;
 		}
 	}
+}
+
+void estopTestInterrupt(unsigned int pin)
+{
+	MotorControl_estop();
 }

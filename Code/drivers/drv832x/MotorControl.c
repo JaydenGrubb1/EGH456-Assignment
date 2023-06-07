@@ -21,6 +21,7 @@ static MotorControl_Config g_config;
 volatile static float g_currentDutyCycle = 0.0f;
 volatile static float g_maxDutyIncrease = 0;
 volatile static float g_maxDutyDecrease = 0;
+volatile static float g_estopDutyDecrease = 0;
 
 volatile static float g_avgRpm = 0.0f;
 
@@ -149,7 +150,6 @@ static void motorControlClock(UArg arg0)
 {
     // We always need to update the speed sensor regardless of state.
     const uint32_t currentTick = Clock_getTicks();
-    // TimeSampler_discardExpiredSamples(&g_hallEdgeTimer, currentTick);
 
     // Call current states onUpdateMotor implementation
     IStateController const * pController = getStateContoller();
@@ -199,7 +199,6 @@ bool MotorControl_init(MotorControl_Config const * pConfig)
     {
         System_printf(err.msg);
         System_flush();
-        // TODO: Output error
         return false;
     }
 
@@ -213,11 +212,12 @@ bool MotorControl_init(MotorControl_Config const * pConfig)
     Clock_construct(&g_controlClock, (Clock_FuncPtr)motorControlClock, 1, &clockParams);
 
     // Calculate max -/+ duty cycle change to stay within accel/decel specification
-    float minAccelMillis = (float)DRV832X_MAX_MAX_RPM / DRV832X_MAX_ACCELERATION_RPM * 1000.0f;
-    float minDecelMillis = (float)DRV832X_MAX_MAX_RPM / DRV832X_MAX_DECELERATION_RPM * 1000.0f;
+    float minAccelMillis = (float)DRV832X_MAX_RPM / DRV832X_MAX_ACCELERATION_RPM * 1000.0f;
+    float minDecelMillis = (float)DRV832X_MAX_RPM / DRV832X_MAX_DECELERATION_RPM * 1000.0f;
+    float eStopDecelMillis = (float)DRV832X_MAX_RPM / DRV832X_ESTOP_DECELERATION_RPM * 1000.0f;
     g_maxDutyIncrease = g_config.pwmPeriod / minAccelMillis;
     g_maxDutyDecrease = g_config.pwmPeriod / minDecelMillis;
-
+    g_estopDutyDecrease = g_config.pwmPeriod / eStopDecelMillis;
     // Pre-calculate phase lookup for different hall sensor states
     initMotorPhaseTable();
 
@@ -383,13 +383,14 @@ static bool estop_canTransition(MotorControl_State newState)
 
 static void estop_activate()
 {
-    // Stop motor by setting all phases to high (active break).
-    setDuty(20);
     stopMotor(true);
 }
 
 static void estop_onMotorUpdate(uint32_t speed, uint32_t tick)
 {
+    setDuty((uint32_t)g_currentDutyCycle);
+    g_currentDutyCycle -= g_estopDutyDecrease;
+
     if (speed == 0)
         MotorControl_transition(MotorControl_State_Idle);
 }
