@@ -23,12 +23,15 @@ volatile static float g_currentDutyCycle = 0.0f;
 volatile static float g_maxDutyIncrease = 0;
 volatile static float g_maxDutyDecrease = 0;
 
+volatile static float g_avgRpm = 0.0f;
+
 // Current speed of the motor.
 volatile static uint32_t g_currentRpm = 0;
 
 // Target speed of the motor. This is used when starting/running
 volatile static uint32_t g_targetRpm = 0;
 
+volatile static uint32_t g_numEdges = 0;
 // Current state of the motor driver.
 volatile static MotorControl_State g_motorState = MotorControl_State_Unknown;
 
@@ -160,6 +163,18 @@ static void motorControlClock(UArg arg0)
 
         pController->onUpdateMotor(speed, currentTick);
     }
+
+    int numEdges = g_numEdges;
+    g_numEdges = 0;
+
+    float edgesPerSec = numEdges * 1000;
+    float rotationsPerSec = edgesPerSec / DRV832X_HALLEFFECT_EDGES_PER_ROTATION;
+    float rpm = rotationsPerSec * 60;
+
+    static int sampleCount = 25;
+
+    float newAvg = g_avgRpm * (sampleCount - 1);
+    g_avgRpm = (newAvg + rpm) / sampleCount;
 }
 //----------------------
 
@@ -170,6 +185,7 @@ static void edgeInterruptHandler(unsigned int pin)
     TimeSampler_addSample(&g_hallEdgeTimer, Clock_getTicks());
     g_currentMotorPhase = pollMotorPhase();
     setMotorPhase(g_currentMotorPhase + 1);
+    ++g_numEdges;
 }
 //----------------------
 
@@ -252,14 +268,7 @@ bool MotorControl_stop()
 
 uint32_t MotorControl_getSpeed()
 {
-    const uint32_t ticksPerSecond = 1000000 / Clock_tickPeriod;
-
-    float avgEdgeTicks = TimeSampler_calculateSpeed(&g_hallEdgeTimer);
-    float ticksPerRotation = DRV832X_HALLEFFECT_EDGES_PER_ROTATION * avgEdgeTicks;
-    if (ticksPerRotation == 0)
-        return 0;
-
-    return (uint32_t)((ticksPerSecond * 60) / ticksPerRotation); // Convert from ticks-per-rotation to RPM
+    return (uint32_t)g_avgRpm;
 }
 
 void MotorControl_estop()
