@@ -47,7 +47,7 @@
 #define RPM_INCREMENT 50
 #define GRAPH_GRID_SIZE_X 28
 #define GRAPH_GRID_SIZE_Y 28
-#define GRAPH_UNIT_SPEED "dY:45RPM"	  // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
+#define GRAPH_UNIT_SPEED "dY:800RPM" // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
 #define GRAPH_UNIT_POWER "dY:45W"	  // MAX_POWER / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
 #define GRAPH_UNIT_LIGHT "dY:45lux"	  // MAX_LIGHT / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
 #define GRAPH_UNIT_ACCEL "dY:45m/s^2" // MAX_ACCEL / (GRAPH_HEIGHT / GRAPH_GRID_SIZE_Y)
@@ -66,7 +66,7 @@ const tRectangle gc_sOption4Rect = {180, 202, 216, 219};
 /* Global variables */
 tContext g_sContext;
 tCurrentPanel g_eCurrentPanel = MAIN_PANEL;
-int16_t g_i16DesiredSpeed = 0;
+int16_t g_i16DesiredSpeed = 500;
 bool g_bPrevEStop = false;
 uint8_t g_ui8MaxPower = 10;
 uint8_t g_ui8MaxAccel = 10;
@@ -987,7 +987,7 @@ void OnMainStartBtnClick(tWidget *pWidget) {
 	}
 
 	GPIO_write(MOTOR_STATE_LED, g_bIsRunning);
-	GUI_InvokeCallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, NULL);
+	GUI_InvokeCallback(GUI_MOTOR_STATE_CHANGE, g_bIsRunning, g_i16DesiredSpeed);
 }
 
 /**

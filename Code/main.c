@@ -43,17 +43,19 @@ char ga_opt3001Stack[TASK_STACK_SIZE];
 float ga_opt3001Lux = 0;
 void OPT3001_Handle();
 
-
 /**
  * @brief Callback function for when the motor state changes
  *
  * @param bMotorState The new state of the motor
  */
-void MotorStateChanged(bool bMotorState) {
-	if (bMotorState)
+void MotorStateChanged(bool bMotorState, int16_t i16DesiredSpeed) {
+	if (bMotorState) {
 		MotorControl_start();
-	else
+		MotorControl_setSpeed(i16DesiredSpeed);
+	} else {
+		MotorControl_setSpeed(0);
 		MotorControl_stop();
+	}
 }
 
 void SetMotorSpeed(UArg rpm) {
@@ -91,27 +93,51 @@ void SetClock(uint32_t ui32Time) {
 	g_ui32ClockCounter = ui32Time;
 }
 
+/**
+ * @brief Get the current motor speed
+ * 
+ * @return The current motor speed in RPM
+ */
 int16_t GetCurrentSpeed() {
 	return (int16_t)MotorControl_getSpeed();
 }
 
+/**
+ * @brief Get the current light level
+ * 
+ * @return The current light level in lux
+ */
+int16_t GetCurrentLight() {
+	return (int16_t)ga_opt3001Lux;
+}
+
+/**
+ * @brief Get the current power consumption (placeholder)
+ * 
+ * @return The current power consumption in watts
+ */
 float powerCounter = 0;
 int16_t GetCurrentPower() {
 	powerCounter++;
 	return ((sin(powerCounter / 10) * 80) + (255 / 2));
 }
 
-float lightCounter = 0;
-int16_t GetCurrentLight() {
-	return (int16_t)ga_opt3001Lux;
-}
-
+/**
+ * @brief Get the current acceleration (placeholder)
+ * 
+ * @return The current acceleration in m/s/s
+ */
 float accelCounter = 0;
 int16_t GetCurrentAccel() {
 	accelCounter++;
 	return (((sin(accelCounter / 2) * 40) + (255 / 2)) + ((sin(accelCounter / 10) * 80) + (255 / 2))) / 2;
 }
 
+/**
+ * @brief Get the current e-stop status (placeholder)
+ * 
+ * @return The current e-stop status
+ */
 bool GetEStop() {
 	// uint32_t ticks = Clock_getTicks();		// Enables e-stop after 10 seconds
 	// return ticks < 20000 && ticks > 10000;	// Disables e-stop after 20 seconds
@@ -127,6 +153,7 @@ int main(void) {
 	/* Call board init functions */
 	Board_initGeneral();
 	Board_initGPIO();
+	Board_initI2C();
 
 	/* Get CPU frequency */
 	Types_FreqHz cpuFreq;
@@ -144,17 +171,16 @@ int main(void) {
 	GUI_SetCallback(GUI_RETURN_ACCEL, (tGUICallbackFxn)GetCurrentAccel);
 	GUI_SetCallback(GUI_RETURN_ESTOP, (tGUICallbackFxn)GetEStop);
 
+	/* Initialize I2C for OPT3001 */
+	openI2C(Board_I2C_OPT3001);
+
 	/* Construct task threads */
 	Task_Params taskParams;
 	Task_Params_init(&taskParams);
 	taskParams.stackSize = TASK_STACK_SIZE;
 	taskParams.stack = &ga_cHandleGUIStack;
 	Task_construct(&g_sHandleGUITask, (Task_FuncPtr)GUI_Handle, &taskParams, NULL);
-
-  openI2C(Board_I2C_OPT3001);
-
-	taskParams.stackSize = TASK_STACK_SIZE;
-	taskParams.stack = &ga_opt3001Lux;
+	taskParams.stack = &ga_opt3001Stack;
 	Task_construct(&g_opt3001Task, (Task_FuncPtr)OPT3001_Handle, &taskParams, NULL);
 
 	/* Construct clock threads */
@@ -165,7 +191,6 @@ int main(void) {
 	Clock_create((Clock_FuncPtr)GUI_Pulse, GUI_PULSE_PERIOD, &clockParams, NULL);
 	clockParams.period = 1000;
 	Clock_create((Clock_FuncPtr)PulseClock, 1000, &clockParams, NULL);
-	
 
 	/* Start motor control driver */
 	MotorControl_Config motorConfig;
@@ -182,40 +207,38 @@ int main(void) {
 
 /**
  * @brief Handles reading the lux value from the OPT3001 sensor
+ * 
  * @note This function does not return and should be called in its own task
  */
 void OPT3001_Handle() {
-    uint32_t ticksPerSecond = 1000000 / Clock_getTickPeriod();
-    // Test that sensor is set up correctly
-    System_printf("\nTesting OPT3001 Sensor:\n");
-    System_flush();
-    bool worked = sensorOpt3001Test();
+	uint32_t ticksPerSecond = 1000000 / Clock_getTickPeriod();
+	// Test that sensor is set up correctly
+	System_printf("\nTesting OPT3001 Sensor:\n");
+	System_flush();
+	bool worked = sensorOpt3001Test();
 
-    while (!worked) {
-        Task_sleep(ticksPerSecond);
-        System_printf("\nTest Failed, Trying again\n");
-        System_flush();
-        worked = sensorOpt3001Test();
-    }
+	while (!worked) {
+		Task_sleep(ticksPerSecond);
+		System_printf("\nTest Failed, Trying again\n");
+		System_flush();
+		worked = sensorOpt3001Test();
+	}
 
-    System_printf("All Tests Passed!\n\n");
-    System_flush();
+	System_printf("All Tests Passed!\n\n");
+	System_flush();
 
-    sensorOpt3001Enable(true);
+	sensorOpt3001Enable(true);
 
-    // Loop Forever
-    while(1)
-    {
-        Task_sleep((unsigned int)ticksPerSecond / 4);
+	// Loop Forever
+	while (1) {
+		Task_sleep((unsigned int)ticksPerSecond / 4);
 
-        uint16_t rawData = 0;
-        //Read and convert OPT values
-        if (sensorOpt3001Read(&rawData))
-        {
-            float convertedLux = 0;
-            sensorOpt3001Convert(rawData, &convertedLux);
-						ga_opt3001Lux = convertedLux;
-        }
-
-    }
+		uint16_t rawData = 0;
+		// Read and convert OPT values
+		if (sensorOpt3001Read(&rawData)) {
+			float convertedLux = 0;
+			sensorOpt3001Convert(rawData, &convertedLux);
+			ga_opt3001Lux = convertedLux;
+		}
+	}
 }
