@@ -23,6 +23,9 @@
 
 /* Project header files */
 #include "drivers/drv832x/MotorControl.h"
+#include "drivers/opt3001/i2cOptDriver.h"
+#include "drivers/opt3001/opt3001.h"
+
 #include "gui.h"
 #include "util.h"
 #include "config.h"
@@ -34,6 +37,12 @@
 Task_Struct g_sHandleGUITask;
 char ga_cHandleGUIStack[TASK_STACK_SIZE];
 uint32_t g_ui32ClockCounter = 0;
+
+Task_Struct g_opt3001Task;
+char ga_opt3001Stack[TASK_STACK_SIZE];
+float ga_opt3001Lux = 0;
+void OPT3001_Handle();
+
 
 /**
  * @brief Callback function for when the motor state changes
@@ -94,8 +103,7 @@ int16_t GetCurrentPower() {
 
 float lightCounter = 0;
 int16_t GetCurrentLight() {
-	lightCounter++;
-	return ((sin(lightCounter / (38.5 / M_PI)) * 40) + 35);
+	return (int16_t)ga_opt3001Lux;
 }
 
 float accelCounter = 0;
@@ -143,6 +151,12 @@ int main(void) {
 	taskParams.stack = &ga_cHandleGUIStack;
 	Task_construct(&g_sHandleGUITask, (Task_FuncPtr)GUI_Handle, &taskParams, NULL);
 
+  openI2C(Board_I2C_OPT3001);
+
+	taskParams.stackSize = TASK_STACK_SIZE;
+	taskParams.stack = &ga_opt3001Lux;
+	Task_construct(&g_opt3001Task, (Task_FuncPtr)OPT3001_Handle, &taskParams, NULL);
+
 	/* Construct clock threads */
 	Clock_Params clockParams;
 	Clock_Params_init(&clockParams);
@@ -151,6 +165,7 @@ int main(void) {
 	Clock_create((Clock_FuncPtr)GUI_Pulse, GUI_PULSE_PERIOD, &clockParams, NULL);
 	clockParams.period = 1000;
 	Clock_create((Clock_FuncPtr)PulseClock, 1000, &clockParams, NULL);
+	
 
 	/* Start motor control driver */
 	MotorControl_Config motorConfig;
@@ -163,4 +178,44 @@ int main(void) {
 	/* Start BIOS */
 	BIOS_start();
 	return (0);
+}
+
+/**
+ * @brief Handles reading the lux value from the OPT3001 sensor
+ * @note This function does not return and should be called in its own task
+ */
+void OPT3001_Handle() {
+    uint32_t ticksPerSecond = 1000000 / Clock_getTickPeriod();
+    // Test that sensor is set up correctly
+    System_printf("\nTesting OPT3001 Sensor:\n");
+    System_flush();
+    bool worked = sensorOpt3001Test();
+
+    while (!worked) {
+        Task_sleep(ticksPerSecond);
+        System_printf("\nTest Failed, Trying again\n");
+        System_flush();
+        worked = sensorOpt3001Test();
+    }
+
+    System_printf("All Tests Passed!\n\n");
+    System_flush();
+
+    sensorOpt3001Enable(true);
+
+    // Loop Forever
+    while(1)
+    {
+        Task_sleep((unsigned int)ticksPerSecond / 4);
+
+        uint16_t rawData = 0;
+        //Read and convert OPT values
+        if (sensorOpt3001Read(&rawData))
+        {
+            float convertedLux = 0;
+            sensorOpt3001Convert(rawData, &convertedLux);
+						ga_opt3001Lux = convertedLux;
+        }
+
+    }
 }

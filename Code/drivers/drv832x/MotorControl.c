@@ -1,6 +1,5 @@
 #include "MotorControl.h"
 #include "motorlib/motorlib.h"
-#include "detail/TimeSampler.h"
 #include "detail/PIController.h"
 #include "Board.h"
 
@@ -40,9 +39,6 @@ volatile static uint32_t g_currentMotorPhase = 0;
 
 // LUT used to get the phase from the sensor states
 volatile static uint8_t g_phaseLUT[8] = {};
-
-/// Responsible for calculating time between hall sensor signal edges.
-static TimeSampler g_hallEdgeTimer;
 
 /// PI Controller used to drive the duty cycle motor input
 static PIController g_controller;
@@ -153,7 +149,7 @@ static void motorControlClock(UArg arg0)
 {
     // We always need to update the speed sensor regardless of state.
     const uint32_t currentTick = Clock_getTicks();
-    TimeSampler_discardExpiredSamples(&g_hallEdgeTimer, currentTick);
+    // TimeSampler_discardExpiredSamples(&g_hallEdgeTimer, currentTick);
 
     // Call current states onUpdateMotor implementation
     IStateController const * pController = getStateContoller();
@@ -182,7 +178,6 @@ static void motorControlClock(UArg arg0)
 // Motor speed sensing
 static void edgeInterruptHandler(unsigned int pin)
 {
-    TimeSampler_addSample(&g_hallEdgeTimer, Clock_getTicks());
     g_currentMotorPhase = pollMotorPhase();
     setMotorPhase(g_currentMotorPhase + 1);
     ++g_numEdges;
@@ -225,9 +220,6 @@ bool MotorControl_init(MotorControl_Config const * pConfig)
 
     // Pre-calculate phase lookup for different hall sensor states
     initMotorPhaseTable();
-
-    // Initialize speed sensing sampler
-    TimeSampler_init(&g_hallEdgeTimer);
 
     // Initialize PI motor controller
     PIController_init(&g_controller, DRV832X_CONTROLLER_GAIN_P, DRV832X_CONTROLLER_GAIN_I);
@@ -338,7 +330,7 @@ static void starting_onMotorUpdate(uint32_t speed, uint32_t tick)
 {
     applyMotorControlAction(g_targetRpm, speed, tick);
 
-    if (abs(g_targetRpm - speed) < 500)
+    if (abs(g_targetRpm - speed) < 50)
         MotorControl_transition(MotorControl_State_Running);
 }
 //----------------------------------------------
